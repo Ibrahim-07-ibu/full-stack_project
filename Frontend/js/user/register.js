@@ -30,8 +30,15 @@ document
         alert("Registration successful! Redirecting to login...");
         window.location.href = "login.html";
       } else {
-        const errorData = await response.json();
-        alert(`Registration failed: ${errorData.detail || "Unknown error"}`);
+        let errorDetail = "Unknown error";
+        try {
+          const errorData = await response.json();
+          errorDetail = errorData.detail || errorDetail;
+        } catch (e) {
+          // If response is not JSON, use status text
+          errorDetail = `Server Error: ${response.status} ${response.statusText}`;
+        }
+        alert(`Registration failed: ${errorDetail}`);
       }
     } catch (error) {
       console.error("Error:", error);

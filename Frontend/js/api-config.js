@@ -6,15 +6,9 @@ const API_BASE_URL = (() => {
         return 'http://localhost:8000';
     }
 
-    // For Vercel deployment
-    if (hostname.includes('vercel.app')) {
-        // Use the current origin for same-domain deployment
-        return window.location.origin;
-    }
-
-    // Default: use current origin
-    return window.location.origin;
+    // For Vercel deployment, use relative paths
+    // This is most reliable when using vercel.json rewrites
+    return '';
 })();
 
 console.log('API Base URL:', API_BASE_URL);
-console.log('Current hostname:', window.location.hostname);
