@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       },
     );
     if (response.ok) {
-      const p = data; // response is the provider object directly
+      const p = await response.json();
 
       const setVal = (id, val) => {
         const el = document.getElementById(id);
