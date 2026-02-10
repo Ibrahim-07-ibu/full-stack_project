@@ -13,8 +13,9 @@ document
       return;
     }
     try {
-      console.log(`Attempting registration at: ${API_BASE_URL}/api/auth/register`);
-      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      const fullUrl = new URL(`${API_BASE_URL}/api/auth/register`, window.location.origin).href;
+      console.log(`Attempting registration at: ${fullUrl}`);
+      const response = await fetch(fullUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
