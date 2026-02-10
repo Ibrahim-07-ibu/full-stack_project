@@ -1,16 +1,22 @@
 import sys
 import os
 
-# Ensure the Backend directory is in the path so we can import main.py
-backend_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "Backend")
+# Root directory (where Backend and api folders live)
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
+# Backend directory
+backend_path = os.path.join(project_root, "Backend")
 sys.path.insert(0, backend_path)
 
-# Import the FastAPI app instance from Backend/main.py
 try:
-    from main import app
-except ImportError:
-    # Fallback if the path structure is slightly different in the build env
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     from Backend.main import app
-
-# Vercel will discover this 'app' and treat it as the entry point
+    from mangum import Mangum
+    
+    # Wrap FastAPI with Mangum for Vercel/AWS Lambda
+    handler = Mangum(app)
+    # Also expose 'app' for Vercel's auto-detection
+    app = app 
+except Exception as e:
+    print(f"Initialization Error: {e}")
+    raise e
