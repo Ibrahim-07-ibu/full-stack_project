@@ -6,10 +6,10 @@ const API_BASE_URL = (() => {
         return 'http://localhost:8000';
     }
 
-    // For production/Vercel
-    // Using window.location.origin ensures we have the correct base URL
-    return window.location.origin;
+    // For Vercel production
+    // Returning an empty string is the most reliable way to force relative paths
+    // which works best with Vercel rewrites and avoids CORS/Protocol issues.
+    return '';
 })();
 
-console.log('API Base URL:', API_BASE_URL);
-console.log('Current hostname:', window.location.hostname);
+console.log('API Base URL configured:', API_BASE_URL || '(relative)');

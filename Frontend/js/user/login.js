@@ -34,17 +34,23 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       }
 
       alert(`Welcome back! Logging in as ${result.role}...`);
-
-      // Handle path correction for Vercel/Local
-      // The backend sends absolute paths starting with /Frontend/...
-      // We might need to adjust them relative to current location or root
       window.location.href = result.redirect;
     } else {
-      const errorData = await response.json();
-      alert(`Login failed: ${errorData.detail || "Invalid credentials"}`);
+      let errorDetail = "Invalid credentials";
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const errorData = await response.json();
+        errorDetail = errorData.detail || errorDetail;
+      } else {
+        // Likely a 405 or 404 HTML page from Vercel
+        const text = await response.text();
+        console.error("Non-JSON error response from server:", text);
+        errorDetail = `Server Error: ${response.status} ${response.statusText}`;
+      }
+      alert(`Login failed: ${errorDetail}`);
     }
   } catch (error) {
-    console.error("Error logging in:", error);
-    alert("An error occurred. Please try again.");
+    console.error("Login Fetch Error:", error);
+    alert(`An error occurred: ${error.message}`);
   }
 });
