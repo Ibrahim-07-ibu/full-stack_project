@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Registration & Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #FF6B35;
+            padding-bottom: 10px;
+        }
+
+        button {
+            background: #FF6B35;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #e55a2b;
+        }
+
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 HomeBuddy API Test Suite</h1>
+
+    <div class="test-section">
+        <h2>1. Test User Registration</h2>
+        <button onclick="testUserRegistration()">Test User Registration</button>
+        <div id="register-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Test User Login</h2>
+        <button onclick="testUserLogin()">Test User Login</button>
+        <div id="login-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Test Provider Registration</h2>
+        <button onclick="testProviderRegistration()">Test Provider Registration</button>
+        <div id="provider-register-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Test Provider Login</h2>
+        <button onclick="testProviderLogin()">Test Provider Login</button>
+        <div id="provider-login-result"></div>
+    </div>
+
+    <script src="js/api-config.js"></script>
+    <script>
+        const timestamp = Date.now();
+
+        async function testUserRegistration() {
+            const resultDiv = document.getElementById('register-result');
+            resultDiv.innerHTML = '<div class="result info">Testing...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        name: 'Test User',
+                        email: `test_${timestamp}@example.com`,
+                        password: 'password123',
+                        phone: `${timestamp}`.slice(-10),
+                        address: 'Test Address 123'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="result success">✅ SUCCESS\n${JSON.stringify(data, null, 2)}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">❌ FAILED\nStatus: ${response.status}\n${JSON.stringify(data, null, 2)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ ERROR\n${error.message}</div>`;
+            }
+        }
+
+        async function testUserLogin() {
+            const resultDiv = document.getElementById('login-result');
+            resultDiv.innerHTML = '<div class="result info">Testing...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/unified_login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'hari_kabadi@gmail.com',
+                        password: 'hari123'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="result success">✅ SUCCESS\n${JSON.stringify(data, null, 2)}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">❌ FAILED\nStatus: ${response.status}\n${JSON.stringify(data, null, 2)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ ERROR\n${error.message}</div>`;
+            }
+        }
+
+        async function testProviderRegistration() {
+            const resultDiv = document.getElementById('provider-register-result');
+            resultDiv.innerHTML = '<div class="result info">Testing...</div>';
+
+            try {
+                // First get services
+                const servicesResponse = await fetch(`${API_BASE_URL}/api/services`);
+                const services = await servicesResponse.json();
+
+                const response = await fetch(`${API_BASE_URL}/api/providers/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        full_name: 'Test Provider',
+                        email: `provider_${timestamp}@example.com`,
+                        phone: `${timestamp}`.slice(-10),
+                        dob: '1990-01-01',
+                        address: 'Provider Address 123',
+                        service_id: services[0]?.id || 1,
+                        years_experience: 5,
+                        specialization: 'Test Specialization',
+                        bio: 'Test bio',
+                        password: 'password123',
+                        id_proof: 'pending_upload',
+                        certificate: 'pending_upload'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="result success">✅ SUCCESS\n${JSON.stringify(data, null, 2)}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">❌ FAILED\nStatus: ${response.status}\n${JSON.stringify(data, null, 2)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ ERROR\n${error.message}</div>`;
+            }
+        }
+
+        async function testProviderLogin() {
+            const resultDiv = document.getElementById('provider-login-result');
+            resultDiv.innerHTML = '<div class="result info">Testing...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/auth/provider/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'dhanush@email.com',
+                        password: 'dhanush123'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `<div class="result success">✅ SUCCESS\n${JSON.stringify(data, null, 2)}</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="result error">❌ FAILED\nStatus: ${response.status}\n${JSON.stringify(data, null, 2)}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="result error">❌ ERROR\n${error.message}</div>`;
+            }
+        }
+
+        // Display API configuration on load
+        console.log('API Base URL:', API_BASE_URL);
+        console.log('Current hostname:', window.location.hostname);
+    </script>
+</body>
+
+</html>

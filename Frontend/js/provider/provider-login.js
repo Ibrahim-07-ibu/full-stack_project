@@ -4,7 +4,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   const password = document.getElementById("password").value;
   try {
     const response = await fetch(
-      "/api/auth/provider/login",
+      `${API_BASE_URL}/api/auth/provider/login`,
       {
         method: "POST",
         headers: {

@@ -3,7 +3,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   try {
-    const response = await fetch("/api/auth/unified_login", {
+    const response = await fetch(`${API_BASE_URL}/api/auth/unified_login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
