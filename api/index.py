@@ -10,11 +10,12 @@ backend_path = os.path.join(project_root, "Backend")
 sys.path.insert(0, backend_path)
 
 try:
-    from Backend.main import app
+    from Backend.main import app as fastapi_app
     from mangum import Mangum
     
-    # Wrap FastAPI with Mangum for stable Vercel execution
-    handler = Mangum(app)
+    # Vercel's Python runtime expects 'app' or 'application' as the variable name
+    app = Mangum(fastapi_app)
+    application = app
 except Exception as e:
     print(f"Import Error: {e}")
     raise e

@@ -7,9 +7,7 @@ const API_BASE_URL = (() => {
     }
 
     // For Vercel production
-    // Returning an empty string is the most reliable way to force relative paths
-    // which works best with Vercel rewrites and avoids CORS/Protocol issues.
-    return '';
+    return window.location.origin;
 })();
 
 console.log('API Base URL configured:', API_BASE_URL || '(relative)');
