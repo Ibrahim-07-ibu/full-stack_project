@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
-app = FastAPI(redirect_slashes=False)
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,

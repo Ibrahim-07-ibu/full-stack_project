@@ -82,4 +82,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (error) {
     console.error("Error fetching recent activity:", error);
   }
+
+  // Handle Logout
+  const logoutBtn = document.querySelector(".btn-logout");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", (e) => {
+      localStorage.clear();
+      // Let the natural href "login.html" handle the navigation
+    });
+  }
 });
