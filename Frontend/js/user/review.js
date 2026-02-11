@@ -10,14 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const fetchBookingDetails = async () => {
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/bookings/${bookingId}`,
-        {
-          headers: {
-            "X-User-ID": localStorage.getItem("user_id"),
-          },
-        },
-      );
+      const response = await makeRequest(`/api/bookings/${bookingId}`);
       if (response.ok) {
         const booking = await response.json();
         document.getElementById("display-provider-name").innerHTML =
@@ -53,25 +46,14 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const bookingResponse = await fetch(
-        `${API_BASE_URL}/api/bookings/${bookingId}`,
-        {
-          headers: {
-            "X-User-ID": localStorage.getItem("user_id"),
-          },
-        },
-      );
+      const bookingResponse = await makeRequest(`/api/bookings/${bookingId}`);
       if (bookingResponse.ok) {
         const booking = await bookingResponse.json();
         reviewData.service_id = booking.service_id;
       }
 
-      const response = await fetch(`${API_BASE_URL}/api/reviews`, {
+      const response = await makeRequest(`/api/reviews`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-User-ID": localStorage.getItem("user_id"),
-        },
         body: JSON.stringify(reviewData),
       });
       if (response.ok) {

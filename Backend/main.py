@@ -16,27 +16,32 @@ logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 
-# Environment detection
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 APP_URL = os.getenv("APP_URL", "http://localhost:3000")
 
-# Configure CORS based on environment
 if ENVIRONMENT == "production":
     allowed_origins = [
         "https://homebuddy.vercel.app",
         "https://www.homebuddy.vercel.app",
-        os.getenv("FRONTEND_URL", "").split(",") if os.getenv("FRONTEND_URL") else []
+        "https://homebuddy.vercel.app",
     ]
-    allowed_origins = [url.strip() for url_group in allowed_origins for url in (url_group.split(",") if isinstance(url_group, str) else [url_group])]
-    allowed_origins = [url for url in allowed_origins if url]
+    frontend_url_env = os.getenv("FRONTEND_URL")
+    if frontend_url_env:
+        # Support both comma-separated string or single URL
+        env_origins = [url.strip() for url in frontend_url_env.split(",") if url.strip()]
+        allowed_origins.extend(env_origins)
 else:
     allowed_origins = [
         "http://localhost:3000", 
         "http://localhost:8000", 
         "http://localhost:8001",
+        "http://localhost:5500",
+        "http://localhost:5173",
         "http://127.0.0.1:3000", 
         "http://127.0.0.1:8000",
-        "http://127.0.0.1:8001"
+        "http://127.0.0.1:8001",
+        "http://127.0.0.1:5500",
+        "http://127.0.0.1:5173"
     ]
 
 app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="1.0.0")
@@ -82,8 +87,46 @@ async def global_exception_handler(request: Request, exc: Exception):
 try:
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables verified/created successfully.")
+    
+    # Seed services and admin if they don't exist
+    from db.database import SessionLocal
+    from models.services import Service
+    from models.users import User
+    from pwd_utils import hash_password
+    
+    db_seed = SessionLocal()
+    try:
+        if db_seed.query(Service).count() == 0:
+            logger.info("Seeding initial services...")
+            services = [
+                Service(name="House Cleaning", price=500, description="Full professional house cleaning services"),
+                Service(name="Plumbing", price=300, description="Expert plumbing repairs and installations"),
+                Service(name="Electrical Work", price=400, description="Safe electrical wiring and repair services"),
+                Service(name="Home Cooking", price=600, description="Professional home-style meal preparation"),
+                Service(name="Laundry & Washing", price=200, description="High-quality laundry and garment care"),
+            ]
+            db_seed.add_all(services)
+            db_seed.commit()
+            logger.info(f"Successfully seeded {len(services)} services.")
+            
+        if db_seed.query(User).filter(User.role == "admin").count() == 0:
+            logger.info("Seeding default admin...")
+            admin_user = User(
+                name="System Administrator",
+                email="admin@homebuddy.com",
+                password=hash_password("admin123"),
+                phone="0000000000",
+                address="Headquarters",
+                role="admin"
+            )
+            db_seed.add(admin_user)
+            db_seed.commit()
+            logger.info("Successfully seeded admin account.")
+    finally:
+        db_seed.close()
+        
 except Exception as e:
-    logger.error(f"Startup Database Error: {str(e)}")
+    logger.error(f"Startup Error: {str(e)}")
     traceback.print_exc()
 
 app.include_router(users.router)

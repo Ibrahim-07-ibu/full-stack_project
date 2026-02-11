@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const servicesGrid = document.getElementById("services-grid");
   if (!servicesGrid) return;
   try {
-    const response = await fetch(`${API_BASE_URL}/api/services`);
+    const response = await makeRequest("/api/services");
     if (response.ok) {
       const services = await response.json();
       if (services.length > 0) {

@@ -13,13 +13,8 @@ document
       return;
     }
     try {
-      const path = `${API_BASE_URL}/api/auth/register`;
-      console.log(`Attempting registration at: ${path}`);
-      const response = await fetch(path, {
+      const response = await makeRequest("/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           name,
           email,

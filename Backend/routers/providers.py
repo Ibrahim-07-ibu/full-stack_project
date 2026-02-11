@@ -12,13 +12,14 @@ router = APIRouter(prefix="/api/providers", tags=["Providers"])
 
 @router.post("/create", response_model=ProviderResponse)
 def create_provider(provider: ProviderCreate, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.email == provider.email).first()
+    normalized_email = provider.email.lower().strip()
+    db_user = db.query(User).filter(User.email == normalized_email).first()
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
     new_user = User(
         name=provider.full_name,
-        email=provider.email,
+        email=normalized_email,
         password=hash_password(provider.password),
         phone=provider.phone,
         address=provider.address,
@@ -28,6 +29,7 @@ def create_provider(provider: ProviderCreate, db: Session = Depends(get_db)):
     db.flush()
 
     provider_data = provider.model_dump()
+    provider_data["email"] = normalized_email
     provider_data["password"] = hash_password(provider.password)
     new_provider = Provider(user_id=new_user.id, **provider_data)
 

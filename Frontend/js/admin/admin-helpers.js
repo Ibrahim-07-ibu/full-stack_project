@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const response = await fetch('/api/providers/all');
+        const response = await makeRequest('/api/providers/all');
         const providers = await response.json();
 
         const tbody = document.getElementById('helpers-table-body');

@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const response = await fetch('/api/auth/users');
+        const response = await makeRequest('/api/auth/users');
         const users = await response.json();
 
         const tbody = document.getElementById('users-table-body');

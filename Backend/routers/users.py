@@ -42,18 +42,11 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
             "name": new_user.name,
             "email": new_user.email
         }
-    except HTTPException:
-        raise
     except Exception as e:
         import traceback
-        import datetime
         traceback.print_exc()
-        with open("register_error.log", "a") as f:
-            f.write(f"\n--- Error at {datetime.datetime.now()} ---\n")
-            f.write(f"Error: {str(e)}\n")
-            traceback.print_exc(file=f)
         print(f"CRITICAL ERROR IN REGISTER: {str(e)}", flush=True)
-        raise HTTPException(status_code=500, detail=f"Registration failed: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal Server Error during registration")
 
 
 @router.post("/login")
@@ -109,7 +102,7 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
                 "access_token": access_token,
                 "token_type": "bearer",
                 "role": "admin",
-                "redirect": "Frontend/html/admin/admin-dashboard.html"
+                "redirect": "/Frontend/html/admin/admin-dashboard.html"
             }
 
         # 2. Check for User
@@ -120,14 +113,6 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
             if verify_password(user.password, db_user.password):
                 print("User password verified", flush=True)
                 access_token = create_access_token(data={"sub": str(db_user.id), "role": db_user.role})
-                
-                # Determine redirect based on role
-                redirect_path = "Frontend/html/user/dashboard.html"
-                if db_user.role == "provider":
-                    redirect_path = "Frontend/html/provider/provider-dashboard.html"
-                elif db_user.role == "admin":
-                    redirect_path = "Frontend/html/admin/admin-dashboard.html"
-
                 # Prepare response
                 response_data = {
                     "message": "Login successful",
@@ -137,15 +122,18 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
                     "user_id": db_user.id,
                     "name": db_user.name,
                     "email": db_user.email,
-                    "redirect": redirect_path
+                    "redirect": "/Frontend/html/user/dashboard.html"
                 }
                 
-                # Add provider_id if it's a provider
+                # Determine redirect and additional data based on role
                 if db_user.role == "provider":
+                    response_data["redirect"] = "/Frontend/html/provider/provider-dashboard.html"
                     db_provider = db.query(Provider).filter(Provider.user_id == db_user.id).first()
                     if db_provider:
                         response_data["provider_id"] = db_provider.id
-                        
+                elif db_user.role == "admin":
+                    response_data["redirect"] = "/Frontend/html/admin/admin-dashboard.html"
+                    
                 return response_data
             else:
                 print("User password mismatch", flush=True)
@@ -153,13 +141,14 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
             print("User not found in users table", flush=True)
 
         # 3. Check for Provider
-        print(f"Checking provider table for {user.email}", flush=True)
-        db_provider = db.query(Provider).filter(Provider.email == user.email).first()
+        normalized_email = user.email.lower().strip()
+        print(f"Checking provider table for {normalized_email}", flush=True)
+        db_provider = db.query(Provider).filter(Provider.email == normalized_email).first()
         if db_provider:
              print(f"Provider found: {db_provider.email}, verifying password...", flush=True)
              if verify_password(user.password, db_provider.password):
                 print("Provider password verified", flush=True)
-                access_token = create_access_token(data={"sub": str(db_provider.id), "role": "provider"})
+                access_token = create_access_token(data={"sub": str(db_provider.user_id), "role": "provider"})
                 return {
                     "message": "Login successful",
                     "access_token": access_token,
@@ -169,7 +158,7 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
                     "user_id": db_provider.user_id,
                     "name": db_provider.full_name,
                     "email": db_provider.email,
-                    "redirect": "Frontend/html/provider/provider-dashboard.html"
+                    "redirect": "/Frontend/html/provider/provider-dashboard.html"
                 }
              else:
                 print("Provider password mismatch", flush=True)
@@ -208,7 +197,7 @@ def login_provider(user: UserLogin, db: Session = Depends(get_db)):
             f"DEBUG: Login successful for provider: '{user.email}', ID: {db_provider.id}",
             flush=True,
         )
-        access_token = create_access_token(data={"sub": str(db_provider.id), "role": "provider"})
+        access_token = create_access_token(data={"sub": str(db_provider.user_id), "role": "provider"})
         return {
             "message": "Login successful",
             "access_token": access_token,

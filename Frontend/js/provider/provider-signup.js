@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("signup-form");
 
   try {
-    const response = await fetch(`${API_BASE_URL}/api/services`);
+    const response = await makeRequest("/api/services");
     if (response.ok) {
       const services = await response.json();
       serviceSelect.innerHTML = '<option value="">Select Service</option>';
@@ -50,16 +50,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       certificate: "pending_upload",
     };
     try {
-      const response = await fetch(
-        `${API_BASE_URL}/api/providers/create`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(formData),
-        },
-      );
+      const response = await makeRequest("/api/providers/create", {
+        method: "POST",
+        body: JSON.stringify(formData),
+      });
       if (response.ok) {
         const result = await response.json();
         alert("Registration successful! Redirecting to login...");

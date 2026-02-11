@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from dependencies import get_db, get_current_user, get_current_provider
+from dependencies import get_db, get_current_user, get_current_provider, get_current_admin
 from models.users import User
 from models.services import Service
 from models.bookings import Booking
@@ -9,6 +9,27 @@ from schemas.bookings_schema import BookingCreate
 
 
 router = APIRouter(prefix="/api/bookings", tags=["Bookings"])
+
+
+@router.get("/all")
+def get_all_bookings(
+    db: Session = Depends(get_db), 
+    admin: bool = Depends(get_current_admin)
+):
+    bookings = db.query(Booking).all()
+    response = []
+    for b in bookings:
+        response.append({
+            "id": b.id,
+            "user_name": b.user.name if b.user else "Unknown",
+            "service_name": b.service.name if b.service else "Unknown",
+            "provider_name": b.provider.full_name if b.provider else "Not assigned",
+            "date": str(b.date),
+            "time": str(b.time),
+            "status": b.status,
+            "address": f"{b.address}, {b.city} - {b.pincode}"
+        })
+    return response
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
