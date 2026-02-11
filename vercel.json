@@ -1,7 +1,6 @@
 {
   "buildCommand": "pip install -r requirements.txt && pip install -r Backend/requirements.txt",
-  "outputDirectory": "Frontend",
-  "framework": "vanilla",
+  "outputDirectory": ".",
   "trailingSlash": false,
   "env": {
     "ENVIRONMENT": "production",
@@ -11,12 +10,26 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/index.py",
-      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH",
+        "OPTIONS"
+      ]
     },
     {
       "src": "/api$",
       "dest": "/api/index.py",
-      "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
+      "methods": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE",
+        "PATCH",
+        "OPTIONS"
+      ]
     },
     {
       "handle": "filesystem"
