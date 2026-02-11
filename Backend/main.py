@@ -22,9 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.options("/{rest_of_path:path}")
-async def preflight_handler():
-    return {}
+
+# CORSMiddleware handles preflight requests automatically.
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):

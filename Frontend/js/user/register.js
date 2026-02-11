@@ -31,7 +31,7 @@ document
 
       if (response.ok) {
         alert("Registration successful! Redirecting to login...");
-        window.location.href = "login.html";
+        window.location.href = "Frontend/html/user/login.html";
       } else {
         let errorDetail = "Unknown error";
         const contentType = response.headers.get("content-type");
