@@ -3,9 +3,9 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
   try {
-    const fullUrl = new URL(`${API_BASE_URL}/api/auth/unified_login`, window.location.origin).href;
-    console.log(`Attempting login at: ${fullUrl}`);
-    const response = await fetch(fullUrl, {
+    const path = `${API_BASE_URL}/api/auth/unified_login`;
+    console.log(`Attempting login at: ${path}`);
+    const response = await fetch(path, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
