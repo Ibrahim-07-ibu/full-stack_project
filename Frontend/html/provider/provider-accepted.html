@@ -1,68 +1,66 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Accepted Orders - HomeBuddy Helper</title>
-    <link rel="stylesheet" href="../../css/provider/provider-styles.css" />
-    <link rel="stylesheet" href="../../css/provider/provider-accepted.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-  </head>
 
-  <body>
-    <nav class="navbar">
-      <div class="nav-container">
-        <div class="logo">
-          <span class="logo-icon"><i class="fa-solid fa-house"></i></span>
-          <h1>HomeBuddy Helper</h1>
-        </div>
-        <div class="nav-right">
-          <div class="helper-info">
-            <div class="helper-avatar" id="nav-provider-avatar">PS</div>
-            <span id="nav-provider-name">Priya Sharma</span>
-          </div>
-          <a href="provider-login.html" class="btn-logout"
-            ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
-          >
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accepted Orders - HomeBuddy Helper</title>
+  <link rel="stylesheet" href="../../css/provider/provider-styles.css" />
+  <link rel="stylesheet" href="../../css/provider/provider-accepted.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-house"></i></span>
+        <h1>HomeBuddy Helper</h1>
       </div>
-    </nav>
-
-    <div class="dashboard-container">
-      <div class="dashboard-header">
-        <h2>Accepted Orders</h2>
-        <p>Your confirmed bookings and upcoming services</p>
-      </div>
-
-      <div class="tabs">
-        <a href="provider-dashboard.html" class="tab">New Requests</a>
-        <a href="provider-accepted.html" class="tab active">Accepted Orders</a>
-        <a href="provider-completed.html" class="tab">Completed</a>
-        <a href="provider-profile.html" class="tab">My Profile</a>
-      </div>
-
-      <div class="orders-section">
-        <div class="section-header">
-          <h3>Your Accepted Service Bookings</h3>
+      <div class="nav-right">
+        <div class="helper-info">
+          <div class="helper-avatar" id="nav-provider-avatar">PS</div>
+          <span id="nav-provider-name">Priya Sharma</span>
         </div>
-
-        <div id="bookings-container">
-          <div class="no-bookings">
-            <p>Loading accepted orders...</p>
-          </div>
-        </div>
-
-        <div class="tip-box">
-          <p>
-            <strong>Tip:</strong> Mark orders as completed after service
-            delivery to get paid and receive reviews!
-          </p>
-        </div>
+        <a href="provider-login.html" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
       </div>
     </div>
-    <script src="../../js/provider/provider-accepted.js" defer></script>
-  </body>
+  </nav>
+
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h2>Accepted Orders</h2>
+      <p>Your confirmed bookings and upcoming services</p>
+    </div>
+
+    <div class="tabs">
+      <a href="provider-dashboard.html" class="tab">New Requests</a>
+      <a href="provider-accepted.html" class="tab active">Accepted Orders</a>
+      <a href="provider-completed.html" class="tab">Completed</a>
+      <a href="provider-profile.html" class="tab">My Profile</a>
+    </div>
+
+    <div class="orders-section">
+      <div class="section-header">
+        <h3>Your Accepted Service Bookings</h3>
+      </div>
+
+      <div id="bookings-container">
+        <div class="no-bookings">
+          <p>Loading accepted orders...</p>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        <p>
+          <strong>Tip:</strong> Mark orders as completed after service
+          delivery to get paid and receive reviews!
+        </p>
+      </div>
+    </div>
+  </div>
+  <script src="../../js/api-config.js"></script>
+  <script src="../../js/provider/provider-accepted.js" defer></script>
+</body>
+
 </html>

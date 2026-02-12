@@ -1,169 +1,159 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Profile - HomeBuddy Helper</title>
-    <link rel="stylesheet" href="../../css/provider/provider-styles.css" />
-    <link rel="stylesheet" href="../../css/provider/provider-profile.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-  </head>
 
-  <body>
-    <nav class="navbar">
-      <div class="nav-container">
-        <div class="logo">
-          <span class="logo-icon"><i class="fa-solid fa-house"></i></span>
-          <h1>HomeBuddy Helper</h1>
-        </div>
-        <div class="nav-right">
-          <div class="helper-info">
-            <div class="helper-avatar" id="nav-provider-avatar">n</div>
-            <span id="nav-provider-name">name</span>
-          </div>
-          <a href="provider-login.html" class="btn-logout"
-            ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
-          >
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile - HomeBuddy Helper</title>
+  <link rel="stylesheet" href="../../css/provider/provider-styles.css" />
+  <link rel="stylesheet" href="../../css/provider/provider-profile.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-house"></i></span>
+        <h1>HomeBuddy Helper</h1>
       </div>
-    </nav>
-
-    <div class="dashboard-container">
-      <div class="dashboard-header">
-        <h2>My Profile</h2>
-        <p>Manage your profile and service information</p>
-      </div>
-
-      <div class="tabs">
-        <a href="provider-dashboard.html" class="tab">New Requests</a>
-        <a href="provider-accepted.html" class="tab">Accepted Orders</a>
-        <a href="provider-completed.html" class="tab">Completed</a>
-        <a href="provider-profile.html" class="tab active">My Profile</a>
-      </div>
-
-      <div class="profile-section">
-        <div class="profile-header">
-          <div class="profile-avatar-large" id="profile-avatar">n</div>
-          <div class="profile-info">
-            <h3 id="profile-name">name</h3>
-            <div class="profile-rating">
-              <span class="stars" id="profile-stars"
-                ><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
-                ><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
-                ><i class="fa-solid fa-star"></i
-              ></span>
-              <span class="rating-text" id="profile-rating-text"
-                >4.8 (125 reviews)</span
-              >
-            </div>
-            <span class="verified-badge-large" id="profile-verified"
-              ><i class="fa-solid fa-certificate"></i> Verified Helper</span
-            >
-          </div>
+      <div class="nav-right">
+        <div class="helper-info">
+          <div class="helper-avatar" id="nav-provider-avatar">n</div>
+          <span id="nav-provider-name">name</span>
         </div>
-
-        <div class="profile-details">
-          <!-- Personal Information -->
-          <div class="detail-group">
-            <h4>Personal Information</h4>
-            <div class="detail-item">
-              <label>Full Name</label>
-              <div class="value" id="detail-fullname">name</div>
-            </div>
-            <div class="detail-item">
-              <label>Email</label>
-              <div class="value" id="detail-email">name@email.com</div>
-            </div>
-            <div class="detail-item">
-              <label>Phone Number</label>
-              <div class="value" id="detail-phone">+91 98765 43210</div>
-            </div>
-            <div class="detail-item">
-              <label>Address</label>
-              <div class="value" id="detail-address">
-                Neelankarai, Chennai, Tamil Nadu - 600041
-              </div>
-            </div>
-            <div class="detail-item">
-              <label>Member Since</label>
-              <div class="value">January 2023</div>
-            </div>
-          </div>
-
-          <!-- Service Information -->
-          <div class="detail-group">
-            <h4>Service Information</h4>
-            <div class="detail-item">
-              <label>Service Category</label>
-              <div class="value" id="detail-service">🍳 Cooking</div>
-            </div>
-            <div class="detail-item">
-              <label>Experience</label>
-              <div class="value" id="detail-experience">5 years</div>
-            </div>
-
-            <div class="detail-item">
-              <label>Specializations</label>
-              <div class="value" id="detail-specialization">
-                North Indian, Continental, Chinese
-              </div>
-            </div>
-          </div>
-
-          <!-- Verification Status -->
-          <div class="detail-group">
-            <h4>Verification Status</h4>
-            <div class="detail-item">
-              <label>ID Verification</label>
-              <div class="value verified" id="verify-id">✓ Verified</div>
-            </div>
-            <div class="detail-item">
-              <label>Background Check</label>
-              <div class="value verified">✓ Completed</div>
-            </div>
-            <div class="detail-item">
-              <label>Skills Verification</label>
-              <div class="value verified">✓ Verified</div>
-            </div>
-            <div class="detail-item">
-              <label>Contact Verified</label>
-              <div class="value verified">✓ Email & Phone</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bio Section -->
-        <div class="bio-section">
-          <h4>Bio / Description</h4>
-          <p id="profile-bio">
-            Experienced professional cook with 5 years of expertise in preparing
-            a wide variety of cuisines. Specialized in North Indian,
-            Continental, and Chinese dishes. I take pride in creating delicious,
-            hygienic meals tailored to your preferences. Whether it's a family
-            dinner, party, or daily meals, I ensure quality and taste in every
-            dish. I bring my own utensils and maintain high standards of
-            cleanliness. Looking forward to serving you!
-          </p>
-        </div>
-
-        <!-- Recent Reviews -->
-        <div class="reviews-section">
-          <h4>Recent Reviews</h4>
-          <div id="reviews-container">
-            <div class="no-reviews">Loading reviews...</div>
-          </div>
-        </div>
-
-        <div class="profile-actions">
-          <a href="provider-edit-profile.html" class="btn-primary btn-block"
-            >Edit Profile</a
-          >
-        </div>
+        <a href="provider-login.html" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
       </div>
     </div>
-    <script src="../../js/provider/provider-profile.js" defer></script>
-  </body>
+  </nav>
+
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h2>My Profile</h2>
+      <p>Manage your profile and service information</p>
+    </div>
+
+    <div class="tabs">
+      <a href="provider-dashboard.html" class="tab">New Requests</a>
+      <a href="provider-accepted.html" class="tab">Accepted Orders</a>
+      <a href="provider-completed.html" class="tab">Completed</a>
+      <a href="provider-profile.html" class="tab active">My Profile</a>
+    </div>
+
+    <div class="profile-section">
+      <div class="profile-header">
+        <div class="profile-avatar-large" id="profile-avatar">n</div>
+        <div class="profile-info">
+          <h3 id="profile-name">name</h3>
+          <div class="profile-rating">
+            <span class="stars" id="profile-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></span>
+            <span class="rating-text" id="profile-rating-text">4.8 (125 reviews)</span>
+          </div>
+          <span class="verified-badge-large" id="profile-verified"><i class="fa-solid fa-certificate"></i> Verified
+            Helper</span>
+        </div>
+      </div>
+
+      <div class="profile-details">
+        <!-- Personal Information -->
+        <div class="detail-group">
+          <h4>Personal Information</h4>
+          <div class="detail-item">
+            <label>Full Name</label>
+            <div class="value" id="detail-fullname">name</div>
+          </div>
+          <div class="detail-item">
+            <label>Email</label>
+            <div class="value" id="detail-email">name@email.com</div>
+          </div>
+          <div class="detail-item">
+            <label>Phone Number</label>
+            <div class="value" id="detail-phone">+91 98765 43210</div>
+          </div>
+          <div class="detail-item">
+            <label>Address</label>
+            <div class="value" id="detail-address">
+              Neelankarai, Chennai, Tamil Nadu - 600041
+            </div>
+          </div>
+          <div class="detail-item">
+            <label>Member Since</label>
+            <div class="value">January 2023</div>
+          </div>
+        </div>
+
+        <!-- Service Information -->
+        <div class="detail-group">
+          <h4>Service Information</h4>
+          <div class="detail-item">
+            <label>Service Category</label>
+            <div class="value" id="detail-service">🍳 Cooking</div>
+          </div>
+          <div class="detail-item">
+            <label>Experience</label>
+            <div class="value" id="detail-experience">5 years</div>
+          </div>
+
+          <div class="detail-item">
+            <label>Specializations</label>
+            <div class="value" id="detail-specialization">
+              North Indian, Continental, Chinese
+            </div>
+          </div>
+        </div>
+
+        <!-- Verification Status -->
+        <div class="detail-group">
+          <h4>Verification Status</h4>
+          <div class="detail-item">
+            <label>ID Verification</label>
+            <div class="value verified" id="verify-id">✓ Verified</div>
+          </div>
+          <div class="detail-item">
+            <label>Background Check</label>
+            <div class="value verified">✓ Completed</div>
+          </div>
+          <div class="detail-item">
+            <label>Skills Verification</label>
+            <div class="value verified">✓ Verified</div>
+          </div>
+          <div class="detail-item">
+            <label>Contact Verified</label>
+            <div class="value verified">✓ Email & Phone</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bio Section -->
+      <div class="bio-section">
+        <h4>Bio / Description</h4>
+        <p id="profile-bio">
+          Experienced professional cook with 5 years of expertise in preparing
+          a wide variety of cuisines. Specialized in North Indian,
+          Continental, and Chinese dishes. I take pride in creating delicious,
+          hygienic meals tailored to your preferences. Whether it's a family
+          dinner, party, or daily meals, I ensure quality and taste in every
+          dish. I bring my own utensils and maintain high standards of
+          cleanliness. Looking forward to serving you!
+        </p>
+      </div>
+
+      <!-- Recent Reviews -->
+      <div class="reviews-section">
+        <h4>Recent Reviews</h4>
+        <div id="reviews-container">
+          <div class="no-reviews">Loading reviews...</div>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <a href="provider-edit-profile.html" class="btn-primary btn-block">Edit Profile</a>
+      </div>
+    </div>
+  </div>
+  <script src="../../js/api-config.js"></script>
+  <script src="../../js/provider/provider-profile.js" defer></script>
+</body>
+
 </html>

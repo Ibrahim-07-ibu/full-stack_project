@@ -1,76 +1,74 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Completed Orders - HomeBuddy Helper</title>
-    <link rel="stylesheet" href="../../css/provider/provider-styles.css" />
-    <link rel="stylesheet" href="../../css/provider/provider-completed.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
-  </head>
 
-  <body>
-    <nav class="navbar">
-      <div class="nav-container">
-        <div class="logo">
-          <span class="logo-icon"><i class="fa-solid fa-house"></i></span>
-          <h1>HomeBuddy Helper</h1>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Completed Orders - HomeBuddy Helper</title>
+  <link rel="stylesheet" href="../../css/provider/provider-styles.css" />
+  <link rel="stylesheet" href="../../css/provider/provider-completed.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-house"></i></span>
+        <h1>HomeBuddy Helper</h1>
+      </div>
+      <div class="nav-right">
+        <div class="helper-info">
+          <div class="helper-avatar" id="nav-provider-avatar">PS</div>
+          <span id="nav-provider-name">Priya Sharma</span>
         </div>
-        <div class="nav-right">
-          <div class="helper-info">
-            <div class="helper-avatar" id="nav-provider-avatar">PS</div>
-            <span id="nav-provider-name">Priya Sharma</span>
+        <a href="provider-login.html" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+    <div class="dashboard-header">
+      <h2>Completed Services</h2>
+      <p>Your service history and earnings</p>
+    </div>
+
+    <div class="tabs">
+      <a href="provider-dashboard.html" class="tab">New Requests</a>
+      <a href="provider-accepted.html" class="tab">Accepted Orders</a>
+      <a href="provider-completed.html" class="tab active">Completed</a>
+      <a href="provider-profile.html" class="tab">My Profile</a>
+    </div>
+
+    <div class="orders-section">
+      <div class="section-header">
+        <h3>Service History</h3>
+      </div>
+
+      <!-- Summary Card -->
+      <div class="summary-card">
+        <h3 class="mb-1">Service Summary</h3>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-value" id="summary-count">0</div>
+            <div class="summary-label">Orders Completed</div>
           </div>
-          <a href="provider-login.html" class="btn-logout"
-            ><i class="fa-solid fa-right-from-bracket"></i> Logout</a
-          >
-        </div>
-      </div>
-    </nav>
-
-    <div class="dashboard-container">
-      <div class="dashboard-header">
-        <h2>Completed Services</h2>
-        <p>Your service history and earnings</p>
-      </div>
-
-      <div class="tabs">
-        <a href="provider-dashboard.html" class="tab">New Requests</a>
-        <a href="provider-accepted.html" class="tab">Accepted Orders</a>
-        <a href="provider-completed.html" class="tab active">Completed</a>
-        <a href="provider-profile.html" class="tab">My Profile</a>
-      </div>
-
-      <div class="orders-section">
-        <div class="section-header">
-          <h3>Service History</h3>
-        </div>
-
-        <!-- Summary Card -->
-        <div class="summary-card">
-          <h3 class="mb-1">Service Summary</h3>
-          <div class="summary-grid">
-            <div class="summary-item">
-              <div class="summary-value" id="summary-count">0</div>
-              <div class="summary-label">Orders Completed</div>
-            </div>
-            <div class="summary-item">
-              <div class="summary-value" id="summary-rating">0.0</div>
-              <div class="summary-label">Average Rating</div>
-            </div>
+          <div class="summary-item">
+            <div class="summary-value" id="summary-rating">0.0</div>
+            <div class="summary-label">Average Rating</div>
           </div>
         </div>
+      </div>
 
-        <div id="bookings-container">
-          <div class="no-bookings">
-            <p>Loading service history...</p>
-          </div>
+      <div id="bookings-container">
+        <div class="no-bookings">
+          <p>Loading service history...</p>
         </div>
       </div>
     </div>
-    <script src="../../js/provider/provider-completed.js" defer></script>
-  </body>
+  </div>
+  <script src="../../js/api-config.js"></script>
+  <script src="../../js/provider/provider-completed.js" defer></script>
+</body>
+
 </html>

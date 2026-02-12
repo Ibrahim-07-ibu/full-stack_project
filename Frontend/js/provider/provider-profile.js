@@ -17,6 +17,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const el = document.getElementById(id);
         if (el) el.textContent = text;
       };
+      const safeSetHtml = (id, html) => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+      };
       safeSetText("profile-name", p.full_name);
       safeSetText("detail-fullname", p.full_name);
       safeSetText("detail-email", p.email);

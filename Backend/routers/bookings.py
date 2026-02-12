@@ -249,6 +249,8 @@ def get_provider_pending_bookings(
                 "address": b.address,
                 "city": b.city,
                 "pincode": b.pincode,
+                "user_name": b.user.name if b.user else "Unknown",
+                "user_phone": b.user.phone if b.user else "N/A",
             }
         )
     return response
