@@ -20,13 +20,11 @@ ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 APP_URL = os.getenv("APP_URL", "http://localhost:3000")
 
 if ENVIRONMENT == "production":
-    # Allowed origins for deployed frontend
     allowed_origins = [
         "https://homebuddy.vercel.app",
         "https://www.homebuddy.vercel.app",
         "https://homebuddy.vercel.app",
     ]
-    # Also allow local development frontends when ENVIRONMENT is set to production locally
     allowed_origins.extend(
         [
             "http://localhost:3000",
@@ -47,8 +45,9 @@ if ENVIRONMENT == "production":
     )
     frontend_url_env = os.getenv("FRONTEND_URL")
     if frontend_url_env:
-        # Support both comma-separated string or single URL
-        env_origins = [url.strip() for url in frontend_url_env.split(",") if url.strip()]
+        env_origins = [
+            url.strip() for url in frontend_url_env.split(",") if url.strip()
+        ]
         allowed_origins.extend(env_origins)
 else:
     allowed_origins = [
@@ -72,16 +71,16 @@ app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins, 
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-
 from fastapi.responses import JSONResponse
 import traceback
+
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -89,15 +88,18 @@ async def log_requests(request: Request, call_next):
     try:
         response = await call_next(request)
         process_time = time.time() - start_time
-        logger.info(f"RID: {request.method} {request.url.path} - Status: {response.status_code} - Time: {process_time:.4f}s")
+        logger.info(
+            f"RID: {request.method} {request.url.path} - Status: {response.status_code} - Time: {process_time:.4f}s"
+        )
         return response
     except Exception as e:
         logger.error(f"Middleware Error: {str(e)}")
         traceback.print_exc()
         return JSONResponse(
             status_code=500,
-            content={"detail": "Internal Server Error in Middleware", "error": str(e)}
+            content={"detail": "Internal Server Error in Middleware", "error": str(e)},
         )
+
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
@@ -108,31 +110,72 @@ async def global_exception_handler(request: Request, exc: Exception):
         content={"detail": "Global Internal Server Error", "error": str(exc)},
     )
 
+
 try:
     Base.metadata.create_all(bind=engine)
     logger.info("Database tables verified/created successfully.")
-    
-    # Seed services and admin if they don't exist
+
     from db.database import SessionLocal
     from models.services import Service
     from models.users import User
     from pwd_utils import hash_password
-    
+
     db_seed = SessionLocal()
     try:
         if db_seed.query(Service).count() == 0:
             logger.info("Seeding initial services...")
             services = [
-                Service(name="House Cleaning", price=500, description="Full professional house cleaning services"),
-                Service(name="Plumbing", price=300, description="Expert plumbing repairs and installations"),
-                Service(name="Electrical Work", price=400, description="Safe electrical wiring and repair services"),
-                Service(name="Home Cooking", price=600, description="Professional home-style meal preparation"),
-                Service(name="Laundry & Washing", price=200, description="High-quality laundry and garment care"),
+                Service(
+                    name="House Cleaning",
+                    price=500,
+                    description="Full professional house cleaning services",
+                ),
+                Service(
+                    name="Deep Cleaning",
+                    price=800,
+                    description="Complete deep cleaning for home or office",
+                ),
+                Service(
+                    name="Plumbing",
+                    price=300,
+                    description="Expert plumbing repairs and installations",
+                ),
+                Service(
+                    name="Electrical Work",
+                    price=400,
+                    description="Safe electrical wiring and repair services",
+                ),
+                Service(
+                    name="AC Repair",
+                    price=600,
+                    description="Air conditioner repair and servicing",
+                ),
+                Service(
+                    name="Carpentry",
+                    price=450,
+                    description="Furniture repair and carpentry work",
+                ),
+                Service(
+                    name="Painting",
+                    price=700,
+                    description="Home and office painting services",
+                ),
+                Service(
+                    name="Home Cooking",
+                    price=600,
+                    description="Professional home-style meal preparation",
+                ),
+                Service(
+                    name="Laundry & Washing",
+                    price=200,
+                    description="High-quality laundry and garment care",
+                ),
             ]
+
             db_seed.add_all(services)
             db_seed.commit()
             logger.info(f"Successfully seeded {len(services)} services.")
-            
+
         if db_seed.query(User).filter(User.role == "admin").count() == 0:
             logger.info("Seeding default admin...")
             admin_user = User(
@@ -141,14 +184,14 @@ try:
                 password=hash_password("admin123"),
                 phone="0000000000",
                 address="Headquarters",
-                role="admin"
+                role="admin",
             )
             db_seed.add(admin_user)
             db_seed.commit()
             logger.info("Successfully seeded admin account.")
     finally:
         db_seed.close()
-        
+
 except Exception as e:
     logger.error(f"Startup Error: {str(e)}")
     traceback.print_exc()
@@ -165,6 +208,8 @@ app.include_router(supports.router)
 def greet():
     return {"message": "Home Buddy API Running"}
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)
