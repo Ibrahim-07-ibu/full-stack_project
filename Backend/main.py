@@ -20,11 +20,31 @@ ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
 APP_URL = os.getenv("APP_URL", "http://localhost:3000")
 
 if ENVIRONMENT == "production":
+    # Allowed origins for deployed frontend
     allowed_origins = [
         "https://homebuddy.vercel.app",
         "https://www.homebuddy.vercel.app",
         "https://homebuddy.vercel.app",
     ]
+    # Also allow local development frontends when ENVIRONMENT is set to production locally
+    allowed_origins.extend(
+        [
+            "http://localhost:3000",
+            "http://localhost:8000",
+            "http://localhost:8001",
+            "http://localhost:5500",
+            "http://localhost:5504",
+            "http://localhost:5505",
+            "http://localhost:5173",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:8000",
+            "http://127.0.0.1:8001",
+            "http://127.0.0.1:5500",
+            "http://127.0.0.1:5504",
+            "http://127.0.0.1:5505",
+            "http://127.0.0.1:5173",
+        ]
+    )
     frontend_url_env = os.getenv("FRONTEND_URL")
     if frontend_url_env:
         # Support both comma-separated string or single URL
@@ -32,16 +52,20 @@ if ENVIRONMENT == "production":
         allowed_origins.extend(env_origins)
 else:
     allowed_origins = [
-        "http://localhost:3000", 
-        "http://localhost:8000", 
+        "http://localhost:3000",
+        "http://localhost:8000",
         "http://localhost:8001",
         "http://localhost:5500",
+        "http://localhost:5504",
+        "http://localhost:5505",
         "http://localhost:5173",
-        "http://127.0.0.1:3000", 
+        "http://127.0.0.1:3000",
         "http://127.0.0.1:8000",
         "http://127.0.0.1:8001",
         "http://127.0.0.1:5500",
-        "http://127.0.0.1:5173"
+        "http://127.0.0.1:5504",
+        "http://127.0.0.1:5505",
+        "http://127.0.0.1:5173",
     ]
 
 app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="1.0.0")
