@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.checkAuth();
   const providerId = localStorage.getItem("provider_id");
   if (!providerId) {
-    // handled by checkAuth
   }
   updateNavBar();
   updateStatistics();
@@ -38,11 +37,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                   \u003c/div\u003e
                   \u003cdiv class="order-detail"\u003e
                     \u003cspan class="detail-label"\u003eCustomer\u003c/span\u003e
-                    \u003cspan class="detail-value"\u003e\u003ci class="fa-solid fa-user"\u003e\u003c/i\u003e ${booking.user_name || 'Unknown'}\u003c/span\u003e
+                    \u003cspan class="detail-value"\u003e\u003ci class="fa-solid fa-user"\u003e\u003c/i\u003e ${booking.user_name || "Unknown"}\u003c/span\u003e
                   \u003c/div\u003e
                   \u003cdiv class="order-detail"\u003e
                     \u003cspan class="detail-label"\u003eMobile\u003c/span\u003e
-                    \u003cspan class="detail-value"\u003e\u003ci class="fa-solid fa-phone"\u003e\u003c/i\u003e ${booking.user_phone || 'N/A'}\u003c/span\u003e
+                    \u003cspan class="detail-value"\u003e\u003ci class="fa-solid fa-phone"\u003e\u003c/i\u003e ${booking.user_phone || "N/A"}\u003c/span\u003e
                   \u003c/div\u003e
                   \u003cdiv class="order-detail"\u003e
                     \u003cspan class="detail-label"\u003eDate \u0026 Time\u003c/span\u003e
@@ -50,7 +49,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                   \u003c/div\u003e
                   \u003cdiv class="order-detail"\u003e
                     \u003cspan class="detail-label"\u003eInstructions\u003c/span\u003e
-                    \u003cspan class="detail-value"\u003e\u003ci class="fa-solid fa-circle-info"\u003e\u003c/i\u003e ${booking.instructions || 'No special instructions'}\u003c/span\u003e
+                    \u003cspan class="detail-value"\u003e\u003ci class="fa-solid fa-circle-info"\u003e\u003c/i\u003e ${booking.instructions || "No special instructions"}\u003c/span\u003e
                   \u003c/div\u003e
                   \u003cdiv class="order-detail"\u003e
                     \u003cspan class="detail-label"\u003eAddress\u003c/span\u003e
@@ -79,8 +78,10 @@ async function updateStatistics() {
       document.getElementById("stat-accepted").textContent = stats.accepted;
       document.getElementById("stat-completed").textContent = stats.completed;
       document.getElementById("stat-rating").textContent = stats.rating;
-      document.getElementById("stat-earnings").textContent = `₹${stats.earnings}`;
-      document.getElementById("stat-completion-rate").textContent = `${stats.completion_rate}%`;
+      document.getElementById("stat-earnings").textContent =
+        `₹${stats.earnings}`;
+      document.getElementById("stat-completion-rate").textContent =
+        `${stats.completion_rate}%`;
       const providerName = localStorage.getItem("provider_name");
       if (providerName) {
         document.getElementById("provider-name").textContent = providerName;
@@ -112,9 +113,12 @@ async function acceptBooking(bookingId) {
   if (!confirm("Are you sure you want to accept this booking?")) return;
 
   try {
-    const response = await makeRequest(`/api/bookings/provider/${bookingId}/confirm`, {
-      method: "PUT"
-    });
+    const response = await makeRequest(
+      `/api/bookings/provider/${bookingId}/confirm`,
+      {
+        method: "PUT",
+      },
+    );
 
     if (response.ok) {
       alert("Booking confirmed!");

@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.checkAuth();
   const providerId = localStorage.getItem("provider_id");
   if (!providerId) {
-    // handled by checkAuth
   }
   updateNavBar();
   const container = document.getElementById("bookings-container");
@@ -66,8 +65,8 @@ async function completeBooking(bookingId) {
     const response = await makeRequest(
       `/api/bookings/provider/${bookingId}/complete`,
       {
-        method: "PUT"
-      }
+        method: "PUT",
+      },
     );
     if (response.ok) {
       alert("Booking completed!");

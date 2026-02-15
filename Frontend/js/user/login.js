@@ -11,14 +11,12 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     if (response.ok) {
       const result = await response.json();
 
-      // Clear previous session data
       localStorage.clear();
 
       if (result.access_token) {
         window.setToken(result.access_token);
       }
 
-      // Store session data based on role
       localStorage.setItem("role", result.role);
 
       if (result.role === "user") {
@@ -41,10 +39,8 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
         const errorData = await response.json();
-        // Since we changed backend to return access_token, check if we got one anyway (unlikely on error)
         errorDetail = errorData.detail || errorDetail;
       } else {
-        // Likely a 405 or 404 HTML page from Vercel
         const text = await response.text();
         console.error("Non-JSON error response from server:", text);
         errorDetail = `Server Error: ${response.status} ${response.statusText}`;

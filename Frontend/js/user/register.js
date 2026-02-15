@@ -39,7 +39,6 @@ document
             errorDetail = `Failed to parse error JSON: ${response.status} ${response.statusText}`;
           }
         } else {
-          // Response is not JSON (likely HTML error from Vercel)
           const text = await response.text();
           console.error("Non-JSON error response:", text);
           errorDetail = `Server Error: ${response.status} ${response.statusText}. Check console for details.`;

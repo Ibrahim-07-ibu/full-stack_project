@@ -10,7 +10,6 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     if (response.ok) {
       const result = await response.json();
 
-      // Clear previous session data
       localStorage.clear();
 
       if (result.access_token) {

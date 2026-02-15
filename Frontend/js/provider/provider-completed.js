@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.checkAuth();
   const providerId = localStorage.getItem("provider_id");
   if (!providerId) {
-    // handled by checkAuth
   }
   updateNavBar();
   const container = document.getElementById("bookings-container");

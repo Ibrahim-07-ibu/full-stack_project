@@ -70,7 +70,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Error fetching recent activity:", error);
   }
 
-  // Handle Logout
   const logoutBtn = document.querySelector(".btn-logout");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", (e) => {

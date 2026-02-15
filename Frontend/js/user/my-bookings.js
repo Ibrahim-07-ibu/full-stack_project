@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     console.log(`Loaded ${bookings.length} bookings`);
 
-    window.bookingProviders = {}; // Store provider data here
+    window.bookingProviders = {}; 
 
     bookings.forEach((booking, index) => {
       let status = (booking.status || "pending").toLowerCase();
@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // Store provider data if available
       if (booking.provider) {
         window.bookingProviders[booking.id] = booking.provider;
       }

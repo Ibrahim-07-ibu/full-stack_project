@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.checkAuth();
   const userId = localStorage.getItem("user_id");
   if (!userId) {
-    // handled by checkAuth
   }
   const nameInput = document.getElementById("profile-name");
   const emailInput = document.getElementById("profile-email");

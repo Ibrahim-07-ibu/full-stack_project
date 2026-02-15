@@ -93,7 +93,6 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
 def unified_login(user: UserLogin, db: Session = Depends(get_db)):
     print(f"Unified Login attempt for: {user.email}", flush=True)
     try:
-        # 1. Check for Admin (Hardcoded)
         if user.email == "admin@homebuddy.com" and user.password == "admin123":
             print("Admin login successful", flush=True)
             access_token = create_access_token(data={"sub": "admin", "role": "admin"})
@@ -105,7 +104,6 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
                 "redirect": "/Frontend/html/admin/admin-dashboard.html"
             }
 
-        # 2. Check for User
         print(f"Checking user table for {user.email}", flush=True)
         db_user = db.query(User).filter(User.email == user.email.lower().strip()).first()
         if db_user:
@@ -113,7 +111,6 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
             if verify_password(user.password, db_user.password):
                 print("User password verified", flush=True)
                 access_token = create_access_token(data={"sub": str(db_user.id), "role": db_user.role})
-                # Prepare response
                 response_data = {
                     "message": "Login successful",
                     "access_token": access_token,
@@ -125,7 +122,6 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
                     "redirect": "/Frontend/html/user/dashboard.html"
                 }
                 
-                # Determine redirect and additional data based on role
                 if db_user.role == "provider":
                     response_data["redirect"] = "/Frontend/html/provider/provider-dashboard.html"
                     db_provider = db.query(Provider).filter(Provider.user_id == db_user.id).first()
@@ -140,7 +136,6 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
         else:
             print("User not found in users table", flush=True)
 
-        # 3. Check for Provider
         normalized_email = user.email.lower().strip()
         print(f"Checking provider table for {normalized_email}", flush=True)
         db_provider = db.query(Provider).filter(Provider.email == normalized_email).first()
@@ -179,7 +174,6 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
 
 @router.post("/provider/login")
 def login_provider(user: UserLogin, db: Session = Depends(get_db)):
-    # Legacy endpoint kept for compatibility, but unified_login is preferred
     print(f"DEBUG: Provider Login attempt for email: '{user.email}'", flush=True)
 
     try:

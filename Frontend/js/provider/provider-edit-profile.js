@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const providerId = localStorage.getItem("provider_id");
   const userId = localStorage.getItem("user_id");
   if (!providerId) {
-    // handled by checkAuth
   }
   updateNavBar();
   try {

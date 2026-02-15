@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from datetime import date
+from typing import Optional
 
 
 class ProviderCreate(BaseModel):
@@ -17,7 +18,6 @@ class ProviderCreate(BaseModel):
     certificate: str
 
 
-from typing import Optional
 
 class ProviderUpdate(BaseModel):
     full_name: Optional[str] = None

@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.checkAuth();
   const providerId = localStorage.getItem("provider_id");
   if (!providerId) {
-    // handled by checkAuth
   }
   updateNavBar();
   const userId = localStorage.getItem("user_id");
@@ -47,10 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         "metric-rating",
         `<i class="fa-solid fa-star"></i> ${m.average_rating}`,
       );
-      // safeSetText('metric-completed', `${m.completed_orders} orders`);
-      // safeSetText('metric-completion-rate', `${m.completion_rate}%`);
-      // safeSetText('metric-satisfaction-rate', `${m.satisfaction_rate}%`);
-      // safeSetText('metric-earnings', `₹${m.total_earnings}`);
+
       const starsEl = document.getElementById("profile-stars");
       if (starsEl) {
         const filledRequest = Math.round(m.average_rating);
