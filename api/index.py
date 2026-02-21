@@ -39,6 +39,9 @@ app.add_middleware(
 )
 
 # 6. APP CONTENT (Logic re-integration)
+init_status = "Not Started"
+init_error = None
+
 try:
     from db.database import Base, engine
     from routers import users, bookings, providers, reviews, services, supports
@@ -55,10 +58,12 @@ try:
     app.include_router(reviews.router)
     app.include_router(services.router)
     app.include_router(supports.router)
+    init_status = "Success"
 
 except Exception as e:
-    logger.error(f"Logic Import Error: {e}")
-    traceback.print_exc()
+    init_status = "Failed"
+    init_error = f"{str(e)}\n{traceback.format_exc()}"
+    logger.error(f"Logic Import Error: {init_error}")
 
 # 7. TOP-LEVEL ROUTES
 @app.get("/api/infra-test")
@@ -66,6 +71,8 @@ def infra_test():
     return {
         "status": "ok",
         "message": "Full Backend package is LIVE on flattened V1 stack",
+        "init_status": init_status,
+        "init_error": init_error,
         "env": ENVIRONMENT,
         "files_in_api": os.listdir(api_dir) if os.path.exists(api_dir) else "N/A"
     }
