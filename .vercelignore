@@ -1,0 +1,17 @@
+.vscode/
+scripts/
+api/Backend/__pycache__/
+api/Backend/db/__pycache__/
+api/Backend/models/__pycache__/
+api/Backend/routers/__pycache__/
+api/Backend/schemas/__pycache__/
+__pycache__/
+node_modules/
+.env
+myenv/
+venv/
+.venv/
+*.pyc
+*.pyo
+*.pyd
+*.db
