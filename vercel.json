@@ -7,6 +7,18 @@
       "config": {
         "maxDuration": 15
       }
+    },
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "signup.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "Frontend/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
