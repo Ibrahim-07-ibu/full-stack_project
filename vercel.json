@@ -1,17 +1,18 @@
 {
   "version": 2,
+  "functions": {
+    "api/index.py": {
+      "runtime": "vercel-python@0.0.0"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/api",
-      "destination": "/api/index.py"
+      "destination": "api/index.py"
     },
     {
       "source": "/health",
-      "destination": "/api/index.py"
+      "destination": "api/index.py"
     }
   ]
 }
