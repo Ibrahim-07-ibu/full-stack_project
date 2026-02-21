@@ -5,33 +5,27 @@ import traceback
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# 1. ENVIRONMENT CONFIG
+# 1. ENVIRONMENT
 ENVIRONMENT = os.getenv("ENVIRONMENT", "production")
 
-# 2. PATHING FOR SERVERLESS
-project_root = os.getcwd() # /var/task on Vercel
+# 2. PATHING
+project_root = os.getcwd() 
 api_dir = os.path.join(project_root, "api")
 if api_dir not in sys.path:
     sys.path.insert(0, api_dir)
 
-# 3. LOGGING
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# 3. INITIALIZATION
+app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="9.0-STABILIZED")
 
-# 4. FASTAPI APP INITIALIZATION
-app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="8.0-RELEASE-CANDIDATE")
-
-# 5. CORS CONFIG
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Relaxed for final verification, then tighten
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# 6. APP CONTENT (Logic re-integration)
-init_status = "Not Started"
+init_status = "In Progress"
 init_error = None
 
 try:
@@ -42,7 +36,7 @@ try:
     # Verify/Create tables
     Base.metadata.create_all(bind=engine)
     
-    # Include routers with /api prefix as required by Vercel rewrites
+    # Include routers
     app.include_router(users.router)
     app.include_router(bookings.router)
     app.include_router(providers.router)
@@ -51,23 +45,24 @@ try:
     app.include_router(supports.router)
     
     init_status = "Success"
-    logger.info("Vercel: Successfully loaded all HomeBuddy routers")
-
 except Exception as e:
     init_status = "Failed"
-    init_error = f"{str(e)}\n{traceback.format_exc()}"
-    logger.error(f"Logic Import Error: {init_error}")
+    # Capture only the last few lines of traceback to avoid serialization issues
+    init_error = traceback.format_exc()[-1000:] 
 
-# 7. ROUTES
+# 4. ROUTES
 @app.get("/api/infra-test")
 def infra_test():
+    db_url = os.getenv("DATABASE_URL", "NOT_SET")
     return {
         "status": "ok",
-        "version": "8.0-RELEASE-CANDIDATE",
+        "version": "9.0-STABILIZED",
         "init_status": init_status,
         "init_error": init_error,
-        "env": ENVIRONMENT,
-        "files_in_api": os.listdir(api_dir) if os.path.exists(api_dir) else "N/A"
+        "db": {
+            "raw_prefix": db_url.split("://")[0] if "://" in db_url else "N/A"
+        },
+        "env": ENVIRONMENT
     }
 
 @app.get("/api/health")
@@ -76,7 +71,7 @@ def health():
 
 @app.get("/api")
 def root():
-    return {"message": "HomeBuddy API v8.0 Live"}
+    return {"message": "HomeBuddy API v9.0 Live"}
 
 # Vercel entry
 handler = app
