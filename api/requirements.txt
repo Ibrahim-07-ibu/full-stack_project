@@ -6,6 +6,4 @@ python-multipart
 pyjwt
 requests
 psycopg2-binary
-passlib[bcrypt]
 bcrypt
-# Removed mangum as Vercel handles ASGI natively
