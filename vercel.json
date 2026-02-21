@@ -1,45 +1,16 @@
 {
-  "version": 2,
-  "builds": [
+  "rewrites": [
     {
-      "src": "api/index.py",
-      "use": "@vercel/python",
-      "config": {
-        "maxDuration": 15
-      }
+      "source": "/api/(.*)",
+      "destination": "/api"
     },
     {
-      "src": "index.html",
-      "use": "@vercel/static"
+      "source": "/api",
+      "destination": "/api"
     },
     {
-      "src": "signup.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "Frontend/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/api",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/health",
-      "dest": "/api/index.py"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
+      "source": "/health",
+      "destination": "/api"
     }
   ]
 }
