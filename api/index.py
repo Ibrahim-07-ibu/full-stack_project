@@ -15,7 +15,7 @@ if api_dir not in sys.path:
     sys.path.insert(0, api_dir)
 
 # 3. INITIALIZATION
-app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="9.0-STABILIZED")
+app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="10.0-GOLD-MASTER")
 
 app.add_middleware(
     CORSMiddleware,
@@ -28,7 +28,9 @@ app.add_middleware(
 init_status = "In Progress"
 init_error = None
 
+# LOAD LOGIC (SAFE IMPORT)
 try:
+    # We do NOT import everything at top level to prevent total crash
     from db.database import Base, engine
     from routers import users, bookings, providers, reviews, services, supports
     import models
@@ -47,21 +49,16 @@ try:
     init_status = "Success"
 except Exception as e:
     init_status = "Failed"
-    # Capture only the last few lines of traceback to avoid serialization issues
-    init_error = traceback.format_exc()[-1000:] 
+    init_error = str(e)
 
 # 4. ROUTES
 @app.get("/api/infra-test")
 def infra_test():
-    db_url = os.getenv("DATABASE_URL", "NOT_SET")
     return {
         "status": "ok",
-        "version": "9.0-STABILIZED",
+        "version": "10.0-GOLD-MASTER",
         "init_status": init_status,
         "init_error": init_error,
-        "db": {
-            "raw_prefix": db_url.split("://")[0] if "://" in db_url else "N/A"
-        },
         "env": ENVIRONMENT
     }
 
@@ -71,7 +68,7 @@ def health():
 
 @app.get("/api")
 def root():
-    return {"message": "HomeBuddy API v9.0 Live"}
+    return {"message": "HomeBuddy API v10.0 Live"}
 
 # Vercel entry
 handler = app
