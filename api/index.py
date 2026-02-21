@@ -2,7 +2,7 @@ import sys
 import os
 import logging
 import traceback
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 # 1. ENVIRONMENT
@@ -15,7 +15,7 @@ if api_dir not in sys.path:
     sys.path.insert(0, api_dir)
 
 # 3. INITIALIZATION
-app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="10.0-GOLD-MASTER")
+app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="15.0-WILDCARD")
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,50 +25,31 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-init_status = "In Progress"
-init_error = None
+# 4. WILDCARD AUDITOR
+@app.api_route("/api/{full_path:path}", methods=["GET", "POST", "PUT", "DELETE"])
+async def catch_all_api(request: Request, full_path: str):
+    return {
+        "status": "intercepted",
+        "path_param": full_path,
+        "method": request.method,
+        "url": str(request.url),
+        "headers": dict(request.headers),
+        "base_url": str(request.base_url)
+    }
 
-# LOAD LOGIC (SAFE IMPORT)
-try:
-    # We do NOT import everything at top level to prevent total crash
-    from db.database import Base, engine
-    from routers import users, bookings, providers, reviews, services, supports
-    import models
-
-    # Verify/Create tables (DISABLED for diagnostic v11)
-    # Base.metadata.create_all(bind=engine)
-    
-    # Include routers
-    app.include_router(users.router)
-    app.include_router(bookings.router)
-    app.include_router(providers.router)
-    app.include_router(reviews.router)
-    app.include_router(services.router)
-    app.include_router(supports.router)
-    
-    init_status = "Success"
-except Exception as e:
-    init_status = "Failed"
-    init_error = str(e)
-
-# 4. ROUTES
+# 5. DIAGNOSTICS
 @app.get("/api/infra-test")
 def infra_test():
     return {
         "status": "ok",
-        "version": "10.0-GOLD-MASTER",
-        "init_status": init_status,
-        "init_error": init_error,
-        "env": ENVIRONMENT
+        "version": "15.0-WILDCARD",
+        "env": ENVIRONMENT,
+        "sys_path": sys.path
     }
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "init": init_status}
-
-@app.get("/api")
-def root():
-    return {"message": "HomeBuddy API v10.0 Live"}
+    return {"status": "ok"}
 
 # Vercel entry
 handler = app
