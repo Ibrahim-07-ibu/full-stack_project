@@ -1,2 +1,2 @@
-fastapi
-pydantic
+fastapi==0.103.2
+pydantic<2.0.0
