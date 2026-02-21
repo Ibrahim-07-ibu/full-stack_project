@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is not set.")
+    logger.warning("DATABASE_URL not set — using local SQLite fallback!")
+    DATABASE_URL = "sqlite:///./homebuddy.db"
 
 # FOR VERCEL/SERVERLESS: ULTIMATE PG8000 OVERRIDE
 # This replaces any scheme (e.g. postgres://, postgresql+psycopg2://, etc.) 
