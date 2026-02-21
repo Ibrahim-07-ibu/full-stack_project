@@ -1,9 +1,9 @@
 import sys
 import os
 import logging
+import traceback
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-import traceback
 
 # 1. ENVIRONMENT CONFIG
 ENVIRONMENT = os.getenv("ENVIRONMENT", "production")
@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # 4. FASTAPI APP INITIALIZATION
-app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="16.0-DEBUG-V2-RESTORATION")
+app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="18.0-STABLE-RELEASE")
 
 # 5. CORS CONFIG
 app.add_middleware(
@@ -39,7 +39,7 @@ try:
     from routers import users, bookings, providers, reviews, services, supports
     import models
 
-    # We skip create_all for now to be safe
+    # Skip create_all for now to avoid timeout during first boot
     # Base.metadata.create_all(bind=engine)
     
     # Include routers
@@ -60,20 +60,21 @@ except Exception as e:
 # 7. ROUTES
 @app.get("/api/infra-test")
 def infra_test():
-    db_url = os.getenv("DATABASE_URL", "NOT_SET")
     return {
         "status": "ok",
-        "version": "16.0-DEBUG-V2-RESTORATION",
+        "version": "18.0-STABLE-RELEASE",
         "init_status": init_status,
         "init_error": init_error,
-        "db_prefix": db_url.split("://")[0] if "://" in db_url else "N/A",
-        "env": ENVIRONMENT,
-        "files": os.listdir(api_dir) if os.path.exists(api_dir) else "N/A"
+        "env": ENVIRONMENT
     }
 
 @app.get("/api/health")
 def health():
     return {"status": "ok", "init": init_status}
+
+@app.get("/api")
+def root():
+    return {"message": "HomeBuddy API v18.0 Live"}
 
 # Vercel entry
 handler = app
