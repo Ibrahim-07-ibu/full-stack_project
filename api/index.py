@@ -158,11 +158,15 @@ app.include_router(services.router)
 app.include_router(supports.router)
 
 
-@app.get("/")
+@app.get("/api/infra-test")
+def infra_test():
+    return {"status": "ok", "message": "Full Backend package is LIVE on Pydantic V1 stack"}
+
+@app.get("/api")
 def greet():
     return {"message": "Home Buddy API Running"}
 
-@app.get("/health")
+@app.get("/api/health")
 def health():
     return {"status": "ok"}
 
