@@ -3,17 +3,13 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import sys
 
-# index.py is in api/
+# When moved to api/Backend, we can use relative imports or add api to path
 current_dir = os.path.dirname(os.path.abspath(__file__))
-project_root = os.path.dirname(current_dir)
-backend_dir = os.path.join(project_root, "Backend")
-
-if project_root not in sys.path:
-    sys.path.insert(0, project_root)
-if backend_dir not in sys.path:
-    sys.path.insert(0, backend_dir)
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
 
 try:
+    # Now that Backend is INSIDE api/, we can import it directly
     from Backend.main import app as fastapi_app
     app = fastapi_app
     
@@ -21,8 +17,8 @@ try:
     def infra_test():
         return {
             "status": "ok", 
-            "version": "59.0-FINAL", 
-            "message": "Backend Package is LIVE"
+            "version": "61.0-INTERNAL", 
+            "message": "Backend Package (Internal Mode) is LIVE"
         }
     
 except Exception as e:
