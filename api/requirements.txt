@@ -1,5 +1,2 @@
 fastapi
-mangum
 pydantic
-python-dotenv
-uvicorn
