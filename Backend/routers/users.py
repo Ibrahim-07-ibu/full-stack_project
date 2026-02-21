@@ -6,21 +6,25 @@ from models.users import User
 from models.providers import Provider
 from schemas.user_schema import UserRegister, UserLogin, UserProfileUpdate, UserOut
 from pwd_utils import hash_password, verify_password
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/auth", tags=["Auth"])
 
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
 def register_user(user: UserRegister, db: Session = Depends(get_db)):
-    print(f"DEBUG: Registering user: {user.email}", flush=True)
+    logger.info(f"Registering user: {user.email}")
     try:
         normalized_email = user.email.lower().strip()
         if db.query(User).filter(User.email == normalized_email).first():
-            print(f"DEBUG: Email already exists: {normalized_email}", flush=True)
+            logger.warning(f"Email already exists: {normalized_email}")
             raise HTTPException(status_code=400, detail="Email already registered")
 
         if db.query(User).filter(User.phone == user.phone).first():
-            print(f"DEBUG: Phone already exists: {user.phone}", flush=True)
+            logger.warning(f"Phone already exists: {user.phone}")
             raise HTTPException(
                 status_code=400, detail="Phone number already registered"
             )
@@ -37,7 +41,7 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
         db.add(new_user)
         db.commit()
         db.refresh(new_user)
-        print(f"DEBUG: User created successfully: {new_user.id}", flush=True)
+        logger.info(f"User created successfully: {new_user.id}")
 
         return {
             "message": "User registered successfully",
@@ -45,11 +49,11 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
             "name": new_user.name,
             "email": new_user.email,
         }
+    except HTTPException:
+        raise
     except Exception as e:
-        import traceback
-
         traceback.print_exc()
-        print(f"CRITICAL ERROR IN REGISTER: {str(e)}", flush=True)
+        logger.error(f"CRITICAL ERROR IN REGISTER: {str(e)}")
         raise HTTPException(
             status_code=500, detail="Internal Server Error during registration"
         )
@@ -57,7 +61,7 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
 
 @router.post("/login")
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
-    print(f"Login attempt for: {user.email}", flush=True)
+    logger.info(f"Login attempt for: {user.email}")
 
     try:
         normalized_email = user.email.lower().strip()
@@ -68,14 +72,14 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
         )
 
         if not db_user:
-            print(f"FAILED: User not found: {normalized_email}", flush=True)
+            logger.warning(f"FAILED: User not found: {normalized_email}")
             raise HTTPException(
                 status_code=401,
                 detail=f"Account with email '{normalized_email}' not found",
             )
 
         if not verify_password(user.password, db_user.password):
-            print(f"FAILED: Password mismatch for {normalized_email}", flush=True)
+            logger.warning(f"FAILED: Password mismatch for {normalized_email}")
             raise HTTPException(
                 status_code=401,
                 detail="Incorrect password. Please check and try again.",
@@ -84,7 +88,7 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
         access_token = create_access_token(
             data={"sub": str(db_user.id), "role": "user"}
         )
-        print(f"SUCCESS: Login successful for {normalized_email}", flush=True)
+        logger.info(f"SUCCESS: Login successful for {normalized_email}")
         return {
             "message": "Login successful",
             "access_token": access_token,
@@ -97,10 +101,8 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
     except HTTPException:
         raise
     except Exception as e:
-        import traceback
-
         traceback.print_exc()
-        print(f"CRITICAL ERROR IN LOGIN: {e}", flush=True)
+        logger.error(f"CRITICAL ERROR IN LOGIN: {e}")
         raise HTTPException(
             status_code=500, detail="Internal Server Error during login processing"
         )
@@ -108,7 +110,7 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
 
 @router.post("/provider/login")
 def login_provider(user: UserLogin, db: Session = Depends(get_db)):
-    print(f"DEBUG: Provider Login attempt for email: '{user.email}'", flush=True)
+    logger.info(f"Provider Login attempt for email: '{user.email}'")
 
     try:
         normalized_email = user.email.lower().strip()
@@ -120,17 +122,11 @@ def login_provider(user: UserLogin, db: Session = Depends(get_db)):
         )
 
         if not db_user:
-            print(
-                f"DEBUG: Provider account not found for: '{normalized_email}'",
-                flush=True,
-            )
+            logger.warning(f"Provider account not found for: '{normalized_email}'")
             raise HTTPException(status_code=401, detail="Provider account not found")
 
         if not verify_password(user.password, db_user.password):
-            print(
-                f"DEBUG: Password mismatch for provider: '{normalized_email}'",
-                flush=True,
-            )
+            logger.warning(f"Password mismatch for provider: '{normalized_email}'")
             raise HTTPException(status_code=401, detail="Invalid email or password")
 
         db_provider = db.query(Provider).filter(Provider.user_id == db_user.id).first()
@@ -139,7 +135,7 @@ def login_provider(user: UserLogin, db: Session = Depends(get_db)):
             data={"sub": str(db_user.id), "role": "provider"}
         )
 
-        print(f"DEBUG: Provider login successful: '{normalized_email}'", flush=True)
+        logger.info(f"Provider login successful: '{normalized_email}'")
 
         return {
             "message": "Login successful",
@@ -153,10 +149,8 @@ def login_provider(user: UserLogin, db: Session = Depends(get_db)):
     except HTTPException:
         raise
     except Exception as e:
-        import traceback
-
         traceback.print_exc()
-        print(f"CRITICAL ERROR IN PROVIDER LOGIN: {str(e)}", flush=True)
+        logger.error(f"CRITICAL ERROR IN PROVIDER LOGIN: {str(e)}")
         raise HTTPException(
             status_code=500, detail="Internal Server Error during provider login"
         )

@@ -6,9 +6,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
+ENVIRONMENT = os.getenv("ENVIRONMENT", "development")
+SECRET_KEY = os.getenv("SECRET_KEY")
+
+if not SECRET_KEY:
+    if ENVIRONMENT == "production":
+        raise ValueError("SECRET_KEY not set in production environment!")
+    SECRET_KEY = "dev-secret-key-change-it"
+
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  
+# Access token expiration in minutes (default to 24 hours)
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 1440))
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()

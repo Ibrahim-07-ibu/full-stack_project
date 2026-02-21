@@ -1,17 +1,7 @@
-const API_BASE_URL = (() => {
-    const hostname = window.location.hostname;
-    const protocol = window.location.protocol;
-
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return `${protocol}//${hostname}:8000`;
-    }
-
-    if (hostname.includes('vercel.app') || hostname.includes('homebuddy')) {
-        return window.location.origin;
-    }
-
-    return '';
-})();
+const API_BASE =
+    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+        ? "http://localhost:8000"
+        : "";
 
 
 window.setToken = (token, role = "user") => {
@@ -51,8 +41,7 @@ window.checkAuth = () => {
 
 
 async function makeRequest(endpoint, options = {}) {
-    const url = API_BASE_URL ? `${API_BASE_URL}${endpoint}` : endpoint;
-
+    const url = `${API_BASE}${endpoint}`;
     const token = window.getToken();
 
     const headers = {
@@ -116,7 +105,7 @@ window.getServiceIcon = (serviceName) => {
     return "fa-wrench";
 };
 
-console.log('API Base URL configured:', API_BASE_URL || '(relative paths)');
+console.log('API Routing configured:', API_BASE || '(relative paths)');
 
 // --- UI Feedback Components (Toasts, Modals, Validation) ---
 
