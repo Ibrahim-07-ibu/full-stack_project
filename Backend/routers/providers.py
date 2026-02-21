@@ -1,12 +1,12 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from dependencies import get_db, get_current_user
-from models.providers import Provider
-from models.users import User
+from ..dependencies import get_db, get_current_user
+from ..models.providers import Provider
+from ..models.users import User
 
-from schemas.provider_schema import ProviderCreate, ProviderUpdate, ProviderResponse
+from ..schemas.provider_schema import ProviderCreate, ProviderUpdate, ProviderResponse
 
-from pwd_utils import hash_password
+from ..pwd_utils import hash_password
 
 router = APIRouter(prefix="/api/providers", tags=["Providers"])
 

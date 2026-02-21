@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from dependencies import get_db, get_current_user
-from models.supports import Support
-from schemas.supports_schema import SupportCreate
-from models.users import User
+from ..dependencies import get_db, get_current_user
+from ..models.supports import Support
+from ..schemas.supports_schema import SupportCreate
+from ..models.users import User
 
 router = APIRouter(prefix="/api/supports", tags=["Supports"])
 

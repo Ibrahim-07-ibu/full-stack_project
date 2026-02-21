@@ -3,12 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import sys
 
-# Ensure current directory is in path for flat topology resolution
-current_dir = os.path.dirname(os.path.abspath(__file__))
-if current_dir not in sys.path:
-    sys.path.insert(0, current_dir)
+# Backend/main.py is now in the root Backend/ folder
+# Ensure the parent of Backend is in path for absolute imports
+# Or use relative imports
 
-app = FastAPI(title="HomeBuddy", version="62.1-FLAT-PATH")
+app = FastAPI(title="HomeBuddy", version="64.0-ISOLATED")
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,8 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Relative imports from current directory
-from routers import users, bookings, providers, reviews, services, supports
+# Use relative imports within the package
+from .routers import users, bookings, providers, reviews, services, supports
 
 app.include_router(users.router)
 app.include_router(bookings.router)
@@ -30,4 +29,4 @@ app.include_router(supports.router)
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "message": "Backend flat package is healthy"}
+    return {"status": "ok", "message": "Backend package is healthy"}

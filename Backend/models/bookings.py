@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, DATE, TIME
-from db.database import Base
+from ..db.database import Base
 from sqlalchemy.orm import relationship
 
 

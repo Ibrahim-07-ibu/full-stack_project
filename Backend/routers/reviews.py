@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from dependencies import get_db, get_current_user, get_current_provider
-from models.reviews import Review
-from models.users import User
-from models.providers import Provider
-from models.bookings import Booking
-from schemas.reviews_schema import ReviewCreate, ProviderProfileUpdate
+from ..dependencies import get_db, get_current_user, get_current_provider
+from ..models.reviews import Review
+from ..models.users import User
+from ..models.providers import Provider
+from ..models.bookings import Booking
+from ..schemas.reviews_schema import ReviewCreate, ProviderProfileUpdate
 
 router = APIRouter(prefix="/api/reviews", tags=["Reviews"])
 
@@ -100,7 +100,7 @@ def get_provider_profile(
         round((completed_orders / total_assigned) * 100) if total_assigned > 0 else 100
     )
 
-    from models.services import Service
+    from ..models.services import Service
 
     total_earned_query = (
         db.query(Service.price)

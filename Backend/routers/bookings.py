@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from dependencies import get_db, get_current_user, get_current_provider, get_current_admin
-from models.users import User
-from models.services import Service
-from models.bookings import Booking
-from models.providers import Provider
-from schemas.bookings_schema import BookingCreate
+from ..dependencies import get_db, get_current_user, get_current_provider, get_current_admin
+from ..models.users import User
+from ..models.services import Service
+from ..models.bookings import Booking
+from ..models.providers import Provider
+from ..schemas.bookings_schema import BookingCreate
 
 
 router = APIRouter(prefix="/api/bookings", tags=["Bookings"])
@@ -388,7 +388,7 @@ def get_provider_statistics(
 
     earnings = sum(e[0] for e in total_earned)
 
-    from models.reviews import Review
+    from ..models.reviews import Review
 
     ratings = (
         db.query(Review.rating).filter(Review.provider_id == current_provider.id).all()
