@@ -1,9 +1,1 @@
 fastapi
-pydantic
-sqlalchemy
-python-dotenv
-python-multipart
-pyjwt
-requests
-pg8000
-passlib
