@@ -13,14 +13,13 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set.")
 
-# For Vercel/Serverless using pure-python pg8000 driver
-# Handles both postgresql:// and postgres:// (the latter is common in Supabase/Heroku)
-if DATABASE_URL.startswith("postgresql://"):
-    DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+pg8000://", 1)
-elif DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql+pg8000://", 1)
-
-logger.info(f"Database dialect configured for pg8000: {DATABASE_URL.split('@')[-1] if '@' in DATABASE_URL else 'masked'}")
+# FOR VERCEL/SERVERLESS: ULTIMATE PG8000 OVERRIDE
+# This replaces any scheme (e.g. postgres://, postgresql+psycopg2://, etc.) 
+# with the pure-Python pg8000 scheme.
+if "://" in DATABASE_URL:
+    _, rest = DATABASE_URL.split("://", 1)
+    DATABASE_URL = f"postgresql+pg8000://{rest}"
+    logger.info("Database URL forced to postgresql+pg8000 dialect.")
 
 # Create engine — pool_pre_ping validates connections lazily (no import-time DB call)
 engine = create_engine(
@@ -35,4 +34,4 @@ engine = create_engine(
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 Base = declarative_base()
 
-logger.info("Database engine created (connection tested on first use).")
+logger.info("Database engine created.")

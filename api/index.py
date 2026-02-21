@@ -5,57 +5,84 @@ import traceback
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-# 1. ENVIROMENT
+# 1. ENVIRONMENT CONFIG
 ENVIRONMENT = os.getenv("ENVIRONMENT", "production")
 
-# 2. PATHING
-project_root = os.getcwd() 
+# 2. PATHING FOR SERVERLESS
+project_root = os.getcwd() # /var/task on Vercel
 api_dir = os.path.join(project_root, "api")
 if api_dir not in sys.path:
     sys.path.insert(0, api_dir)
 
-# 3. APP (No project imports yet!)
-app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="5.0-SAFE-MODE")
+# 3. LOGGING
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-# 4. DEFERRED DIAGNOSTICS
+# 4. FASTAPI APP INITIALIZATION
+app = FastAPI(redirect_slashes=False, title="HomeBuddy API", version="6.0-FINAL-STABILIZED")
+
+# 5. CORS CONFIG
+if ENVIRONMENT == "production":
+    frontend_url = os.getenv("FRONTEND_URL", "").strip()
+    allowed_origins = [u for u in [frontend_url] if u]
+else:
+    allowed_origins = ["*"] 
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins, 
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# 6. APP CONTENT (Logic re-integration)
+init_status = "Not Started"
+init_error = None
+
+try:
+    from db.database import Base, engine
+    from routers import users, bookings, providers, reviews, services, supports
+    import models
+
+    # Verify/Create tables
+    Base.metadata.create_all(bind=engine)
+    
+    # Include routers with /api prefix as required by Vercel rewrites
+    app.include_router(users.router)
+    app.include_router(bookings.router)
+    app.include_router(providers.router)
+    app.include_router(reviews.router)
+    app.include_router(services.router)
+    app.include_router(supports.router)
+    
+    init_status = "Success"
+    logger.info("Vercel: Successfully loaded all HomeBuddy routers")
+
+except Exception as e:
+    init_status = "Failed"
+    init_error = f"{str(e)}\n{traceback.format_exc()}"
+    logger.error(f"Logic Import Error: {init_error}")
+
+# 7. ROUTES
 @app.get("/api/infra-test")
 def infra_test():
-    context = {
-        "status": "diagnostic",
-        "version": "5.0-SAFE-MODE",
+    return {
+        "status": "ok",
+        "version": "6.0-FINAL-STABILIZED",
+        "init_status": init_status,
+        "init_error": init_error,
         "env": ENVIRONMENT,
-        "db_raw": os.getenv("DATABASE_URL", "NOT_SET")[:20] + "...",
-        "sys_path": sys.path,
-        "import_test": "Not Attempted"
+        "files_in_api": os.listdir(api_dir) if os.path.exists(api_dir) else "N/A"
     }
-    
-    try:
-        # ATTEMPT URL REWRITE
-        raw = os.getenv("DATABASE_URL", "")
-        if "://" in raw:
-            _, rest = raw.split("://", 1)
-            fixed = f"postgresql+pg8000://{rest}"
-            os.environ["DATABASE_URL"] = fixed
-            context["db_fixed_prefix"] = fixed.split("://")[0]
-        
-        # ATTEMPT IMPORTS
-        from db.database import Base, engine
-        from routers import users
-        context["import_test"] = "Success"
-        
-        # ATTEMPT ENGINE (Lazy test)
-        context["engine_dialect"] = str(engine.dialect.name)
-        
-    except Exception as e:
-        context["import_test"] = "Failed"
-        context["error"] = str(e)
-        context["traceback"] = traceback.format_exc()
-        
-    return context
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "init": init_status}
+
+@app.get("/api")
+def root():
+    return {"message": "HomeBuddy API v6.0 Live"}
 
 # Vercel entry
 handler = app
