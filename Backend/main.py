@@ -73,15 +73,18 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 try:
+    # Always create tables — ensures Supabase (or any fresh DB) has the schema on first deploy.
+    # SQLAlchemy's create_all is safe to call repeatedly; it skips existing tables.
+    Base.metadata.create_all(bind=engine)
+    logger.info("Database tables verified/created successfully.")
+
     if ENVIRONMENT == "development":
-        Base.metadata.create_all(bind=engine)
-        logger.info("Database tables verified/created successfully.")
-        
+        # Seed data only in development
         from db.database import SessionLocal
         from models.services import Service
         from models.users import User
         from pwd_utils import hash_password
-        
+
         db_seed = SessionLocal()
         try:
             logger.info("Syncing services...")
@@ -120,14 +123,13 @@ try:
                         existing_service.price = service_to_seed.price
                         existing_service.description = service_to_seed.description
                         updated_count += 1
-            
+
             if added_count > 0 or updated_count > 0:
                 db_seed.commit()
                 logger.info(f"Database Sync: Added {added_count} new services, Updated {updated_count} existing prices.")
             else:
                 logger.info("All services are already up to date.")
 
-                
             if db_seed.query(User).filter(User.role == "admin").count() == 0:
                 logger.info("Seeding default admin...")
                 admin_user = User(
@@ -144,7 +146,7 @@ try:
         finally:
             db_seed.close()
     else:
-        logger.info("Skipping database migration and seeding in production.")
+        logger.info("Production: skipping data seeding (tables already created above).")
         
 except Exception as e:
     logger.error(f"Startup Error: {str(e)}")
