@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from mangum import Mangum
 import os
 import sys
 import traceback
@@ -12,23 +12,29 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 try:
+    # Try to import from the root Backend package
     from Backend.main import app as fastapi_app
 
     @fastapi_app.get("/api/infra-test")
     def infra_test():
-        return {"status": "ok", "version": "66.0-FINAL"}
+        return {"status": "ok", "version": "67.4-FINAL-MANGUM"}
 
-    app = fastapi_app
+    # Wrap the FastAPI app for Vercel's serverless environment
+    app = Mangum(fastapi_app, lifespan="off")
 
 except Exception as e:
-    app = FastAPI()
-
-    @app.get("/api/infra-test")
+    # Fallback app to report errors if initialization fails
+    fallback_app = FastAPI()
+    
+    @fallback_app.get("/api/infra-test")
     def infra_test_error():
         return {
             "status": "error",
             "message": str(e),
             "trace": traceback.format_exc(),
         }
+    
+    app = Mangum(fallback_app, lifespan="off")
 
+# Vercel's @vercel/python looks for 'app' by default
 handler = app
