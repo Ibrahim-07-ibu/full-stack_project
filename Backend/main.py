@@ -17,10 +17,9 @@ if backend_root not in sys.path:
 app = FastAPI(
     title="HomeBuddy", 
     version="55.0-RECOVERY",
-    redirect_slashes=False  # Crucial for Vercel/Netlify to prevent POST -> GET 307 redirects
+    redirect_slashes=False  
 )
 
-# Mount static files
 static_dir = os.path.join(backend_root, "static")
 if not os.path.exists(static_dir):
     os.makedirs(static_dir, exist_ok=True)
@@ -49,16 +48,14 @@ async def log_requests(request: Request, call_next):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # Temporarily broader for debugging
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Relative imports handled by index.py pathing
 from routers import users, bookings, providers, reviews, services, supports
 
-# Initialize Database on Startup
 from db.database import engine, Base
 import models.users, models.providers, models.services, models.bookings, models.reviews, models.supports
 
@@ -66,7 +63,6 @@ import models.users, models.providers, models.services, models.bookings, models.
 def startup_event():
     logger.info("Startup: Syncing database...")
     try:
-        # Only sync if using real DB, SQLite in-memory doesn't need this
         if "sqlite" not in str(engine.url):
             Base.metadata.create_all(bind=engine)
             logger.info("Database synchronized.")
