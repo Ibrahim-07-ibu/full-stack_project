@@ -13,7 +13,7 @@ document.getElementById('admin-login-form').addEventListener('submit', async (e)
         if (response.ok) {
             const result = await response.json();
             if (result.role !== 'admin') {
-                alert('Access denied: You are not an administrator.');
+                showModal('Access denied: You are not an administrator.', 'error');
                 return;
             }
 
@@ -27,14 +27,16 @@ document.getElementById('admin-login-form').addEventListener('submit', async (e)
             localStorage.setItem('admin_logged_in', 'true');
             localStorage.setItem('role', 'admin');
 
-            alert('Admin login successful!');
-            window.location.href = result.redirect;
+            showModal('Admin login successful!', 'success');
+            setTimeout(() => {
+                window.location.href = result.redirect;
+            }, 1200);
         } else {
             const errorData = await response.json();
-            alert(`Login failed: ${errorData.detail || 'Invalid credentials'}`);
+            showModal(`Login failed: ${errorData.detail || 'Invalid credentials'}`, 'error');
         }
     } catch (error) {
         console.error('Admin Login Error:', error);
-        alert('An error occurred. Please try again.');
+        showModal('An error occurred. Please try again.', 'error');
     }
 });

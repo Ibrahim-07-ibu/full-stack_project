@@ -4,8 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helpers - HomeBuddy Admin</title>
-    <link rel="stylesheet" href="../../css/admin/admin-styles.css">
+    <title>Providers - HomeBuddy Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/admin/admin-base.css">
+    <link rel="stylesheet" href="../../css/admin/admin-list.css">
 </head>
 
 <body>
@@ -13,46 +15,42 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <span class="logo-icon">🏠</span>
-                <h2>HomeBuddy Admin</h2>
+                <div class="logo-icon"><i class="fa-solid fa-house-chimney"></i></div>
+                <h2>HomeBuddy</h2>
             </div>
             <nav class="sidebar-nav">
                 <a href="admin-dashboard.html" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="admin-users.html" class="nav-item">
-                    <span class="nav-icon">👥</span>
+                    <span class="nav-icon"><i class="fa-solid fa-users"></i></span>
                     <span>Users</span>
                 </a>
                 <a href="admin-helpers.html" class="nav-item active">
-                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
                     <span>Helpers</span>
                 </a>
                 <a href="admin-bookings.html" class="nav-item">
-                    <span class="nav-icon">📋</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span>
                     <span>All Bookings</span>
                 </a>
                 <a href="admin-verification.html" class="nav-item">
-                    <span class="nav-icon">✓</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-check"></i></span>
                     <span>Verifications</span>
                 </a>
-                <a href="admin-payments.html" class="nav-item">
-                    <span class="nav-icon">💰</span>
-                    <span>Payments</span>
-                </a>
                 <a href="admin-reviews.html" class="nav-item">
-                    <span class="nav-icon">⭐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-star"></i></span>
                     <span>Reviews</span>
                 </a>
-                <a href="admin-settings.html" class="nav-item">
-                    <span class="nav-icon">⚙️</span>
-                    <span>Settings</span>
+                <a href="admin-services.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-tools"></i></span>
+                    <span>Services</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
-                <a href="admin-login.html" class="nav-item">
-                    <span class="nav-icon">🚪</span>
+                <a href="#" id="admin-logout-btn" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-sign-out-alt"></i></span>
                     <span>Logout</span>
                 </a>
             </div>
@@ -62,17 +60,11 @@
         <main class="main-content">
             <!-- Top Bar -->
             <header class="top-bar">
-                <div class="search-bar">
-                    <input type="text" placeholder="Search helpers by name, service, location...">
-                </div>
+                <div class="top-bar-left"></div>
                 <div class="top-bar-right">
-                    <div class="notification-icon">
-                        🔔
-                        <span class="badge">5</span>
-                    </div>
                     <div class="admin-profile">
-                        <div class="admin-avatar">AD</div>
-                        <span>Admin User</span>
+                        <div class="admin-avatar">A</div>
+                        <span>Administrator</span>
                     </div>
                 </div>
             </header>
@@ -86,36 +78,11 @@
                     </div>
                 </div>
 
-                <!-- Filter Bar -->
-                <div class="filter-bar">
-                    <div class="filter-group">
-                        <button class="filter-btn active">All Helpers (342)</button>
-                        <button class="filter-btn">Verified (298)</button>
-                        <button class="filter-btn">Unverified (44)</button>
-                        <button class="filter-btn">Suspended (12)</button>
-                    </div>
-                    <div class="filter-group">
-                        <select class="filter-select">
-                            <option>All Services</option>
-                            <option>Cooking</option>
-                            <option>Cleaning</option>
-                            <option>Tutoring</option>
-                            <option>Electrician</option>
-                            <option>Plumber</option>
-                            <option>Other</option>
-                        </select>
-                        <select class="filter-select">
-                            <option>Sort by: Rating</option>
-                            <option>Name (A-Z)</option>
-                            <option>Most Bookings</option>
-                            <option>Recent</option>
-                        </select>
-                        <button class="btn-secondary">Export CSV</button>
-                    </div>
-                </div>
-
                 <!-- Helpers Table -->
                 <div class="content-card">
+                    <div class="card-header">
+                        <h2>All Service Providers</h2>
+                    </div>
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
@@ -124,11 +91,8 @@
                                     <th>Name</th>
                                     <th>Service</th>
                                     <th>Experience</th>
-                                    <th>Rate</th>
                                     <th>Rating</th>
-                                    <th>Bookings</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="helpers-table-body">
@@ -140,24 +104,9 @@
             </div>
         </main>
     </div>
+    <script src="../../js/api-config.js"></script>
+    <script src="../../js/admin/admin-modal.js"></script>
     <script src="../../js/admin/admin-helpers.js" defer></script>
-    </table>
-    </div>
-
-    <!-- Pagination -->
-    <div class="pagination">
-        <button class="pagination-btn">« Previous</button>
-        <button class="pagination-btn active">1</button>
-        <button class="pagination-btn">2</button>
-        <button class="pagination-btn">3</button>
-        <button class="pagination-btn">4</button>
-        <button class="pagination-btn">5</button>
-        <button class="pagination-btn">Next »</button>
-    </div>
-    </div>
-    </div>
-    </main>
-    </div>
 </body>
 
 </html>

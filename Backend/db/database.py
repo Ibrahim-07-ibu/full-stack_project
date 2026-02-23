@@ -11,18 +11,18 @@ logger = logging.getLogger(__name__)
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
-    logger.warning("DATABASE_URL not set — using local SQLite fallback!")
-    DATABASE_URL = "sqlite:///./homebuddy.db"
+    logger.warning("DATABASE_URL not found. Falling back to in-memory SQLite.")
+    DATABASE_URL = "sqlite:///:memory:"
 
-# FOR VERCEL/SERVERLESS: ULTIMATE PG8000 OVERRIDE
-# This replaces any standard postgres scheme with the pure-Python pg8000 scheme.
-if DATABASE_URL and DATABASE_URL.startswith(("postgres://", "postgresql://")):
-    if "://" in DATABASE_URL:
-        _, rest = DATABASE_URL.split("://", 1)
-        DATABASE_URL = f"postgresql+pg8000://{rest}"
-        logger.info("Database URL forced to postgresql+pg8000 dialect.")
+# Clearer way to add the pg8000 dialect
+if DATABASE_URL.startswith("postgresql://") or DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("://", "+pg8000://", 1)
 
-# Create engine — pool_pre_ping validates connections lazily
+# Debug: Show everything except the actual password
+safe_url = DATABASE_URL.split("@")[-1] if "@" in DATABASE_URL else "INVALID URL"
+logger.info(f"Targeting Database at: {safe_url}")
+
+# Create PostgreSQL engine with optimized pooling for serverless
 engine = create_engine(
     DATABASE_URL,
     pool_pre_ping=True,
@@ -35,4 +35,4 @@ engine = create_engine(
 SessionLocal = sessionmaker(bind=engine, autocommit=False, autoflush=False)
 Base = declarative_base()
 
-logger.info("Database engine created.")
+logger.info("PostgreSQL database engine initialized.")

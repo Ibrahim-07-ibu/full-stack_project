@@ -92,12 +92,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 window.showContact = function (bookingId) {
   const provider = window.bookingProviders[bookingId];
   if (!provider) {
-    alert("Provider information not available.");
+    window.HB.showToast("Provider information not available.", "error");
     return;
   }
-  alert(
-    `Provider Contact Details:\n\nName: ${provider.full_name}\nEmail: ${provider.email}\nPhone: ${provider.phone}`,
-  );
+
+  const content = `
+        <div class="contact-modal-content">
+            <div class="contact-item">
+                <i class="fa-solid fa-user"></i>
+                <div>
+                    <strong>Name</strong>
+                    <p>${provider.full_name}</p>
+                </div>
+            </div>
+            <div class="contact-item">
+                <i class="fa-solid fa-envelope"></i>
+                <div>
+                    <strong>Email</strong>
+                    <p>${provider.email}</p>
+                </div>
+            </div>
+            <div class="contact-item">
+                <i class="fa-solid fa-phone"></i>
+                <div>
+                    <strong>Phone</strong>
+                    <p>${provider.phone}</p>
+                </div>
+            </div>
+        </div>
+    `;
+
+  window.HB.info("Provider Contact Details", content);
 };
 async function cancelBooking(bookingId) {
   window.HB.confirm(

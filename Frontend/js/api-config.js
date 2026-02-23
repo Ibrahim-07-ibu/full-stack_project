@@ -1,157 +1,206 @@
-const API_BASE =
-    window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-        ? "http://localhost:8000"
-        : "";
+// --- HomeBuddy API Config v1.0.2 [RECOVERY MODE] ---
+console.log("🚀 HB API Config Loaded - v1.0.2");
+const API_BASE = (function () {
+  const host = window.location.hostname;
 
+  // Production (Vercel/Netlify)
+  // When deployed, we use relative paths (/api/...)
+  if (host.includes("vercel.app")) {
+    return "";
+  }
+
+  // Local Development (localhost, 127.0.0.1, or opening as a file)
+  // If host is empty, it means user is opening the file directly (file:///)
+  if (host === "localhost" || host === "127.0.0.1" || host === "") {
+    return "http://127.0.0.1:8000";
+  }
+
+  // Fallback for any other local network IP
+  return "http://127.0.0.1:8000";
+})();
+
+window.API_BASE_URL = API_BASE;
 
 window.setToken = (token, role = "user") => {
-    if (role === "provider") {
-        localStorage.setItem('provider_token', token);
-    } else {
-        localStorage.setItem('user_token', token);
-    }
+  if (role === "provider") {
+    localStorage.setItem("provider_token", token);
+  } else {
+    localStorage.setItem("user_token", token);
+  }
 };
 
 window.getToken = () => {
-    if (window.location.pathname.includes('/provider/')) {
-        return localStorage.getItem('provider_token');
-    }
-    return localStorage.getItem('user_token');
+  if (window.location.pathname.includes("/provider/")) {
+    return localStorage.getItem("provider_token");
+  }
+  return localStorage.getItem("user_token");
 };
 
 window.removeToken = () => {
-    localStorage.removeItem('user_token');
-    localStorage.removeItem('provider_token');
+  localStorage.removeItem("user_token");
+  localStorage.removeItem("provider_token");
 };
-
 
 window.checkAuth = () => {
-    if (!window.getToken()) {
-        console.warn('No token found, redirecting to login');
+  if (!window.getToken()) {
+    console.warn("No token found, redirecting to login");
 
-        if (window.location.pathname.includes('/provider/')) {
-            window.location.href = '/Frontend/html/provider/provider-login.html';
-        } else if (window.location.pathname.includes('/admin/')) {
-            window.location.href = '/Frontend/html/admin/admin-login.html';
-        } else {
-            window.location.href = '/Frontend/html/user/login.html';
-        }
+    if (window.location.pathname.includes("/provider/")) {
+      window.location.href = "provider-login.html";
+    } else if (window.location.pathname.includes("/admin/")) {
+      window.location.href = "admin-login.html";
+    } else {
+      window.location.href = "login.html";
     }
+  }
 };
 
-
 async function makeRequest(endpoint, options = {}) {
-    const url = `${API_BASE}${endpoint}`;
-    const token = window.getToken();
+  // Ensure endpoint starts with / and API_BASE doesn't end with / to avoid double slashes
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = `${API_BASE}${cleanEndpoint}`;
 
-    const headers = {
-        'Content-Type': 'application/json',
-        ...options.headers,
-    };
+  console.log(`[API Request] ${options.method || "GET"} ${url}`);
 
-    if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
+  const token = window.getToken();
+  const headers = {
+    "Content-Type": "application/json",
+    ...options.headers,
+  };
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: headers,
+    });
+
+    if (!response.ok) {
+      // Try to get detailed error info
+      let errorData = "No error body";
+      try {
+        // Clone the response so we can read it without consuming the original
+        const clone = response.clone();
+        errorData = await clone.text();
+        // Try to parse as JSON for a cleaner log if possible
+        try {
+          const json = JSON.parse(errorData);
+          errorData = json;
+        } catch (e) { }
+      } catch (e) {
+        errorData = "Failed to read error body";
+      }
+
+      console.group(`[API Error] ${response.status} ${response.statusText}`);
+      console.error(`URL: ${url}`);
+      console.error(`Response Body:`, errorData);
+      console.groupEnd();
+
+      if (response.status === 401) {
+        console.warn("Unauthorized access (401). Redirecting to login...");
+        window.removeToken();
+        window.checkAuth();
+      }
     }
 
-    try {
-        const response = await fetch(url, {
-            ...options,
-            headers: headers,
-        });
-
-        if (response.status === 401) {
-            console.error('Unauthorized access (401). Redirecting to login...');
-            window.removeToken();
-            window.checkAuth();
-            return response;
-        }
-
-        return response;
-    } catch (error) {
-        console.error(`Request failed for ${url}:`, error);
-        throw error;
-    }
+    return response;
+  } catch (error) {
+    console.error(`[Network Error] Request failed for ${url}:`, error);
+    throw error;
+  }
 }
 
 window.getServiceIcon = (serviceName) => {
-    if (!serviceName) return "fa-wrench";
-    const name = serviceName.toLowerCase();
+  if (!serviceName) return "fa-wrench";
+  const name = serviceName.toLowerCase();
 
-    if (name.includes("house cleaning")) return "fa-broom";
-    if (name.includes("deep cleaning")) return "fa-hands-bubbles";
-    if (name.includes("cleaning")) return "fa-broom";
-    if (name.includes("plumb")) return "fa-faucet-drip";
-    if (name.includes("elect")) return "fa-bolt";
-    if (name.includes("ac repair") || name.includes("air cond")) return "fa-snowflake";
-    if (name.includes("carpentry") || name.includes("carpenter")) return "fa-hammer";
-    if (name.includes("paint")) return "fa-paint-roller";
-    if (name.includes("cook")) return "fa-utensils";
-    if (name.includes("laundry") || name.includes("wash")) return "fa-shirt";
-    if (name.includes("garden")) return "fa-seedling";
-    if (name.includes("appliance")) return "fa-screwdriver-wrench";
-    if (name.includes("window")) return "fa-window-maximize";
-    if (name.includes("move") || name.includes("shift")) return "fa-truck-moving";
-    if (name.includes("salon") || name.includes("beauty")) return "fa-scissors";
-    if (name.includes("pest")) return "fa-bug";
-    if (name.includes("car wash") || name.includes("vehicle")) return "fa-car";
-    if (name.includes("pet")) return "fa-paw";
-    if (name.includes("tutor") || name.includes("lesson")) return "fa-book-open-reader";
-    if (name.includes("sofa") || name.includes("upholstery")) return "fa-couch";
-    if (name.includes("purifier") || name.includes("ro service")) return "fa-droplet";
-    if (name.includes("cctv") || name.includes("security")) return "fa-video";
-    if (name.includes("smart home") || name.includes("automation")) return "fa-microchip";
-    if (name.includes("interior") || name.includes("decor")) return "fa-pen-ruler";
+  if (name.includes("house cleaning")) return "fa-broom";
+  if (name.includes("deep cleaning")) return "fa-hands-bubbles";
+  if (name.includes("cleaning")) return "fa-broom";
+  if (name.includes("plumb")) return "fa-faucet-drip";
+  if (name.includes("elect")) return "fa-bolt";
+  if (name.includes("ac repair") || name.includes("air cond"))
+    return "fa-snowflake";
+  if (name.includes("carpentry") || name.includes("carpenter"))
+    return "fa-hammer";
+  if (name.includes("paint")) return "fa-paint-roller";
+  if (name.includes("cook")) return "fa-utensils";
+  if (name.includes("laundry") || name.includes("wash")) return "fa-shirt";
+  if (name.includes("garden")) return "fa-seedling";
+  if (name.includes("appliance")) return "fa-screwdriver-wrench";
+  if (name.includes("window")) return "fa-window-maximize";
+  if (name.includes("move") || name.includes("shift")) return "fa-truck-moving";
+  if (name.includes("salon") || name.includes("beauty")) return "fa-scissors";
+  if (name.includes("pest")) return "fa-bug";
+  if (name.includes("car wash") || name.includes("vehicle")) return "fa-car";
+  if (name.includes("pet")) return "fa-paw";
+  if (name.includes("tutor") || name.includes("lesson"))
+    return "fa-book-open-reader";
+  if (name.includes("sofa") || name.includes("upholstery")) return "fa-couch";
+  if (name.includes("purifier") || name.includes("ro service"))
+    return "fa-droplet";
+  if (name.includes("cctv") || name.includes("security")) return "fa-video";
+  if (name.includes("smart home") || name.includes("automation"))
+    return "fa-microchip";
+  if (name.includes("interior") || name.includes("decor"))
+    return "fa-pen-ruler";
 
-    return "fa-wrench";
+  return "fa-wrench";
 };
 
-console.log('API Routing configured:', API_BASE || '(relative paths)');
+console.log("API Routing configured:", API_BASE || "(relative paths)");
 
 // --- UI Feedback Components (Toasts, Modals, Validation) ---
 
 // Auto-inject UI CSS
 (function injectUIStyles() {
-    if (!document.getElementById('hb-ui-styles')) {
-        const link = document.createElement('link');
-        link.id = 'hb-ui-styles';
-        link.rel = 'stylesheet';
-        // Try both relative and absolute paths for robustness
-        const cssPath = window.location.pathname.includes('/html/') ? '../../css/ui-components.css' : './Frontend/css/ui-components.css';
-        link.href = cssPath;
-        document.head.appendChild(link);
-    }
+  if (!document.getElementById("hb-ui-styles")) {
+    const link = document.createElement("link");
+    link.id = "hb-ui-styles";
+    link.rel = "stylesheet";
+    // Try both relative and absolute paths for robustness
+    const cssPath = window.location.pathname.includes("/html/")
+      ? "../../css/ui-components.css"
+      : "./Frontend/css/ui-components.css";
+    link.href = cssPath;
+    document.head.appendChild(link);
+  }
 })();
 
 window.HB = {
-    // Toast Notification
-    showToast: (message, type = 'success', duration = 3000) => {
-        let container = document.querySelector('.hb-toast-container');
-        if (!container) {
-            container = document.createElement('div');
-            container.className = 'hb-toast-container';
-            document.body.appendChild(container);
-        }
+  // Toast Notification
+  showToast: (message, type = "success", duration = 3000) => {
+    let container = document.querySelector(".hb-toast-container");
+    if (!container) {
+      container = document.createElement("div");
+      container.className = "hb-toast-container";
+      document.body.appendChild(container);
+    }
 
-        const toast = document.createElement('div');
-        toast.className = `hb-toast ${type}`;
+    const toast = document.createElement("div");
+    toast.className = `hb-toast ${type}`;
 
-        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-        toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+    const icon =
+      type === "success" ? "fa-check-circle" : "fa-exclamation-circle";
+    toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
 
-        container.appendChild(toast);
+    container.appendChild(toast);
 
-        setTimeout(() => {
-            toast.style.animation = 'fadeOut 0.5s ease-out forwards';
-            setTimeout(() => toast.remove(), 500);
-        }, duration);
-    },
+    setTimeout(() => {
+      toast.style.animation = "fadeOut 0.5s ease-out forwards";
+      setTimeout(() => toast.remove(), 500);
+    }, duration);
+  },
 
-    // Confirmation Modal
-    confirm: (title, message, onConfirm) => {
-        const overlay = document.createElement('div');
-        overlay.className = 'hb-modal-overlay';
+  // Confirmation Modal
+  confirm: (title, message, onConfirm) => {
+    const overlay = document.createElement("div");
+    overlay.className = "hb-modal-overlay";
 
-        overlay.innerHTML = `
+    overlay.innerHTML = `
             <div class="hb-modal">
                 <h3>${title}</h3>
                 <p>${message}</p>
@@ -162,51 +211,78 @@ window.HB = {
             </div>
         `;
 
-        document.body.appendChild(overlay);
+    document.body.appendChild(overlay);
 
-        const cancelBtn = overlay.querySelector('.hb-btn-cancel');
-        const confirmBtn = overlay.querySelector('.hb-btn-confirm');
+    const cancelBtn = overlay.querySelector(".hb-btn-cancel");
+    const confirmBtn = overlay.querySelector(".hb-btn-confirm");
 
-        cancelBtn.onclick = () => overlay.remove();
-        confirmBtn.onclick = () => {
-            onConfirm();
-            overlay.remove();
-        };
+    cancelBtn.onclick = () => overlay.remove();
+    confirmBtn.onclick = () => {
+      onConfirm();
+      overlay.remove();
+    };
 
-        overlay.onclick = (e) => {
-            if (e.target === overlay) overlay.remove();
-        };
-    },
+    overlay.onclick = (e) => {
+      if (e.target === overlay) overlay.remove();
+    };
+  },
 
-    // Form Validation Helpers
-    showError: (inputId, message) => {
-        const input = document.getElementById(inputId);
-        if (!input) return;
+  // Info Modal (for displaying data)
+  info: (title, htmlContent) => {
+    const overlay = document.createElement("div");
+    overlay.className = "hb-modal-overlay";
 
-        input.classList.add('hb-input-error');
+    overlay.innerHTML = `
+            <div class="hb-modal info-modal">
+                <h3>${title}</h3>
+                <div class="hb-modal-body">
+                    ${htmlContent}
+                </div>
+                <div class="hb-modal-actions">
+                    <button class="hb-btn hb-btn-confirm">Close</button>
+                </div>
+            </div>
+        `;
 
-        const next = input.nextElementSibling;
-        if (next && next.classList.contains('hb-error-message')) {
-            next.remove();
-        }
+    document.body.appendChild(overlay);
 
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'hb-error-message';
-        errorDiv.textContent = message;
-        input.parentNode.insertBefore(errorDiv, input.nextSibling);
+    const closeBtn = overlay.querySelector(".hb-btn-confirm");
+    closeBtn.onclick = () => overlay.remove();
 
-        // Clear error on input
-        input.oninput = () => window.HB.clearError(inputId);
-    },
+    overlay.onclick = (e) => {
+      if (e.target === overlay) overlay.remove();
+    };
+  },
 
-    clearError: (inputId) => {
-        const input = document.getElementById(inputId);
-        if (!input) return;
+  // Form Validation Helpers
+  showError: (inputId, message) => {
+    const input = document.getElementById(inputId);
+    if (!input) return;
 
-        input.classList.remove('hb-input-error');
-        const next = input.nextElementSibling;
-        if (next && next.classList.contains('hb-error-message')) {
-            next.remove();
-        }
+    input.classList.add("hb-input-error");
+
+    const next = input.nextElementSibling;
+    if (next && next.classList.contains("hb-error-message")) {
+      next.remove();
     }
+
+    const errorDiv = document.createElement("div");
+    errorDiv.className = "hb-error-message";
+    errorDiv.textContent = message;
+    input.parentNode.insertBefore(errorDiv, input.nextSibling);
+
+    // Clear error on input
+    input.oninput = () => window.HB.clearError(inputId);
+  },
+
+  clearError: (inputId) => {
+    const input = document.getElementById(inputId);
+    if (!input) return;
+
+    input.classList.remove("hb-input-error");
+    const next = input.nextElementSibling;
+    if (next && next.classList.contains("hb-error-message")) {
+      next.remove();
+    }
+  },
 };

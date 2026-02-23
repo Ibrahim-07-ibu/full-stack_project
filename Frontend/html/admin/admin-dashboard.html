@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - HomeBuddy</title>
-    <link rel="stylesheet" href="../../css/admin/admin-styles.css">
-    <script src="../../js/admin/admin-dashboard.js" defer></script>
+    <title>Dashboard - HomeBuddy Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/admin/admin-base.css">
+    <link rel="stylesheet" href="../../css/admin/admin-dashboard.css">
 </head>
 
 <body>
@@ -14,46 +15,42 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <span class="logo-icon">🏠</span>
-                <h2>HomeBuddy Admin</h2>
+                <div class="logo-icon"><i class="fa-solid fa-house-chimney"></i></div>
+                <h2>HomeBuddy</h2>
             </div>
             <nav class="sidebar-nav">
                 <a href="admin-dashboard.html" class="nav-item active">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="admin-users.html" class="nav-item">
-                    <span class="nav-icon">👥</span>
+                    <span class="nav-icon"><i class="fa-solid fa-users"></i></span>
                     <span>Users</span>
                 </a>
                 <a href="admin-helpers.html" class="nav-item">
-                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
                     <span>Helpers</span>
                 </a>
                 <a href="admin-bookings.html" class="nav-item">
-                    <span class="nav-icon">📋</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span>
                     <span>All Bookings</span>
                 </a>
                 <a href="admin-verification.html" class="nav-item">
-                    <span class="nav-icon">✓</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-check"></i></span>
                     <span>Verifications</span>
                 </a>
-                <a href="admin-payments.html" class="nav-item">
-                    <span class="nav-icon">💰</span>
-                    <span>Payments</span>
-                </a>
                 <a href="admin-reviews.html" class="nav-item">
-                    <span class="nav-icon">⭐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-star"></i></span>
                     <span>Reviews</span>
                 </a>
-                <a href="admin-settings.html" class="nav-item">
-                    <span class="nav-icon">⚙️</span>
-                    <span>Settings</span>
+                <a href="admin-services.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-tools"></i></span>
+                    <span>Services</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
-                <a href="admin-login.html" class="nav-item">
-                    <span class="nav-icon">🚪</span>
+                <a href="#" id="admin-logout-btn" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-sign-out-alt"></i></span>
                     <span>Logout</span>
                 </a>
             </div>
@@ -63,17 +60,11 @@
         <main class="main-content">
             <!-- Top Bar -->
             <header class="top-bar">
-                <div class="search-bar">
-                    <input type="text" placeholder="Search users, helpers, bookings...">
-                </div>
+                <div class="top-bar-left"></div>
                 <div class="top-bar-right">
-                    <div class="notification-icon">
-                        🔔
-                        <span class="badge">5</span>
-                    </div>
                     <div class="admin-profile">
-                        <div class="admin-avatar">AD</div>
-                        <span>Admin User</span>
+                        <div class="admin-avatar">A</div>
+                        <span>Administrator</span>
                     </div>
                 </div>
             </header>
@@ -81,285 +72,87 @@
             <!-- Dashboard Content -->
             <div class="content-wrapper">
                 <div class="page-header">
-                    <h1>Dashboard Overview</h1>
-                    <p>Welcome back! Here's what's happening today.</p>
+                    <div>
+                        <h1>System Overview</h1>
+                        <p>Welcome back! Here's what's happening with HomeBuddy today.</p>
+                    </div>
+
                 </div>
 
                 <!-- Stats Grid -->
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-icon blue">👥</span>
-                            <span class="stat-trend positive">+12%</span>
+                        <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                        <div class="stat-details">
+                            <h3>Total Users</h3>
+                            <div class="stat-number" id="users-count">0</div>
+                            <div class="stat-trend up">↑ 12% this month</div>
                         </div>
-                        <div class="stat-value" id="users-count">-</div>
-                        <div class="stat-label">Total Users</div>
-                        <div class="stat-footer">+45 this month</div>
                     </div>
-
                     <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-icon green">🛠️</span>
-                            <span class="stat-trend positive">+8%</span>
+                        <div class="stat-icon"><i class="fa-solid fa-user-gear"></i></div>
+                        <div class="stat-details">
+                            <h3>Active Providers</h3>
+                            <div class="stat-number" id="providers-count">0</div>
+                            <div class="stat-trend up">↑ 5% this week</div>
                         </div>
-                        <div class="stat-value" id="providers-count">-</div>
-                        <div class="stat-label">Active Helpers</div>
-                        <div class="stat-footer">+18 this month</div>
                     </div>
-
                     <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-icon orange">📋</span>
-                            <span class="stat-trend positive">+25%</span>
+                        <div class="stat-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                        <div class="stat-details">
+                            <h3>Total Bookings</h3>
+                            <div class="stat-number" id="bookings-count">0</div>
+                            <div class="stat-trend up">↑ 18% this month</div>
                         </div>
-                        <div class="stat-value" id="bookings-count">-</div>
-                        <div class="stat-label">Total Bookings</div>
-                        <div class="stat-footer">+234 this month</div>
                     </div>
-
                     <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-icon purple">💰</span>
-                            <span class="stat-trend positive">+18%</span>
-                        </div>
-                        <div class="stat-value">₹8.5L</div>
-                        <div class="stat-label">Revenue</div>
-                        <div class="stat-footer">+₹1.2L this month</div>
-                    </div>
-                </div>
-
-                <!-- Quick Stats Row -->
-                <div class="quick-stats">
-                    <div class="quick-stat-item">
-                        <div class="quick-stat-number">45</div>
-                        <div class="quick-stat-label">Pending Verifications</div>
-                    </div>
-                    <div class="quick-stat-item">
-                        <div class="quick-stat-number">128</div>
-                        <div class="quick-stat-label">Active Bookings</div>
-                    </div>
-                    <div class="quick-stat-item">
-                        <div class="quick-stat-number">23</div>
-                        <div class="quick-stat-label">New Helpers Today</div>
-                    </div>
-                    <div class="quick-stat-item">
-                        <div class="quick-stat-number">4.7</div>
-                        <div class="quick-stat-label">Avg. Rating</div>
-                    </div>
-                </div>
-
-                <!-- Two Column Layout -->
-                <div class="two-column">
-                    <!-- Recent Bookings -->
-                    <div class="content-card">
-                        <div class="card-header">
-                            <h2>Recent Bookings</h2>
-                            <a href="admin-bookings.html" class="view-all">View All →</a>
-                        </div>
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>Booking ID</th>
-                                        <th>Customer</th>
-                                        <th>Helper</th>
-                                        <th>Service</th>
-                                        <th>Status</th>
-                                        <th>Amount</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>#HB2024001</td>
-                                        <td>Rajesh Kumar</td>
-                                        <td>Priya Sharma</td>
-                                        <td>Cooking</td>
-                                        <td><span class="badge-status new">New</span></td>
-                                        <td>₹600</td>
-                                    </tr>
-                                    <tr>
-                                        <td>#HB2024002</td>
-                                        <td>Anjali Patel</td>
-                                        <td>Ramesh Gupta</td>
-                                        <td>Cleaning</td>
-                                        <td><span class="badge-status accepted">Accepted</span></td>
-                                        <td>₹500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>#HB2024003</td>
-                                        <td>Suresh Reddy</td>
-                                        <td>Kavita Menon</td>
-                                        <td>Tutoring</td>
-                                        <td><span class="badge-status completed">Completed</span></td>
-                                        <td>₹1,500</td>
-                                    </tr>
-                                    <tr>
-                                        <td>#HB2024004</td>
-                                        <td>Meera Iyer</td>
-                                        <td>Arjun Nair</td>
-                                        <td>Plumbing</td>
-                                        <td><span class="badge-status accepted">Accepted</span></td>
-                                        <td>₹800</td>
-                                    </tr>
-                                    <tr>
-                                        <td>#HB2024005</td>
-                                        <td>Vikram Singh</td>
-                                        <td>Lakshmi K</td>
-                                        <td>Babysitting</td>
-                                        <td><span class="badge-status new">New</span></td>
-                                        <td>₹700</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Pending Verifications -->
-                    <div class="content-card">
-                        <div class="card-header">
-                            <h2>Pending Verifications</h2>
-                            <a href="admin-verification.html" class="view-all">View All →</a>
-                        </div>
-                        <div class="verification-list">
-                            <div class="verification-item">
-                                <div class="verification-avatar">PS</div>
-                                <div class="verification-info">
-                                    <div class="verification-name">Priya Sharma</div>
-                                    <div class="verification-service">Cooking • Applied 2 days ago</div>
-                                </div>
-                                <div class="verification-actions">
-                                    <button class="btn-approve">✓</button>
-                                    <button class="btn-reject">✗</button>
-                                </div>
-                            </div>
-
-                            <div class="verification-item">
-                                <div class="verification-avatar">RK</div>
-                                <div class="verification-info">
-                                    <div class="verification-name">Rajesh Kumar</div>
-                                    <div class="verification-service">Electrician • Applied 1 day ago</div>
-                                </div>
-                                <div class="verification-actions">
-                                    <button class="btn-approve">✓</button>
-                                    <button class="btn-reject">✗</button>
-                                </div>
-                            </div>
-
-                            <div class="verification-item">
-                                <div class="verification-avatar">AP</div>
-                                <div class="verification-info">
-                                    <div class="verification-name">Anjali Patel</div>
-                                    <div class="verification-service">Cleaning • Applied 3 hours ago</div>
-                                </div>
-                                <div class="verification-actions">
-                                    <button class="btn-approve">✓</button>
-                                    <button class="btn-reject">✗</button>
-                                </div>
-                            </div>
-
-                            <div class="verification-item">
-                                <div class="verification-avatar">MV</div>
-                                <div class="verification-info">
-                                    <div class="verification-name">Meena Verma</div>
-                                    <div class="verification-service">Elder Care • Applied 5 days ago</div>
-                                </div>
-                                <div class="verification-actions">
-                                    <button class="btn-approve">✓</button>
-                                    <button class="btn-reject">✗</button>
-                                </div>
-                            </div>
-
-                            <div class="verification-item">
-                                <div class="verification-avatar">SK</div>
-                                <div class="verification-info">
-                                    <div class="verification-name">Suresh Kumar</div>
-                                    <div class="verification-service">Plumber • Applied 1 day ago</div>
-                                </div>
-                                <div class="verification-actions">
-                                    <button class="btn-approve">✓</button>
-                                    <button class="btn-reject">✗</button>
-                                </div>
-                            </div>
+                        <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+                        <div class="stat-details">
+                            <h3>Gross Revenue</h3>
+                            <div class="stat-number" id="revenue-amount">₹0</div>
+                            <div class="stat-trend up">↑ 24% vs last month</div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Service Category Stats -->
+                <!-- Recent Activity -->
                 <div class="content-card">
                     <div class="card-header">
-                        <h2>Service Category Performance</h2>
+                        <h2>Recent Bookings</h2>
                     </div>
-                    <div class="category-stats">
-                        <div class="category-item">
-                            <div class="category-icon">🍳</div>
-                            <div class="category-info">
-                                <div class="category-name">Cooking</div>
-                                <div class="category-progress">
-                                    <div class="progress-bar w-85"></div>
-                                </div>
-                                <div class="category-numbers">842 bookings • 156 helpers</div>
-                            </div>
-                        </div>
-
-                        <div class="category-item">
-                            <div class="category-icon">🧹</div>
-                            <div class="category-info">
-                                <div class="category-name">Cleaning</div>
-                                <div class="category-progress">
-                                    <div class="progress-bar w-72"></div>
-                                </div>
-                                <div class="category-numbers">645 bookings • 98 helpers</div>
-                            </div>
-                        </div>
-
-                        <div class="category-item">
-                            <div class="category-icon">📚</div>
-                            <div class="category-info">
-                                <div class="category-name">Tutoring</div>
-                                <div class="category-progress">
-                                    <div class="progress-bar w-68"></div>
-                                </div>
-                                <div class="category-numbers">523 bookings • 87 helpers</div>
-                            </div>
-                        </div>
-
-                        <div class="category-item">
-                            <div class="category-icon">⚡</div>
-                            <div class="category-info">
-                                <div class="category-name">Electrician</div>
-                                <div class="category-progress">
-                                    <div class="progress-bar w-54"></div>
-                                </div>
-                                <div class="category-numbers">412 bookings • 45 helpers</div>
-                            </div>
-                        </div>
-
-                        <div class="category-item">
-                            <div class="category-icon">🔧</div>
-                            <div class="category-info">
-                                <div class="category-name">Plumbing</div>
-                                <div class="category-progress">
-                                    <div class="progress-bar w-48"></div>
-                                </div>
-                                <div class="category-numbers">328 bookings • 38 helpers</div>
-                            </div>
-                        </div>
-
-                        <div class="category-item">
-                            <div class="category-icon">👶</div>
-                            <div class="category-info">
-                                <div class="category-name">Babysitting</div>
-                                <div class="category-progress">
-                                    <div class="progress-bar w-42"></div>
-                                </div>
-                                <div class="category-numbers">278 bookings • 32 helpers</div>
-                            </div>
-                        </div>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Booking ID</th>
+                                    <th>Customer</th>
+                                    <th>Provider</th>
+                                    <th>Service</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-bookings-body">
+                                <!-- Loaded via JS -->
+                                <tr>
+                                    <td>#BK-2584</td>
+                                    <td>John Doe</td>
+                                    <td>Alice Smith</td>
+                                    <td>Cleaning</td>
+                                    <td>Oct 24, 2026</td>
+                                    <td><span class="status-badge status-completed">Completed</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </main>
     </div>
+
+    <script src="../../js/api-config.js"></script>
+    <script src="../../js/admin/admin-modal.js"></script>
+    <script src="../../js/admin/admin-dashboard.js" defer></script>
 </body>
 
 </html>

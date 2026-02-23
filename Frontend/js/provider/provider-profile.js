@@ -56,19 +56,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       const verifiedBadge = document.getElementById("profile-verified");
       const verifyIdVal = document.getElementById("verify-id");
-      if (verifiedBadge) {
-        verifiedBadge.classList.toggle("d-none", !p.is_verified);
-        if (p.is_verified)
-          verifiedBadge.innerHTML =
-            '<i class="fa-solid fa-certificate"></i> Verified Helper';
-      }
-      if (verifyIdVal) {
-        verifyIdVal.innerHTML = p.is_verified
+      const verifyCertVal = document.getElementById("verify-cert");
+
+      const setStatus = (el, isVerified) => {
+        if (!el) return;
+        el.innerHTML = isVerified
           ? '<i class="fa-solid fa-check-circle"></i> Verified'
           : '<i class="fa-regular fa-clock"></i> Pending';
-        verifyIdVal.classList.toggle("text-success", p.is_verified);
-        verifyIdVal.classList.toggle("verified", p.is_verified);
-      }
+        el.classList.toggle("text-success", isVerified);
+        el.classList.toggle("verified", isVerified);
+      };
+
+      if (verifyIdVal) setStatus(verifyIdVal, p.is_verified);
+      if (verifyCertVal) setStatus(verifyCertVal, p.is_verified);
 
       localStorage.setItem("provider_name", p.full_name);
     }

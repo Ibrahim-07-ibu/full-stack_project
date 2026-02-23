@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verifications - HomeBuddy Admin</title>
-    <link rel="stylesheet" href="../../css/admin/admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/admin/admin-base.css">
+    <link rel="stylesheet" href="../../css/admin/admin-verification.css">
 </head>
 
 <body>
@@ -18,41 +20,37 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="admin-dashboard.html" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="admin-users.html" class="nav-item">
-                    <span class="nav-icon">👥</span>
+                    <span class="nav-icon"><i class="fa-solid fa-users"></i></span>
                     <span>Users</span>
                 </a>
                 <a href="admin-helpers.html" class="nav-item">
-                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
                     <span>Helpers</span>
                 </a>
                 <a href="admin-bookings.html" class="nav-item">
-                    <span class="nav-icon">📋</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span>
                     <span>All Bookings</span>
                 </a>
                 <a href="admin-verification.html" class="nav-item active">
-                    <span class="nav-icon">✓</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-check"></i></span>
                     <span>Verifications</span>
                 </a>
-                <a href="admin-payments.html" class="nav-item">
-                    <span class="nav-icon">💰</span>
-                    <span>Payments</span>
-                </a>
                 <a href="admin-reviews.html" class="nav-item">
-                    <span class="nav-icon">⭐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-star"></i></span>
                     <span>Reviews</span>
                 </a>
-                <a href="admin-settings.html" class="nav-item">
-                    <span class="nav-icon">⚙️</span>
-                    <span>Settings</span>
+                <a href="admin-services.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-tools"></i></span>
+                    <span>Services</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
-                <a href="admin-login.html" class="nav-item">
-                    <span class="nav-icon">🚪</span>
+                <a href="#" class="nav-item" id="admin-logout-btn">
+                    <span class="nav-icon"><i class="fa-solid fa-sign-out-alt"></i></span>
                     <span>Logout</span>
                 </a>
             </div>
@@ -62,14 +60,8 @@
         <main class="main-content">
             <!-- Top Bar -->
             <header class="top-bar">
-                <div class="search-bar">
-                    <input type="text" placeholder="Search verification requests...">
-                </div>
+                <div class="top-bar-left"></div>
                 <div class="top-bar-right">
-                    <div class="notification-icon">
-                        🔔
-                        <span class="badge">5</span>
-                    </div>
                     <div class="admin-profile">
                         <div class="admin-avatar">AD</div>
                         <span>Admin User</span>
@@ -86,271 +78,116 @@
                     </div>
                 </div>
 
-                <!-- Filter Bar -->
-                <div class="filter-bar">
-                    <div class="filter-group">
-                        <button class="filter-btn active">Pending (45)</button>
-                        <button class="filter-btn">Approved (298)</button>
-                        <button class="filter-btn">Rejected (23)</button>
-                    </div>
-                    <div class="filter-group">
-                        <select class="filter-select">
-                            <option>All Services</option>
-                            <option>Cooking</option>
-                            <option>Cleaning</option>
-                            <option>Other</option>
-                        </select>
-                        <select class="filter-select">
-                            <option>Sort by: Recent</option>
-                            <option>Oldest First</option>
-                        </select>
-                    </div>
-                </div>
+
 
                 <!-- Verification Cards -->
-                <div class="d-grid gap-15">
+                <div class="verification-grid" id="verification-cards-container">
                     <!-- Verification Card 1 -->
-                    <div class="content-card">
-                        <div class="p-2">
-                            <div class="d-flex gap-2 mb-2">
-                                <div class="flex-shrink-0">
-                                    <div
-                                        class="avatar-lg bg-dark text-white rounded-circle d-flex align-center justify-center text-3xl fw-bold">
-                                        PS</div>
-                                    <div class="text-center mt-05">
-                                        <span class="badge-status pending">Pending</span>
-                                    </div>
-                                </div>
-                                <div class="flex-1">
-                                    <h2 class="text-dark mb-05">Priya Sharma</h2>
-                                    <div class="d-grid grid-cols-auto gap-1 mb-1">
-                                        <div>
-                                            <div class="text-muted text-sm">Service</div>
-                                            <div class="fw-600">🍳 Cooking</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted text-sm">Experience</div>
-                                            <div class="fw-600">5 years</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted text-sm">Rate</div>
-                                            <div class="fw-600">₹300/hour</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted text-sm">Applied</div>
-                                            <div class="fw-600">2 days ago</div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-mist p-1 rounded-8">
-                                        <div class="fw-600 mb-05">Contact Information</div>
-                                        <div class="text-muted text-sm">
-                                            📧 priya.sharma@email.com<br>
-                                            📞 +91 98765 43210<br>
-                                            📍 Neelankarai, Chennai, Tamil Nadu - 600041
-                                        </div>
-                                    </div>
+                    <div class="verification-card">
+                        <div class="provider-info">
+                            <div class="provider-avatar">PS</div>
+                            <div class="provider-details">
+                                <h3>Priya Sharma</h3>
+                                <div class="text-center mt-05">
+                                    <span class="badge-status pending">Pending</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="bg-warning p-1 rounded-8 mb-15">
-                                <div class="fw-600 mb-05 text-dark">
-                                    Documents Submitted:</div>
-                                <div class="d-grid grid-cols-auto gap-1">
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-success text-lg">✓</span>
-                                        <span>Aadhaar Card</span>
-                                    </div>
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-success text-lg">✓</span>
-                                        <span>Address Proof</span>
-                                    </div>
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-success text-lg">✓</span>
-                                        <span>Photograph</span>
-                                    </div>
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-success text-lg">✓</span>
-                                        <span>Skill Certificate</span>
-                                    </div>
-                                </div>
+                        <div class="d-grid grid-cols-auto gap-1 mb-15">
+                            <div>
+                                <div class="text-muted text-sm">Service</div>
+                                <div class="fw-600"><i class="fa-solid fa-utensils"></i> Cooking</div>
                             </div>
+                            <div>
+                                <div class="text-muted text-sm">Experience</div>
+                                <div class="fw-600">5 years</div>
+                            </div>
+                            <div>
+                                <div class="text-muted text-sm">Applied</div>
+                                <div class="fw-600">2 days ago</div>
+                            </div>
+                        </div>
 
-                            <div class="d-flex gap-1">
-                                <button class="btn-primary flex-1 bg-success">✓
-                                    Approve & Verify</button>
-                                <button class="btn-secondary flex-1 bg-danger text-white">✗ Reject
-                                    Application</button>
-                                <button class="btn-secondary">View Documents</button>
+                        <div class="bg-mist p-1 rounded-8 mb-15">
+                            <div class="fw-600 mb-05 text-dark">Contact Information</div>
+                            <div class="text-muted text-sm lh-16">
+                                <i class="fa-solid fa-envelope w-20"></i> priya.sharma@email.com<br>
+                                <i class="fa-solid fa-phone w-20"></i> +91 98765 43210<br>
+                                <i class="fa-solid fa-location-dot w-20"></i> Neelankarai, Chennai, Tamil Nadu - 600041
                             </div>
+                        </div>
+
+                        <div class="document-list">
+                            <div class="doc-item"><i class="fa-solid fa-check"></i> Aadhaar Card</div>
+                            <div class="doc-item"><i class="fa-solid fa-check"></i> Address Proof</div>
+                            <div class="doc-item"><i class="fa-solid fa-check"></i> Photograph</div>
+                            <div class="doc-item"><i class="fa-solid fa-check"></i> Skill Certificate</div>
+                        </div>
+
+                        <div class="verification-actions">
+                            <button class="btn-approve">Approve & Verify</button>
+                            <button class="btn-reject">Reject Application</button>
                         </div>
                     </div>
 
                     <!-- Verification Card 2 -->
-                    <div class="content-card">
-                        <div class="p-2">
-                            <div class="d-flex gap-2 mb-2">
-                                <div class="flex-shrink-0">
-                                    <div
-                                        class="avatar-lg bg-steel text-white rounded-circle d-flex align-center justify-center text-3xl fw-bold">
-                                        RK</div>
-                                    <div class="text-center mt-05">
-                                        <span class="badge-status pending">Pending</span>
-                                    </div>
-                                </div>
-                                <div class="flex-1">
-                                    <h2 class="text-dark mb-05">Rajesh Kumar</h2>
-                                    <div class="d-grid grid-2-cols gap-1 mb-1">
-                                        <div>
-                                            <div class="text-muted text-sm">Service</div>
-                                            <div class="fw-600">⚡ Electrician</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted text-sm">Experience</div>
-                                            <div class="fw-600">8 years</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted text-sm">Rate</div>
-                                            <div class="fw-600">₹400/visit</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted text-sm">Applied</div>
-                                            <div class="fw-600">1 day ago</div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-mist p-1 rounded-8">
-                                        <div class="fw-600 mb-05">Contact Information</div>
-                                        <div class="text-muted text-sm">
-                                            📧 rajesh.kumar@email.com<br>
-                                            📞 +91 98765 43211<br>
-                                            📍 Adyar, Chennai, Tamil Nadu - 600020
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-warning p-1 rounded-8 mb-15">
-                                <div class="fw-600 mb-05 text-dark">
-                                    Documents Submitted:</div>
-                                <div class="d-grid grid-cols-auto gap-1">
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-success text-lg">✓</span>
-                                        <span>PAN Card</span>
-                                    </div>
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-success text-lg">✓</span>
-                                        <span>License Certificate</span>
-                                    </div>
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-success text-lg">✓</span>
-                                        <span>Photograph</span>
-                                    </div>
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-warning text-lg">⚠</span>
-                                        <span class="text-danger">Address Proof Missing</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-flex gap-1">
-                                <button class="btn-primary flex-1 bg-success">✓
-                                    Approve & Verify</button>
-                                <button class="btn-secondary flex-1 bg-danger text-white">✗ Reject
-                                    Application</button>
-                                <button class="btn-secondary">Request Document</button>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- Verification Card 3 -->
-                    <div class="content-card">
-                        <div class="p-2">
-                            <div class="d-flex gap-2 mb-2">
-                                <div class="flex-shrink-0">
-                                    <div
-                                        class="avatar-lg bg-steel text-white rounded-circle d-flex align-center justify-center text-3xl fw-bold">
-                                        AP</div>
-                                    <div class="text-center mt-05">
-                                        <span class="badge-status pending">Pending</span>
-                                    </div>
+                    <div class="verification-card">
+                        <div class="provider-info">
+                            <div class="provider-avatar">AP</div>
+                            <div class="provider-details">
+                                <h3>Anjali Patel</h3>
+                                <div class="text-center mt-05">
+                                    <span class="badge-status pending">Pending</span>
                                 </div>
-                                <div class="flex-1">
-                                    <h2 class="text-dark mb-05">Anjali Patel</h2>
-                                    <div class="d-grid grid-cols-auto gap-1 mb-1">
-                                        <div>
-                                            <div class="text-muted text-sm">Service</div>
-                                            <div class="fw-600">🧹 Cleaning</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted text-sm">Experience</div>
-                                            <div class="fw-600">3 years</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted text-sm">Rate</div>
-                                            <div class="fw-600">₹250/hour</div>
-                                        </div>
-                                        <div>
-                                            <div class="text-muted text-sm">Applied</div>
-                                            <div class="fw-600">3 hours ago</div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-mist p-1 rounded-8">
-                                        <div class="fw-600 mb-05">Contact Information</div>
-                                        <div class="text-muted text-sm">
-                                            📧 anjali.patel@email.com<br>
-                                            📞 +91 98765 43212<br>
-                                            📍 Velachery, Chennai, Tamil Nadu - 600042
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="bg-warning p-1 rounded-8 mb-15">
-                                <div class="fw-600 mb-05 text-dark">
-                                    Documents Submitted:</div>
-                                <div class="d-grid grid-cols-auto gap-1">
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-success text-lg">✓</span>
-                                        <span>Voter ID</span>
-                                    </div>
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-success text-lg">✓</span>
-                                        <span>Address Proof</span>
-                                    </div>
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-success text-lg">✓</span>
-                                        <span>Photograph</span>
-                                    </div>
-                                    <div class="d-flex align-center gap-05">
-                                        <span class="text-success text-lg">✓</span>
-                                        <span>Reference Letters</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="d-flex gap-1">
-                                <button class="btn-primary flex-1 bg-success">✓
-                                    Approve & Verify</button>
-                                <button class="btn-secondary flex-1 bg-danger text-white">✗ Reject
-                                    Application</button>
-                                <button class="btn-secondary">View Documents</button>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Pagination -->
-                <div class="mt-2 text-center">
-                    <div class="pagination">
-                        <button class="pagination-btn">« Previous</button>
-                        <button class="pagination-btn active">1</button>
-                        <button class="pagination-btn">2</button>
-                        <button class="pagination-btn">3</button>
-                        <button class="pagination-btn">Next »</button>
+                        <div class="d-grid grid-cols-auto gap-1 mb-15">
+                            <div>
+                                <div class="text-muted text-sm">Service</div>
+                                <div class="fw-600"><i class="fa-solid fa-broom"></i> Cleaning</div>
+                            </div>
+                            <div>
+                                <div class="text-muted text-sm">Experience</div>
+                                <div class="fw-600">3 years</div>
+                            </div>
+                            <div>
+                                <div class="text-muted text-sm">Applied</div>
+                                <div class="fw-600">3 hours ago</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-mist p-1 rounded-8 mb-15">
+                            <div class="fw-600 mb-05 text-dark">Contact Information</div>
+                            <div class="text-muted text-sm lh-16">
+                                <i class="fa-solid fa-envelope w-20"></i> anjali.patel@email.com<br>
+                                <i class="fa-solid fa-phone w-20"></i> +91 98765 43212<br>
+                                <i class="fa-solid fa-location-dot w-20"></i> Velachery, Chennai, Tamil Nadu - 600042
+                            </div>
+                        </div>
+
+                        <div class="document-list">
+                            <div class="doc-item"><i class="fa-solid fa-check"></i> Voter ID</div>
+                            <div class="doc-item"><i class="fa-solid fa-check"></i> Address Proof</div>
+                            <div class="doc-item"><i class="fa-solid fa-check"></i> Photograph</div>
+                            <div class="doc-item"><i class="fa-solid fa-check"></i> Reference Letters</div>
+                        </div>
+
+                        <div class="verification-actions">
+                            <button class="btn-approve">Approve & Verify</button>
+                            <button class="btn-reject">Reject Application</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
     </div>
+    <script src="../../js/api-config.js"></script>
+    <script src="../../js/admin/admin-modal.js"></script>
+    <script src="../../js/admin/admin-verification.js" defer></script>
 </body>
 
 </html>

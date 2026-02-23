@@ -1,5 +1,4 @@
-fastapi==0.103.2
-pydantic<2.0.0
+fastapi
 sqlalchemy
 python-dotenv
 python-multipart
@@ -8,4 +7,4 @@ requests
 pg8000
 passlib
 bcrypt
-mangum
+uvicorn

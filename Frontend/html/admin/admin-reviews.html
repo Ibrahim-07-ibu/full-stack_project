@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reviews - HomeBuddy Admin</title>
-    <link rel="stylesheet" href="../../css/admin/admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/admin/admin-base.css">
+    <link rel="stylesheet" href="../../css/admin/admin-reviews.css">
 </head>
 
 <body>
@@ -18,41 +20,37 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="admin-dashboard.html" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="admin-users.html" class="nav-item">
-                    <span class="nav-icon">👥</span>
+                    <span class="nav-icon"><i class="fa-solid fa-users"></i></span>
                     <span>Users</span>
                 </a>
                 <a href="admin-helpers.html" class="nav-item">
-                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
                     <span>Helpers</span>
                 </a>
                 <a href="admin-bookings.html" class="nav-item">
-                    <span class="nav-icon">📋</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span>
                     <span>All Bookings</span>
                 </a>
                 <a href="admin-verification.html" class="nav-item">
-                    <span class="nav-icon">✓</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-check"></i></span>
                     <span>Verifications</span>
                 </a>
-                <a href="admin-payments.html" class="nav-item">
-                    <span class="nav-icon">💰</span>
-                    <span>Payments</span>
-                </a>
                 <a href="admin-reviews.html" class="nav-item active">
-                    <span class="nav-icon">⭐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-star"></i></span>
                     <span>Reviews</span>
                 </a>
-                <a href="admin-settings.html" class="nav-item">
-                    <span class="nav-icon">⚙️</span>
-                    <span>Settings</span>
+                <a href="admin-services.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-tools"></i></span>
+                    <span>Services</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
-                <a href="admin-login.html" class="nav-item">
-                    <span class="nav-icon">🚪</span>
+                <a href="#" class="nav-item" id="admin-logout-btn">
+                    <span class="nav-icon"><i class="fa-solid fa-sign-out-alt"></i></span>
                     <span>Logout</span>
                 </a>
             </div>
@@ -62,14 +60,8 @@
         <main class="main-content">
             <!-- Top Bar -->
             <header class="top-bar">
-                <div class="search-bar">
-                    <input type="text" placeholder="Search reviews by customer, helper, booking ID...">
-                </div>
+                <div></div>
                 <div class="top-bar-right">
-                    <div class="notification-icon">
-                        🔔
-                        <span class="badge">5</span>
-                    </div>
                     <div class="admin-profile">
                         <div class="admin-avatar">AD</div>
                         <span>Admin User</span>
@@ -84,340 +76,134 @@
                         <h1>Reviews & Ratings</h1>
                         <p>Monitor customer feedback and service quality</p>
                     </div>
-                    <button class="btn-primary">Download Report</button>
                 </div>
 
                 <!-- Rating Stats -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-header">
-                            <span class="stat-icon orange">⭐</span>
-                            <span class="stat-trend positive">+0.2</span>
+                            <span class="stat-icon orange"><i class="fa-solid fa-star"></i></span>
                         </div>
-                        <div class="stat-value">4.7</div>
+                        <div class="stat-value" id="avg-rating-value">4.8</div>
                         <div class="stat-label">Average Rating</div>
-                        <div class="stat-footer">Across all services</div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-header">
-                            <span class="stat-icon green">📝</span>
-                            <span class="stat-trend positive">+15%</span>
+                            <span class="stat-icon green"><i class="fa-solid fa-comment-dots"></i></span>
                         </div>
-                        <div class="stat-value">2,456</div>
+                        <div class="stat-value" id="total-reviews-count">2,456</div>
                         <div class="stat-label">Total Reviews</div>
-                        <div class="stat-footer">+234 this month</div>
                     </div>
 
                     <div class="stat-card">
                         <div class="stat-header">
-                            <span class="stat-icon blue">👍</span>
-                            <span class="stat-trend positive">+3%</span>
+                            <span class="stat-icon blue"><i class="fa-solid fa-thumbs-up"></i></span>
                         </div>
-                        <div class="stat-value">92%</div>
+                        <div class="stat-value" id="positive-reviews-percent">94%</div>
                         <div class="stat-label">Positive Reviews</div>
-                        <div class="stat-footer">4-5 star ratings</div>
                     </div>
+                </div>
 
-                    <div class="stat-card">
-                        <div class="stat-header">
-                            <span class="stat-icon purple">⚠️</span>
-                            <span class="stat-trend positive">-2%</span>
+                <!-- Reviews Content Section -->
+                <div class="reviews-container">
+                    <!-- Left Column: Distribution -->
+                    <aside class="rating-distribution">
+                        <h3>Rating Distribution</h3>
+                        <div class="rating-bar-row">
+                            <span class="rating-label">5 <i class="fa-solid fa-star"></i></span>
+                            <div class="rating-progress-bg">
+                                <div class="rating-progress-fill" id="bar-5" style="width: 0%;"></div>
+                            </div>
+                            <span class="rating-count" id="label-5">0</span>
                         </div>
-                        <div class="stat-value">12</div>
-                        <div class="stat-label">Flagged Reviews</div>
-                        <div class="stat-footer">Needs attention</div>
-                    </div>
-                </div>
-
-                <!-- Rating Distribution -->
-                <div class="content-card mb-2">
-                    <div class="card-header">
-                        <h2>Rating Distribution</h2>
-                    </div>
-                    <div class="p-2">
-                        <div class="d-flex flex-column gap-1">
-                            <div class="d-flex align-center gap-1">
-                                <span class="fw-600 w-80">5 Stars</span>
-                                <div class="flex-1 height-24 bg-mist rounded-12 overflow-hidden">
-                                    <div class="w-68 h-100 bg-gold"></div>
-                                </div>
-                                <span class="fw-600 text-right w-60">1,672 (68%)</span>
+                        <div class="rating-bar-row">
+                            <span class="rating-label">4 <i class="fa-solid fa-star"></i></span>
+                            <div class="rating-progress-bg">
+                                <div class="rating-progress-fill" id="bar-4" style="width: 0%;"></div>
                             </div>
-                            <div class="d-flex align-center gap-1">
-                                <span class="fw-600 w-80">4 Stars</span>
-                                <div class="flex-1 height-24 bg-mist rounded-12 overflow-hidden">
-                                    <div class="w-15 h-100 bg-gold"></div>
-                                </div>
-                                <span class="fw-600 text-right w-60">368 (15%)</span>
-                            </div>
-                            <div class="d-flex align-center gap-1">
-                                <span class="fw-600 w-80">3 Stars</span>
-                                <div class="flex-1 height-24 bg-mist rounded-12 overflow-hidden">
-                                    <div class="w-10 h-100 bg-gold"></div>
-                                </div>
-                                <span class="fw-600 text-right w-60">245 (10%)</span>
-                            </div>
-                            <div class="d-flex align-center gap-1">
-                                <span class="fw-600 w-80">2 Stars</span>
-                                <div class="flex-1 height-24 bg-mist rounded-12 overflow-hidden">
-                                    <div class="w-05 h-100 bg-gold"></div>
-                                </div>
-                                <span class="fw-600 text-right w-60">123 (5%)</span>
-                            </div>
-                            <div class="d-flex align-center gap-1">
-                                <span class="fw-600 w-80">1 Star</span>
-                                <div class="flex-1 height-24 bg-mist rounded-12 overflow-hidden">
-                                    <div class="w-02 h-100 bg-gold"></div>
-                                </div>
-                                <span class="fw-600 text-right w-60">49 (2%)</span>
-                            </div>
+                            <span class="rating-count" id="label-4">0</span>
                         </div>
-                    </div>
-                </div>
+                        <div class="rating-bar-row">
+                            <span class="rating-label">3 <i class="fa-solid fa-star"></i></span>
+                            <div class="rating-progress-bg">
+                                <div class="rating-progress-fill" id="bar-3" style="width: 0%;"></div>
+                            </div>
+                            <span class="rating-count" id="label-3">0</span>
+                        </div>
+                        <div class="rating-bar-row">
+                            <span class="rating-label">2 <i class="fa-solid fa-star"></i></span>
+                            <div class="rating-progress-bg">
+                                <div class="rating-progress-fill" id="bar-2" style="width: 0%;"></div>
+                            </div>
+                            <span class="rating-count" id="label-2">0</span>
+                        </div>
+                        <div class="rating-bar-row">
+                            <span class="rating-label">1 <i class="fa-solid fa-star"></i></span>
+                            <div class="rating-progress-bg">
+                                <div class="rating-progress-fill" id="bar-1" style="width: 0%;"></div>
+                            </div>
+                            <span class="rating-count" id="label-1">0</span>
+                        </div>
 
-                <!-- Filter Bar -->
-                <div class="filter-bar">
-                    <div class="filter-group">
-                        <button class="filter-btn active">All Reviews (2,456)</button>
-                        <button class="filter-btn">5 Stars (1,672)</button>
-                        <button class="filter-btn">4 Stars (590)</button>
-                        <button class="filter-btn">1-3 Stars (194)</button>
-                        <button class="filter-btn">Flagged (12)</button>
-                    </div>
-                    <div class="filter-group">
-                        <select class="filter-select">
-                            <option>All Services</option>
-                            <option>Cooking</option>
-                            <option>Cleaning</option>
-                            <option>Other</option>
-                        </select>
-                        <select class="filter-select">
-                            <option>Sort by: Recent</option>
-                            <option>Highest Rating</option>
-                            <option>Lowest Rating</option>
-                        </select>
-                    </div>
-                </div>
+                    </aside>
 
-                <!-- Reviews List -->
-                <div class="d-grid gap-15">
-                    <!-- Review Card 1 -->
-                    <div class="content-card">
-                        <div class="p-15">
-                            <div class="d-flex justify-between align-start mb-1">
-                                <div class="d-flex gap-1 align-center">
-                                    <div class="user-avatar size-48 text-12">SR
+                    <!-- Right Column: Review Feed -->
+                    <div class="review-list">
+
+
+                        <div id="reviews-list-container" class="d-grid gap-15">
+                            <!-- Review Card 1 -->
+                            <div class="review-card">
+                                <div class="review-header">
+                                    <div class="reviewer-info">
+                                        <div class="user-avatar">SR</div>
+                                        <div>
+                                            <h4>Suresh Reddy</h4>
+                                            <span class="text-muted text-sm">Customer • #BK-2024</span>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <div class="fw-600 text-dark">Suresh Reddy</div>
-                                        <div class="text-muted text-sm">Customer</div>
+                                    <div class="review-rating">
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
+                                        <i class="fa-solid fa-star"></i>
                                     </div>
                                 </div>
-                                <div class="text-right">
-                                    <div class="text-lg mb-025 text-gold">⭐⭐⭐⭐⭐</div>
-                                    <div class="text-muted text-sm">Dec 4, 2024</div>
-                                </div>
-                            </div>
-                            <div class="bg-mist p-1 rounded-8 mb-1">
-                                <div class="text-dark lh-16">
+                                <div class="review-content">
                                     "Excellent tutoring service! Kavita is very knowledgeable and patient. My daughter's
                                     math grades have improved significantly. Highly suggest for anyone looking for
                                     quality home tuition."
                                 </div>
-                            </div>
-                            <div class="d-flex justify-between align-center flex-wrap gap-1">
-                                <div class="d-flex gap-2 text-muted text-sm">
-                                    <span>📋 Booking: #HB2024003</span>
-                                    <span>🛠️ Helper: Kavita Menon</span>
-                                    <span>📚 Service: Tutoring</span>
+                                <div class="review-meta">
+                                    <div class="d-flex gap-15 align-center">
+                                        <span title="Helper"><i class="fa-solid fa-user-tie"></i> Kavita Menon</span>
+                                        <span title="Service"><i class="fa-solid fa-book"></i> Tutoring</span>
+                                        <span>Dec 4, 2024</span>
+                                    </div>
+                                    <div class="review-actions">
+                                        <button class="btn-review-action"><i class="fa-solid fa-thumbs-up"></i>
+                                            42</button>
+                                        <button class="btn-review-action"><i class="fa-solid fa-flag"></i></button>
+                                        <button class="btn-review-action btn-delete"><i
+                                                class="fa-solid fa-trash"></i></button>
+                                    </div>
                                 </div>
-                                <div class="d-flex gap-05">
-                                    <button class="btn-action" title="Helpful">👍 42</button>
-                                    <button class="btn-action" title="Flag">🚩</button>
-                                    <button class="btn-action" title="Delete">🗑️</button>
-                                </div>
                             </div>
-                        </div>
-                    </div>
 
-                    <!-- Review Card 2 -->
-                    <div class="content-card">
-                        <div class="p-15">
-                            <div class="d-flex justify-between align-start mb-1">
-                                <div class="d-flex gap-1 align-center">
-                                    <div class="user-avatar size-48 text-12">PS
-                                    </div>
-                                    <div>
-                                        <div class="fw-600 text-dark">Priya Sharma</div>
-                                        <div class="text-muted text-sm">Customer</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-lg mb-025 text-gold">⭐⭐⭐⭐</div>
-                                    <div class="text-muted text-sm">Dec 3, 2024</div>
-                                </div>
-                            </div>
-                            <div class="bg-mist p-1 rounded-8 mb-1">
-                                <div class="text-dark lh-16">
-                                    "Good cooking service. Priya is punctual and the food tasted great, just like home!
-                                    Minor point: would have liked a bit more variety in the menu, but overall very
-                                    satisfied."
-                                </div>
-                            </div>
-                            <div class="d-flex justify-between align-center flex-wrap gap-1">
-                                <div class="d-flex gap-2 text-muted text-sm">
-                                    <span>📋 Booking: #HB2024006</span>
-                                    <span>🛠️ Helper: Meena Verma</span>
-                                    <span>🍳 Service: Cooking</span>
-                                </div>
-                                <div class="d-flex gap-05">
-                                    <button class="btn-action" title="Helpful">👍 18</button>
-                                    <button class="btn-action" title="Flag">🚩</button>
-                                    <button class="btn-action" title="Delete">🗑️</button>
-                                </div>
-                            </div>
+                            <!-- More cards would follow similar pattern -->
                         </div>
-                    </div>
 
-                    <!-- Review Card 3 -->
-                    <div class="content-card">
-                        <div class="p-15">
-                            <div class="d-flex justify-between align-start mb-1">
-                                <div class="d-flex gap-1 align-center">
-                                    <div class="user-avatar size-48 text-12">AN
-                                    </div>
-                                    <div>
-                                        <div class="fw-600 text-dark">Arjun Nair</div>
-                                        <div class="text-muted text-sm">Customer</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-lg mb-025 text-gold">⭐⭐⭐⭐⭐</div>
-                                    <div class="text-muted text-sm">Dec 2, 2024</div>
-                                </div>
-                            </div>
-                            <div class="bg-mist p-1 rounded-8 mb-1">
-                                <div class="text-dark lh-16">
-                                    "Professional and quick! Suresh arrived on time, fixed the electrical issue within
-                                    minutes, and even checked other points. Very satisfied with the service."
-                                </div>
-                            </div>
-                            <div class="d-flex justify-between align-center flex-wrap gap-1">
-                                <div class="d-flex gap-2 text-muted text-sm">
-                                    <span>📋 Booking: #HB2024012</span>
-                                    <span>🛠️ Helper: Suresh Kumar</span>
-                                    <span>⚡ Service: Electrician</span>
-                                </div>
-                                <div class="d-flex gap-05">
-                                    <button class="btn-action" title="Helpful">👍 25</button>
-                                    <button class="btn-action" title="Flag">🚩</button>
-                                    <button class="btn-action" title="Delete">🗑️</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Review Card 4 - Lower Rating -->
-                    <div class="content-card bl-warning">
-                        <div class="p-15">
-                            <div class="d-flex justify-between align-start mb-1">
-                                <div class="d-flex gap-1 align-center">
-                                    <div class="user-avatar size-48 text-12">VS
-                                    </div>
-                                    <div>
-                                        <div class="fw-600 text-dark">Vikram Singh</div>
-                                        <div class="text-muted text-sm">Customer</div>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-lg mb-025 text-gold">⭐⭐⭐⭐☆</div>
-                                    <div class="text-muted text-sm">Dec 1, 2024</div>
-                                </div>
-                            </div>
-                            <div class="bg-mist p-1 rounded-8 mb-1">
-                                <div class="text-dark lh-16">
-                                    "Good service. Food was tasty. Would have preferred a bit more spice
-                                    but overall
-                                    satisfied with the experience."
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2 text-muted text-sm">
-                                <span>📋 Booking: #HB2023985</span>
-                                <span>🛠️ Helper: Priya Sharma</span>
-                                <span>🍳 Service: Cooking</span>
-                            </div>
-                            <div class="d-flex gap-05">
-                                <button class="btn-action" title="Helpful">👍 15</button>
-                                <button class="btn-action" title="Flag">🚩</button>
-                                <button class="btn-action" title="Delete">🗑️</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Review Card 5 - Flagged -->
-                    <div class="content-card bl-danger">
-                        <div class="p-15">
-                            <div class="d-flex justify-between align-start mb-1">
-                                <div class="d-flex gap-1 align-center">
-                                    <div class="user-avatar size-48 text-12">AK
-                                    </div>
-                                    <div>
-                                        <div class="fw-600 text-dark">Anonymous User</div>
-                                        <div class="text-muted text-sm">Customer</div>
-                                    </div>
-                                    <span class="badge-status suspended">⚠️ Flagged</span>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-lg mb-025 text-gold">⭐⭐☆☆☆</div>
-                                    <div class="text-muted text-sm">Nov 28, 2024</div>
-                                </div>
-                            </div>
-                            <div class="bg-danger-light p-1 rounded-8 mb-1">
-                                <div class="text-dark lh-16">
-                                    "Service was not up to expectations. Helper arrived late and work
-                                    quality was poor."
-                                </div>
-                            </div>
-                            <div class="bg-warning-light p-1 rounded-8 mb-1">
-                                <div class="fw-600 text-orange mb-05">⚠️ Admin Note:
-                                </div>
-                                <div class="text-orange text-sm">
-                                    Flagged for investigation. Helper has been contacted and customer
-                                    complaint is being
-                                    reviewed.
-                                </div>
-                            </div>
-                            <div class="d-flex justify-between align-center flex-wrap gap-1">
-                                <div class="d-flex gap-2 text-muted text-sm">
-                                    <span>📋 Booking: #HB2023945</span>
-                                    <span>🛠️ Helper: Arjun Nair</span>
-                                    <span>🪚 Service: Carpenter</span>
-                                </div>
-                                <div class="d-flex gap-05">
-                                    <button class="btn-primary bg-success text-white p-05-1 rounded-6">Resolve</button>
-                                    <button class="btn-primary bg-danger text-white p-05-1 rounded-6">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pagination -->
-                <div class="mt-2 text-center">
-                    <div class="pagination">
-                        <button class="pagination-btn">« Previous</button>
-                        <button class="pagination-btn active">1</button>
-                        <button class="pagination-btn">2</button>
-                        <button class="pagination-btn">3</button>
-                        <button class="pagination-btn">4</button>
-                        <button class="pagination-btn">5</button>
-                        <button class="pagination-btn">Next »</button>
                     </div>
                 </div>
             </div>
         </main>
     </div>
+    <script src="../../js/api-config.js"></script>
+    <script src="../../js/admin/admin-modal.js"></script>
+    <script src="../../js/admin/admin-reviews.js" defer></script>
 </body>
 
 </html>

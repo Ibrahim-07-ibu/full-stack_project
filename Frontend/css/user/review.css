@@ -123,8 +123,9 @@ body {
 
 .rating-stars {
     display: flex;
+    flex-direction: row-reverse;
     gap: 0.25rem;
-    justify-content: flex-start;
+    justify-content: flex-end;
     margin-bottom: 1rem;
 }
 

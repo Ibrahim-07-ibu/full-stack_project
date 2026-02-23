@@ -2,10 +2,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.checkAuth();
   const userId = localStorage.getItem("user_id");
   const welcomeName = document.getElementById("welcome-name");
-
   const savedName = localStorage.getItem("user_name");
-  if (savedName) {
-    if (welcomeName) welcomeName.textContent = savedName;
+
+  if (savedName && welcomeName) {
+    welcomeName.textContent = savedName;
   }
   try {
     const response = await makeRequest(`/api/auth/profile`);

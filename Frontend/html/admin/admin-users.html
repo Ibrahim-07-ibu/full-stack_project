@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Users - HomeBuddy Admin</title>
-    <link rel="stylesheet" href="../../css/admin/admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/admin/admin-base.css">
+    <link rel="stylesheet" href="../../css/admin/admin-list.css">
 </head>
 
 <body>
@@ -13,46 +15,42 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <span class="logo-icon">🏠</span>
-                <h2>HomeBuddy Admin</h2>
+                <div class="logo-icon"><i class="fa-solid fa-house-chimney"></i></div>
+                <h2>HomeBuddy</h2>
             </div>
             <nav class="sidebar-nav">
                 <a href="admin-dashboard.html" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="admin-users.html" class="nav-item active">
-                    <span class="nav-icon">👥</span>
+                    <span class="nav-icon"><i class="fa-solid fa-users"></i></span>
                     <span>Users</span>
                 </a>
                 <a href="admin-helpers.html" class="nav-item">
-                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
                     <span>Helpers</span>
                 </a>
                 <a href="admin-bookings.html" class="nav-item">
-                    <span class="nav-icon">📋</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span>
                     <span>All Bookings</span>
                 </a>
                 <a href="admin-verification.html" class="nav-item">
-                    <span class="nav-icon">✓</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-check"></i></span>
                     <span>Verifications</span>
                 </a>
-                <a href="admin-payments.html" class="nav-item">
-                    <span class="nav-icon">💰</span>
-                    <span>Payments</span>
-                </a>
                 <a href="admin-reviews.html" class="nav-item">
-                    <span class="nav-icon">⭐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-star"></i></span>
                     <span>Reviews</span>
                 </a>
-                <a href="admin-settings.html" class="nav-item">
-                    <span class="nav-icon">⚙️</span>
-                    <span>Settings</span>
+                <a href="admin-services.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-tools"></i></span>
+                    <span>Services</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
-                <a href="admin-login.html" class="nav-item">
-                    <span class="nav-icon">🚪</span>
+                <a href="#" id="admin-logout-btn" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-sign-out-alt"></i></span>
                     <span>Logout</span>
                 </a>
             </div>
@@ -62,17 +60,11 @@
         <main class="main-content">
             <!-- Top Bar -->
             <header class="top-bar">
-                <div class="search-bar">
-                    <input type="text" placeholder="Search users by name, email, phone...">
-                </div>
+                <div class="top-bar-left"></div>
                 <div class="top-bar-right">
-                    <div class="notification-icon">
-                        🔔
-                        <span class="badge">5</span>
-                    </div>
                     <div class="admin-profile">
-                        <div class="admin-avatar">AD</div>
-                        <span>Admin User</span>
+                        <div class="admin-avatar">A</div>
+                        <span>Administrator</span>
                     </div>
                 </div>
             </header>
@@ -84,31 +76,13 @@
                         <h1>User Management</h1>
                         <p>Manage all registered customers on the platform</p>
                     </div>
-                    <button class="btn-primary">+ Add New User</button>
-                </div>
-
-                <!-- Filter Bar -->
-                <div class="filter-bar">
-                    <div class="filter-group">
-                        <button class="filter-btn active">All Users (1,245)</button>
-                        <button class="filter-btn">Active (1,128)</button>
-                        <button class="filter-btn">Inactive (87)</button>
-                        <button class="filter-btn">Suspended (30)</button>
-                    </div>
-                    <div class="filter-group">
-                        <select class="filter-select">
-                            <option>Sort by: Recent</option>
-                            <option>Name (A-Z)</option>
-                            <option>Name (Z-A)</option>
-                            <option>Most Bookings</option>
-                            <option>Registration Date</option>
-                        </select>
-                        <button class="btn-secondary">Export CSV</button>
-                    </div>
                 </div>
 
                 <!-- Users Table -->
                 <div class="content-card">
+                    <div class="card-header">
+                        <h2>All Registered Users</h2>
+                    </div>
                     <div class="table-container">
                         <table class="data-table">
                             <thead>
@@ -117,43 +91,21 @@
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Phone</th>
-                                    <th>Location</th>
-                                    <th>Bookings</th>
-                                    <th>Joined</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="users-table-body">
-                                <!-- Users will be loaded here -->
+                                <!-- Users will be loaded here via JS -->
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Pagination -->
-                    <!-- Removed static pagination for now -->
                 </div>
             </div>
         </main>
     </div>
+    <script src="../../js/api-config.js"></script>
+    <script src="../../js/admin/admin-modal.js"></script>
     <script src="../../js/admin/admin-users.js" defer></script>
-    </table>
-    </div>
-
-    <!-- Pagination -->
-    <div class="pagination">
-        <button class="pagination-btn">« Previous</button>
-        <button class="pagination-btn active">1</button>
-        <button class="pagination-btn">2</button>
-        <button class="pagination-btn">3</button>
-        <button class="pagination-btn">4</button>
-        <button class="pagination-btn">5</button>
-        <button class="pagination-btn">Next »</button>
-    </div>
-    </div>
-    </div>
-    </main>
-    </div>
 </body>
 
 </html>

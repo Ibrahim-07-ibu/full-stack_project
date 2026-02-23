@@ -1,24 +1,85 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import os
 import sys
+import logging
+from fastapi.staticfiles import StaticFiles
 
-# Backend/main.py is now in the root Backend/ folder
-# Ensure the parent of Backend is in path for absolute imports
-# Or use relative imports
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-app = FastAPI(title="HomeBuddy", version="64.0-ISOLATED")
+# Ensure Backend directory parts are in path
+backend_root = os.path.dirname(os.path.abspath(__file__))
+if backend_root not in sys.path:
+    sys.path.insert(0, backend_root)
+
+app = FastAPI(
+    title="HomeBuddy", 
+    version="55.0-RECOVERY",
+    redirect_slashes=False  # Crucial for Vercel/Netlify to prevent POST -> GET 307 redirects
+)
+
+# Mount static files
+static_dir = os.path.join(backend_root, "static")
+if not os.path.exists(static_dir):
+    os.makedirs(static_dir, exist_ok=True)
+
+app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+@app.get("/")
+def read_root():
+    return {"message": "HomeBuddy API is running", "version": "55.0-RECOVERY"}
+
+@app.api_route("/api/debug-path", methods=["GET", "POST"])
+async def debug_path(request: Request):
+    return {
+        "url": str(request.url),
+        "method": request.method,
+        "headers": dict(request.headers)
+    }
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=[
+        "https://ibuu-gvfn2snsa-maadys-projects.vercel.app",
+        "https://full-stack-project-iota-five.vercel.app",
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://127.0.0.1:8000"
+    ],
+    allow_credentials=True, # Changed to True as it's often needed for tokens
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Use relative imports within the package
-from .routers import users, bookings, providers, reviews, services, supports
+# Relative imports handled by index.py pathing
+from routers import users, bookings, providers, reviews, services, supports
+
+# Initialize Database on Startup
+from db.database import engine, Base
+import models.users, models.providers, models.services, models.bookings, models.reviews, models.supports
+
+@app.on_event("startup")
+def startup_event():
+    logger.info("Startup: Syncing database...")
+    try:
+        # Only sync if using real DB, SQLite in-memory doesn't need this
+        if "sqlite" not in str(engine.url):
+            Base.metadata.create_all(bind=engine)
+            logger.info("Database synchronized.")
+    except Exception as e:
+        logger.error(f"Post-startup DB sync failed: {e}")
+
+@app.get("/api/infra-test")
+def infra_test():
+    return {
+        "status": "ok", 
+        "message": "Backend Is Live", 
+        "db": str(engine.url).split("@")[-1] if "@" in str(engine.url) else "local"
+    }
 
 app.include_router(users.router)
 app.include_router(bookings.router)

@@ -32,7 +32,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 
       window.HB.showToast(`Welcome back, ${result.full_name}!`);
       setTimeout(() => {
-        window.location.href = "/Frontend/html/provider/provider-dashboard.html";
+        window.location.href = "provider-dashboard.html";
       }, 1000);
 
     } else {

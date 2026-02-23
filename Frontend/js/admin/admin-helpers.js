@@ -5,66 +5,80 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
+    // Logout Functionality
+    const logoutBtn = document.getElementById('admin-logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('admin_logged_in');
+            localStorage.removeItem('role');
+            localStorage.removeItem('token');
+            window.location.href = '../../../index.html';
+        });
+    }
+
     try {
         const response = await makeRequest('/api/providers/all');
+        if (!response.ok) throw new Error('Failed to fetch providers');
         const providers = await response.json();
 
         const tbody = document.getElementById('helpers-table-body');
+        if (!tbody) return;
         tbody.innerHTML = '';
 
         if (providers.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="9" class="text-center">No helpers found.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center">No providers found.</td></tr>';
             return;
         }
 
         providers.forEach(provider => {
             const tr = document.createElement('tr');
-            // Mapping fields:
-            // full_name -> Name
-            // specialization -> Service
-            // years_experience -> Experience
-            // No direct rate/rating in easy provider schema yet, usage placeholders.
-
             tr.innerHTML = `
-                <td>#H${provider.id}</td>
+                <td>#P-${provider.id}</td>
                 <td>
-                    <div class="user-cell">
-                        <div class="user-avatar">${getInitials(provider.full_name)}</div>
-                        <div>
-                            <div>${provider.full_name}</div>
-                            <div class="user-subtitle">✓ Verified</div>
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                        <div class="admin-avatar" style="width: 32px; height: 32px; font-size: 0.75rem;">${getInitials(provider.full_name)}</div>
+                        <span style="font-weight: 600;">${provider.full_name}</span>
                     </div>
                 </td>
-                <td>${provider.specialization || 'Service'}</td>
-                <td>${provider.years_experience || 0} years</td>
-                <td>-</td> <!-- Rate not in schema -->
+                <td>${provider.specialization || 'General Service'}</td>
+                <td>${provider.years_experience || 0} Years</td>
                 <td>
-                    <div class="rating-cell">
-                        <span class="rating-stars">⭐⭐⭐⭐⭐</span>
-                        <span class="rating-value">5.0 (New)</span>
+                    <div style="color: #f1c40f; font-size: 0.85rem;">
+                        <i class="fa-solid fa-star"></i> 5.0
                     </div>
                 </td>
-                <td>0</td> <!-- Bookings count not available -->
-                <td><span class="badge-status verified">Verified</span></td>
                 <td>
-                    <div class="action-buttons">
-                        <button class="btn-action" title="View">👁️</button>
-                        <button class="btn-action" title="Edit">✏️</button>
-                        <button class="btn-action" title="Suspend">🚫</button>
-                    </div>
+                    <span class="status-badge ${provider.is_verified ? 'status-verified' : 'status-pending'}">
+                        ${provider.is_verified ? 'Verified' : 'Pending'}
+                    </span>
                 </td>
             `;
             tbody.appendChild(tr);
         });
 
     } catch (error) {
-        console.error('Error fetching helpers:', error);
-        document.getElementById('helpers-table-body').innerHTML = '<tr><td colspan="9">Error loading data.</td></tr>';
+        console.error('Error fetching providers:', error);
+        const tbody = document.getElementById('helpers-table-body');
+        if (tbody) tbody.innerHTML = '<tr><td colspan="7">Error loading provider data.</td></tr>';
     }
 });
 
+async function deleteProvider(id) {
+    const confirmed = await showConfirm('Are you sure you want to delete this provider?', 'danger');
+    if (!confirmed) return;
+    try {
+        const response = await makeRequest(`/api/providers/delete/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+            showModal('Provider deleted successfully.', 'success');
+            setTimeout(() => location.reload(), 1500);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
 function getInitials(name) {
-    if (!name) return 'H';
+    if (!name) return 'P';
     return name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
 }

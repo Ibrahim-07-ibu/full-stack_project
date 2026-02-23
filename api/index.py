@@ -1,57 +1,45 @@
 import os
 import sys
-import json
 import traceback
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-# 1. IMMEDIATE PATH INJECTION
-# index.py is in api/
-# project_root is the parent of api/
+# Pathing setup - Be extremely careful with relative paths on Vercel
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(current_dir)
+backend_dir = os.path.join(project_root, "Backend")
 
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
-
-# Force Backend to be recognizable
-backend_dir = os.path.join(project_root, "Backend")
 if backend_dir not in sys.path:
     sys.path.insert(0, backend_dir)
 
-def handler(request, context=None):
-    """
-    Bulletproof entry point for Vercel Python runtime.
-    Moves all complex imports inside the handler to capture every possible crash.
-    """
-    try:
-        # Delayed framework imports
-        from fastapi import FastAPI
-        from mangum import Mangum
-        from Backend.main import app as fastapi_app
-
-        # Standard Mangum flow
-        # In Vercel, 'request' is a dictionary containing the event data
-        asgi_handler = Mangum(fastapi_app, lifespan="off")
-        return asgi_handler(request, context)
-
-    except Exception as e:
-        # If ANY import or initialization fails, return a JSON error instead of a 500
-        error_info = {
-            "status": "error",
-            "message": f"Critical Gateway Failure: {str(e)}",
-            "trace": traceback.format_exc(),
-            "env": {
-                "cwd": os.getcwd(),
-                "sys_path": sys.path[:5],
-                "python_version": sys.version
-            }
-        }
-        
+def create_error_app(error_msg, trace):
+    error_app = FastAPI(title="Error Recovery App")
+    error_app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"], # In error mode, allow all for easier debugging
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    @error_app.get("/api/infra-test")
+    def error_report():
         return {
-            "statusCode": 500,
-            "headers": {"Content-Type": "application/json"},
-            "body": json.dumps(error_info)
+            "status": "LOAD_ERROR", 
+            "error": error_msg, 
+            "trace": trace,
+            "sys_path": sys.path[:5]
         }
+    @error_app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+    def catch_all(path: str):
+        return {"detail": "Backend failed to load", "error": error_msg}
+    return error_app
 
-# For Vercel direct discovery, we also export an 'app' instance
-# but the 'builds' configuration in vercel.json prioritizes the handler.
-app = handler
+try:
+    from Backend.main import app as backend_app
+    app = backend_app
+except Exception as e:
+    app = create_error_app(str(e), traceback.format_exc())
+
+# End of file

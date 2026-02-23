@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Bookings - HomeBuddy Admin</title>
-    <link rel="stylesheet" href="../../css/admin/admin-styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/admin/admin-base.css">
+    <link rel="stylesheet" href="../../css/admin/admin-bookings.css">
 </head>
 
 <body>
@@ -18,41 +20,37 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="admin-dashboard.html" class="nav-item">
-                    <span class="nav-icon">📊</span>
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
                     <span>Dashboard</span>
                 </a>
                 <a href="admin-users.html" class="nav-item">
-                    <span class="nav-icon">👥</span>
+                    <span class="nav-icon"><i class="fa-solid fa-users"></i></span>
                     <span>Users</span>
                 </a>
                 <a href="admin-helpers.html" class="nav-item">
-                    <span class="nav-icon">🛠️</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
                     <span>Helpers</span>
                 </a>
                 <a href="admin-bookings.html" class="nav-item active">
-                    <span class="nav-icon">📋</span>
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span>
                     <span>All Bookings</span>
                 </a>
                 <a href="admin-verification.html" class="nav-item">
-                    <span class="nav-icon">✓</span>
+                    <span class="nav-icon"><i class="fa-solid fa-user-check"></i></span>
                     <span>Verifications</span>
                 </a>
-                <a href="admin-payments.html" class="nav-item">
-                    <span class="nav-icon">💰</span>
-                    <span>Payments</span>
-                </a>
                 <a href="admin-reviews.html" class="nav-item">
-                    <span class="nav-icon">⭐</span>
+                    <span class="nav-icon"><i class="fa-solid fa-star"></i></span>
                     <span>Reviews</span>
                 </a>
-                <a href="admin-settings.html" class="nav-item">
-                    <span class="nav-icon">⚙️</span>
-                    <span>Settings</span>
+                <a href="admin-services.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-tools"></i></span>
+                    <span>Services</span>
                 </a>
             </nav>
             <div class="sidebar-footer">
-                <a href="admin-login.html" class="nav-item">
-                    <span class="nav-icon">🚪</span>
+                <a href="#" class="nav-item" id="admin-logout-btn">
+                    <span class="nav-icon"><i class="fa-solid fa-sign-out-alt"></i></span>
                     <span>Logout</span>
                 </a>
             </div>
@@ -62,14 +60,8 @@
         <main class="main-content">
             <!-- Top Bar -->
             <header class="top-bar">
-                <div class="search-bar">
-                    <input type="text" placeholder="Search bookings by ID, customer, helper...">
-                </div>
+                <div class="top-bar-left"></div>
                 <div class="top-bar-right">
-                    <div class="notification-icon">
-                        🔔
-                        <span class="badge">5</span>
-                    </div>
                     <div class="admin-profile">
                         <div class="admin-avatar">AD</div>
                         <span>Admin User</span>
@@ -84,58 +76,29 @@
                         <h1>All Bookings</h1>
                         <p>Manage and monitor all service bookings</p>
                     </div>
-                    <button class="btn-primary">Export Report</button>
                 </div>
 
                 <!-- Stats Overview -->
                 <div class="quick-stats">
                     <div class="quick-stat-item">
-                        <div class="quick-stat-number">128</div>
+                        <div class="quick-stat-number" id="active-bookings-count">0</div>
                         <div class="quick-stat-label">Active Bookings</div>
                     </div>
                     <div class="quick-stat-item">
-                        <div class="quick-stat-number">87</div>
+                        <div class="quick-stat-number" id="today-bookings-count">0</div>
                         <div class="quick-stat-label">Today's Bookings</div>
                     </div>
                     <div class="quick-stat-item">
-                        <div class="quick-stat-number">2,847</div>
+                        <div class="quick-stat-number" id="total-bookings-count">0</div>
                         <div class="quick-stat-label">Total Bookings</div>
                     </div>
                     <div class="quick-stat-item">
-                        <div class="quick-stat-number">₹8.5L</div>
+                        <div class="quick-stat-number" id="total-value-amount">₹0</div>
                         <div class="quick-stat-label">Total Value</div>
                     </div>
                 </div>
 
-                <!-- Filter Bar -->
-                <div class="filter-bar">
-                    <div class="filter-group">
-                        <button class="filter-btn active">All (2,847)</button>
-                        <button class="filter-btn">New (45)</button>
-                        <button class="filter-btn">Accepted (128)</button>
-                        <button class="filter-btn">In Progress (67)</button>
-                        <button class="filter-btn">Completed (2,587)</button>
-                        <button class="filter-btn">Cancelled (20)</button>
-                    </div>
-                    <div class="filter-group">
-                        <select class="filter-select">
-                            <option>All Services</option>
-                            <option>Cooking</option>
-                            <option>Cleaning</option>
-                            <option>Tutoring</option>
-                            <option>Electrician</option>
-                            <option>Plumber</option>
-                            <option>Other</option>
-                        </select>
-                        <select class="filter-select">
-                            <option>Sort by: Recent</option>
-                            <option>Oldest First</option>
-                            <option>Highest Value</option>
-                            <option>By Customer</option>
-                        </select>
-                        <button class="btn-secondary">Export CSV</button>
-                    </div>
-                </div>
+
 
                 <!-- Bookings Table -->
                 <div class="content-card">
@@ -151,10 +114,9 @@
                                     <th>Location</th>
                                     <th>Amount</th>
                                     <th>Status</th>
-                                    <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="bookings-table-body">
                                 <tr>
                                     <td>#HB2024001</td>
                                     <td>
@@ -169,21 +131,14 @@
                                             <span>Priya Sharma</span>
                                         </div>
                                     </td>
-                                    <td>🍳 Cooking</td>
+                                    <td><i class="fa-solid fa-utensils"></i> Cooking</td>
                                     <td>
                                         <div>Dec 5, 2024</div>
                                         <div class="user-subtitle">2:00 PM</div>
                                     </td>
                                     <td>Neelankarai</td>
-                                    <td>₹600</td>
-                                    <td><span class="badge-status new">New</span></td>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <button class="btn-action" title="View">👁️</button>
-                                            <button class="btn-action" title="Edit">✏️</button>
-                                            <button class="btn-action" title="Cancel">🚫</button>
-                                        </div>
-                                    </td>
+                                    <td>₹1,200</td>
+                                    <td><span class="badge-status accepted">Accepted</span></td>
                                 </tr>
 
                                 <tr>
@@ -200,7 +155,7 @@
                                             <span>Ramesh Gupta</span>
                                         </div>
                                     </td>
-                                    <td>🧹 Cleaning</td>
+                                    <td><i class="fa-solid fa-broom"></i> Cleaning</td>
                                     <td>
                                         <div>Dec 5, 2024</div>
                                         <div class="user-subtitle">10:00 AM</div>
@@ -210,9 +165,12 @@
                                     <td><span class="badge-status accepted">Accepted</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn-action" title="View">👁️</button>
-                                            <button class="btn-action" title="Edit">✏️</button>
-                                            <button class="btn-action" title="Track">📍</button>
+                                            <button class="btn-action" title="View"><i
+                                                    class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-action" title="Edit"><i
+                                                    class="fa-solid fa-edit"></i></button>
+                                            <button class="btn-action" title="Track"><i
+                                                    class="fa-solid fa-location-dot"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -231,7 +189,7 @@
                                             <span>Kavita Menon</span>
                                         </div>
                                     </td>
-                                    <td>📚 Tutoring</td>
+                                    <td><i class="fa-solid fa-book"></i> Tutoring</td>
                                     <td>
                                         <div>Dec 4, 2024</div>
                                         <div class="user-subtitle">4:00 PM</div>
@@ -241,9 +199,12 @@
                                     <td><span class="badge-status completed">Completed</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn-action" title="View">👁️</button>
-                                            <button class="btn-action" title="Receipt">🧾</button>
-                                            <button class="btn-action" title="Review">⭐</button>
+                                            <button class="btn-action" title="View"><i
+                                                    class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-action" title="Receipt"><i
+                                                    class="fa-solid fa-receipt"></i></button>
+                                            <button class="btn-action" title="Review"><i
+                                                    class="fa-solid fa-star"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -262,7 +223,7 @@
                                             <span>Arjun Nair</span>
                                         </div>
                                     </td>
-                                    <td>🔧 Plumber</td>
+                                    <td><i class="fa-solid fa-faucet"></i> Plumber</td>
                                     <td>
                                         <div>Dec 5, 2024</div>
                                         <div class="user-subtitle">11:00 AM</div>
@@ -272,9 +233,12 @@
                                     <td><span class="badge-status accepted">Accepted</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn-action" title="View">👁️</button>
-                                            <button class="btn-action" title="Edit">✏️</button>
-                                            <button class="btn-action" title="Track">📍</button>
+                                            <button class="btn-action" title="View"><i
+                                                    class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-action" title="Edit"><i
+                                                    class="fa-solid fa-edit"></i></button>
+                                            <button class="btn-action" title="Track"><i
+                                                    class="fa-solid fa-location-dot"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -293,7 +257,7 @@
                                             <span>Lakshmi K</span>
                                         </div>
                                     </td>
-                                    <td>👶 Babysitting</td>
+                                    <td><i class="fa-solid fa-baby"></i> Babysitting</td>
                                     <td>
                                         <div>Dec 6, 2024</div>
                                         <div class="user-subtitle">6:00 PM</div>
@@ -303,9 +267,12 @@
                                     <td><span class="badge-status new">New</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn-action" title="View">👁️</button>
-                                            <button class="btn-action" title="Edit">✏️</button>
-                                            <button class="btn-action" title="Cancel">🚫</button>
+                                            <button class="btn-action" title="View"><i
+                                                    class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-action" title="Edit"><i
+                                                    class="fa-solid fa-edit"></i></button>
+                                            <button class="btn-action" title="Cancel"><i
+                                                    class="fa-solid fa-ban"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -324,7 +291,7 @@
                                             <span>Priya Sharma</span>
                                         </div>
                                     </td>
-                                    <td>🍳 Cooking</td>
+                                    <td><i class="fa-solid fa-utensils"></i> Cooking</td>
                                     <td>
                                         <div>Dec 4, 2024</div>
                                         <div class="user-subtitle">7:00 PM</div>
@@ -334,9 +301,12 @@
                                     <td><span class="badge-status completed">Completed</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn-action" title="View">👁️</button>
-                                            <button class="btn-action" title="Receipt">🧾</button>
-                                            <button class="btn-action" title="Review">⭐</button>
+                                            <button class="btn-action" title="View"><i
+                                                    class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-action" title="Receipt"><i
+                                                    class="fa-solid fa-receipt"></i></button>
+                                            <button class="btn-action" title="Review"><i
+                                                    class="fa-solid fa-star"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -355,7 +325,7 @@
                                             <span>Suresh Kumar</span>
                                         </div>
                                     </td>
-                                    <td>⚡ Electrician</td>
+                                    <td><i class="fa-solid fa-bolt"></i> Electrician</td>
                                     <td>
                                         <div>Dec 3, 2024</div>
                                         <div class="user-subtitle">3:00 PM</div>
@@ -365,9 +335,12 @@
                                     <td><span class="badge-status completed">Completed</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn-action" title="View">👁️</button>
-                                            <button class="btn-action" title="Receipt">🧾</button>
-                                            <button class="btn-action" title="Review">⭐</button>
+                                            <button class="btn-action" title="View"><i
+                                                    class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-action" title="Receipt"><i
+                                                    class="fa-solid fa-receipt"></i></button>
+                                            <button class="btn-action" title="Review"><i
+                                                    class="fa-solid fa-star"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -386,7 +359,7 @@
                                             <span>Meena Verma</span>
                                         </div>
                                     </td>
-                                    <td>👴 Elder Care</td>
+                                    <td><i class="fa-solid fa-person-cane"></i> Elder Care</td>
                                     <td>
                                         <div>Dec 5, 2024</div>
                                         <div class="user-subtitle">9:00 AM</div>
@@ -396,9 +369,12 @@
                                     <td><span class="badge-status accepted">Accepted</span></td>
                                     <td>
                                         <div class="action-buttons">
-                                            <button class="btn-action" title="View">👁️</button>
-                                            <button class="btn-action" title="Edit">✏️</button>
-                                            <button class="btn-action" title="Track">📍</button>
+                                            <button class="btn-action" title="View"><i
+                                                    class="fa-solid fa-eye"></i></button>
+                                            <button class="btn-action" title="Edit"><i
+                                                    class="fa-solid fa-edit"></i></button>
+                                            <button class="btn-action" title="Track"><i
+                                                    class="fa-solid fa-location-dot"></i></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -406,22 +382,14 @@
                         </table>
                     </div>
 
-                    <!-- Pagination -->
-                    <div class="pagination">
-                        <button class="pagination-btn">« Previous</button>
-                        <button class="pagination-btn active">1</button>
-                        <button class="pagination-btn">2</button>
-                        <button class="pagination-btn">3</button>
-                        <button class="pagination-btn">4</button>
-                        <button class="pagination-btn">5</button>
-                        <button class="pagination-btn">...</button>
-                        <button class="pagination-btn">50</button>
-                        <button class="pagination-btn">Next »</button>
-                    </div>
+
                 </div>
             </div>
         </main>
     </div>
+    <script src="../../js/api-config.js"></script>
+    <script src="../../js/admin/admin-modal.js"></script>
+    <script src="../../js/admin/admin-bookings.js" defer></script>
 </body>
 
 </html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - HomeBuddy Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="../../css/admin/admin-base.css">
+    <link rel="stylesheet" href="../../css/admin/admin-services.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon"><i class="fa-solid fa-house-chimney"></i></div>
+                <h2>HomeBuddy</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="admin-dashboard.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-chart-line"></i></span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="admin-users.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-users"></i></span>
+                    <span>Users</span>
+                </a>
+                <a href="admin-helpers.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-user-gear"></i></span>
+                    <span>Helpers</span>
+                </a>
+                <a href="admin-bookings.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-calendar-check"></i></span>
+                    <span>All Bookings</span>
+                </a>
+                <a href="admin-verification.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-user-check"></i></span>
+                    <span>Verifications</span>
+                </a>
+                <a href="admin-reviews.html" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-star"></i></span>
+                    <span>Reviews</span>
+                </a>
+                <a href="admin-services.html" class="nav-item active">
+                    <span class="nav-icon"><i class="fa-solid fa-tools"></i></span>
+                    <span>Services</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" id="admin-logout-btn" class="nav-item">
+                    <span class="nav-icon"><i class="fa-solid fa-sign-out-alt"></i></span>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left"></div>
+                <div class="top-bar-right">
+                    <div class="admin-profile">
+                        <div class="admin-avatar">A</div>
+                        <span>Administrator</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content -->
+            <div class="content-wrapper">
+                <div class="page-header">
+                    <div>
+                        <h1>Service Management</h1>
+                        <p>Configure available services and their pricing</p>
+                    </div>
+                </div>
+
+                <div class="services-grid">
+                    <!-- Add Service Section -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-plus-circle"></i> Add New Service</h2>
+                        </div>
+                        <div class="p-2">
+                            <form id="add-service-form" class="service-form">
+                                <div class="form-group mb-1">
+                                    <label class="form-label">Service Name</label>
+                                    <input type="text" id="new-service-name" class="form-input"
+                                        placeholder="e.g., Deep Cleaning" required>
+                                </div>
+                                <div class="form-group mb-1">
+                                    <label class="form-label">Price (₹)</label>
+                                    <input type="number" id="new-service-price" class="form-input"
+                                        placeholder="e.g., 500" required>
+                                </div>
+                                <div class="form-group mb-15">
+                                    <label class="form-label">Description</label>
+                                    <textarea id="new-service-desc" class="form-input"
+                                        placeholder="Brief description of the service..." rows="3" required></textarea>
+                                </div>
+                                <button type="submit" class="btn-settings-save w-100">
+                                    <i class="fa-solid fa-plus"></i> Add Service
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Manage Services Section -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2><i class="fa-solid fa-list-check"></i> Manage Services</h2>
+                        </div>
+                        <div class="p-2">
+                            <div class="service-list" id="services-list-container">
+                                <!-- Services loaded dynamically -->
+                                <div class="text-center p-2">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Loading services...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../../js/api-config.js"></script>
+    <script src="../../js/admin/admin-modal.js"></script>
+    <script src="../../js/admin/admin-services.js" defer></script>
+</body>
+
+</html>

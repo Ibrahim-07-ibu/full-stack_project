@@ -1,50 +1,135 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
 from sqlalchemy.orm import Session
-from ..dependencies import get_db, get_current_user
-from ..models.providers import Provider
-from ..models.users import User
+from dependencies import get_db, get_current_user
+from models.providers import Provider
+from models.users import User
+import shutil
+import os
+from datetime import date
 
-from ..schemas.provider_schema import ProviderCreate, ProviderUpdate, ProviderResponse
+from schemas.provider_schema import ProviderCreate, ProviderUpdate, ProviderResponse
 
-from ..pwd_utils import hash_password
+from pwd_utils import hash_password
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/providers", tags=["Providers"])
 
 @router.post("/create", response_model=ProviderResponse)
-def create_provider(provider: ProviderCreate, db: Session = Depends(get_db)):
-    normalized_email = provider.email.lower().strip()
+async def create_provider(
+    full_name: str = Form(...),
+    email: str = Form(...),
+    password: str = Form(...),
+    phone: str = Form(...),
+    dob: str = Form(...), # date as string to be parsed
+    address: str = Form(...),
+    service_id: int = Form(...),
+    years_experience: int = Form(...),
+    specialization: str = Form(...),
+    bio: str = Form(...),
+    id_proof: UploadFile = File(...),
+    certificate: UploadFile = File(...),
+    db: Session = Depends(get_db)
+):
+    """
+    Register a new service provider with document uploads.
+    """
+    logger.info(f"New provider registration attempt: {email}")
+    normalized_email = email.lower().strip()
 
-    db_user = db.query(User).filter(User.email == normalized_email).first()
+    try:
+        # 1. Integrity Check: Check for existing User/Provider
+        existing_user = db.query(User).filter(User.email == normalized_email).first()
+        db_user = None
+        
+        if existing_user:
+            existing_provider = db.query(Provider).filter(Provider.user_id == existing_user.id).first()
+            if existing_provider:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST, 
+                    detail="An account with this email already exists as a provider."
+                )
+            existing_user.role = "provider"
+            db_user = existing_user
+            
+        hashed_pw = hash_password(password)
+        
+        if not db_user:
+             db_user = User(
+                 name=full_name.strip(),
+                 email=normalized_email,
+                 password=hashed_pw,
+                 phone=phone.strip(),
+                 address=address.strip(),
+                 role="provider",
+                 is_active=True
+             )
+             db.add(db_user)
+             db.flush()
 
-    if not db_user:
-        db_user = User(
-            name=provider.full_name,
+        # 2. Handle File Uploads
+        backend_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        upload_dir = os.path.join(backend_root, "static", "uploads", "providers")
+        if not os.path.exists(upload_dir):
+            os.makedirs(upload_dir, exist_ok=True)
+
+        id_proof_filename = f"id_{db_user.id}_{id_proof.filename}"
+        cert_filename = f"cert_{db_user.id}_{certificate.filename}"
+        
+        id_proof_path = os.path.join(upload_dir, id_proof_filename)
+        cert_path = os.path.join(upload_dir, cert_filename)
+
+        with open(id_proof_path, "wb") as buffer:
+            shutil.copyfileobj(id_proof.file, buffer)
+            
+        with open(cert_path, "wb") as buffer:
+            shutil.copyfileobj(certificate.file, buffer)
+
+        # 3. Create the Provider Profile
+        # Correctly format dob from string
+        try:
+            dob_date = date.fromisoformat(dob)
+        except ValueError:
+            raise HTTPException(status_code=400, detail="Invalid date format for DOB. Use YYYY-MM-DD.")
+
+        new_provider = Provider(
+            user_id=db_user.id,
+            full_name=full_name.strip(),
             email=normalized_email,
-            password=hash_password(provider.password),
-            phone=provider.phone,
-            address=provider.address,
+            password=hashed_pw,
+            phone=phone.strip(),
+            dob=dob_date,
+            address=address.strip(),
+            service_id=service_id,
+            years_experience=years_experience,
+            specialization=specialization,
+            bio=bio,
+            id_proof=f"/static/uploads/providers/{id_proof_filename}",
+            certificate=f"/static/uploads/providers/{cert_filename}",
             role="provider",
+            is_verified=False
         )
-        db.add(db_user)
-        db.flush()
-    else:
-        db_user.role = "provider"
 
-    existing_provider = db.query(Provider).filter(Provider.user_id == db_user.id).first()
-    if existing_provider:
-        raise HTTPException(status_code=400, detail="Provider already exists")
+        db.add(new_provider)
+        db.commit()
+        db.refresh(new_provider)
+        
+        logger.info(f"Provider registration success: ID {new_provider.id}")
+        return new_provider
 
-    provider_data = provider.model_dump()
-    provider_data["email"] = normalized_email
-    provider_data["password"] = hash_password(provider.password)
-
-    new_provider = Provider(user_id=db_user.id, **provider_data)
-
-    db.add(new_provider)
-    db.commit()
-    db.refresh(new_provider)
-
-    return new_provider
+    except HTTPException:
+        db.rollback()
+        raise
+    except Exception as e:
+        db.rollback()
+        logger.error(f"FATAL ERROR in provider registration: {str(e)}")
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to create provider account. Please verify all fields are correct."
+        )
 
 
 
@@ -75,6 +160,17 @@ def update_provider(
     db.commit()
     db.refresh(provider)
     return provider
+
+
+@router.post("/verify/{provider_id}")
+def verify_provider(provider_id: int, db: Session = Depends(get_db)):
+    provider = db.query(Provider).filter(Provider.id == provider_id).first()
+    if not provider:
+        raise HTTPException(status_code=404, detail="Provider not found")
+    
+    provider.is_verified = True
+    db.commit()
+    return {"message": "Provider verified successfully", "is_verified": provider.is_verified}
 
 
 @router.delete("/delete/{provider_id}")

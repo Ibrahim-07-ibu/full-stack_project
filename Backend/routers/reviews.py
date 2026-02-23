@@ -1,13 +1,34 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from ..dependencies import get_db, get_current_user, get_current_provider
-from ..models.reviews import Review
-from ..models.users import User
-from ..models.providers import Provider
-from ..models.bookings import Booking
-from ..schemas.reviews_schema import ReviewCreate, ProviderProfileUpdate
+from dependencies import get_db, get_current_user, get_current_provider, get_current_admin
+from models.reviews import Review
+from models.users import User
+from models.providers import Provider
+from models.bookings import Booking
+from schemas.reviews_schema import ReviewCreate, ProviderProfileUpdate
 
 router = APIRouter(prefix="/api/reviews", tags=["Reviews"])
+
+
+@router.get("/all")
+def get_all_reviews(
+    db: Session = Depends(get_db),
+    admin: bool = Depends(get_current_admin)
+):
+    reviews = db.query(Review).all()
+    response = []
+    for r in reviews:
+        response.append({
+            "id": r.id,
+            "rating": r.rating,
+            "comment": r.comment,
+            "user_name": r.user.name if r.user else "Anonymous",
+            "provider_name": r.provider.full_name if r.provider else "Unknown",
+            "service_name": r.service.name if r.service else "Service",
+            "booking_id": r.booking_id,
+            "created_at": str(r.created_at) if hasattr(r, 'created_at') else "N/A"
+        })
+    return response
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -100,7 +121,7 @@ def get_provider_profile(
         round((completed_orders / total_assigned) * 100) if total_assigned > 0 else 100
     )
 
-    from ..models.services import Service
+    from models.services import Service
 
     total_earned_query = (
         db.query(Service.price)
@@ -158,3 +179,18 @@ def update_provider_profile(
     db.refresh(provider)
 
     return {"message": "Profile updated successfully"}
+
+
+@router.delete("/{review_id}")
+def delete_review(
+    review_id: int,
+    db: Session = Depends(get_db),
+    admin: bool = Depends(get_current_admin)
+):
+    review = db.query(Review).filter(Review.id == review_id).first()
+    if not review:
+        raise HTTPException(status_code=404, detail="Review not found")
+    
+    db.delete(review)
+    db.commit()
+    return {"message": "Review deleted successfully"}

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from ..dependencies import get_db, get_current_user, get_current_provider, get_current_admin
-from ..models.users import User
-from ..models.services import Service
-from ..models.bookings import Booking
-from ..models.providers import Provider
-from ..schemas.bookings_schema import BookingCreate
+from dependencies import get_db, get_current_user, get_current_provider, get_current_admin
+from models.users import User
+from models.services import Service
+from models.bookings import Booking
+from models.providers import Provider
+from schemas.bookings_schema import BookingCreate
 
 
 router = APIRouter(prefix="/api/bookings", tags=["Bookings"])
@@ -27,6 +27,7 @@ def get_all_bookings(
             "date": str(b.date),
             "time": str(b.time),
             "status": b.status,
+            "amount": b.service.price if b.service else 0,
             "address": f"{b.address}, {b.city} - {b.pincode}"
         })
     return response
@@ -233,7 +234,15 @@ def get_provider_pending_bookings(
     db: Session = Depends(get_db),
     current_provider: Provider = Depends(get_current_provider),
 ):
-    bookings = db.query(Booking).filter(Booking.status == "pending").all()
+    # Filter bookings by the provider's specific service specialty
+    bookings = (
+        db.query(Booking)
+        .filter(
+            Booking.status == "pending",
+            Booking.service_id == current_provider.service_id
+        )
+        .all()
+    )
 
     response = []
     for b in bookings:
@@ -361,7 +370,15 @@ def get_provider_statistics(
     db: Session = Depends(get_db),
     current_provider: Provider = Depends(get_current_provider),
 ):
-    pending = db.query(Booking).filter(Booking.status == "pending").count()
+    # Only count pending bookings that match this provider's service
+    pending = (
+        db.query(Booking)
+        .filter(
+            Booking.status == "pending",
+            Booking.service_id == current_provider.service_id
+        )
+        .count()
+    )
     accepted = (
         db.query(Booking)
         .filter(
@@ -388,7 +405,7 @@ def get_provider_statistics(
 
     earnings = sum(e[0] for e in total_earned)
 
-    from ..models.reviews import Review
+    from models.reviews import Review
 
     ratings = (
         db.query(Review.rating).filter(Review.provider_id == current_provider.id).all()

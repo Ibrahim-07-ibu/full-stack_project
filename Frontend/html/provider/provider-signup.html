@@ -102,37 +102,25 @@
           </div>
 
           <div class="form-section">
-            <h3>Verification Documents</h3>
+            <h3>Verification Documents *</h3>
 
             <div class="verification-notice">
               <p>
-                📋 You will need to upload these documents after registration
-                for verification (Not required now)
+                📋 Please upload clear copies of your documents for background verification.
               </p>
             </div>
 
-            <div class="doc-list">
-              <div class="doc-item">
-                <span>✓</span>
-                <span>
-                  Government-issued ID (Aadhaar, Passport, or Driver's
-                  License)
-                </span>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="id_proof">Government ID Proof *</label>
+                <input type="file" id="id_proof" name="id_proof" accept="image/*,.pdf" required />
+                <small class="form-text">Aadhaar, Passport, or Driver's License</small>
               </div>
 
-              <div class="doc-item">
-                <span>✓</span>
-                <span>Proof of Address (within last 3 months)</span>
-              </div>
-
-              <div class="doc-item">
-                <span>✓</span>
-                <span>Recent photograph</span>
-              </div>
-
-              <div class="doc-item">
-                <span>✓</span>
-                <span>Skill certificates (if applicable)</span>
+              <div class="form-group">
+                <label for="certificate">Skill Certificate *</label>
+                <input type="file" id="certificate" name="certificate" accept="image/*,.pdf" required />
+                <small class="form-text">Proof of expertise in your chosen service</small>
               </div>
             </div>
           </div>

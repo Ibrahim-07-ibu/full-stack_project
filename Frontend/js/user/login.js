@@ -13,7 +13,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   }
 
   try {
-    const response = await makeRequest("/api/auth/login", {
+    const response = await makeRequest("/api/auth/unified_login", {
       method: "POST",
       body: JSON.stringify({ email, password }),
     });
@@ -22,17 +22,22 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       const result = await response.json();
 
       if (result.access_token) {
-        window.setToken(result.access_token, "user");
+        window.setToken(result.access_token, result.role);
       }
 
-      localStorage.setItem("role", "user");
+      localStorage.setItem("role", result.role);
       localStorage.setItem("user_id", result.user_id);
       localStorage.setItem("user_name", result.user_name);
       localStorage.setItem("user_email", result.email);
 
-      window.HB.showToast("Welcome back! Logging in...");
+      // Admin specific flag
+      if (result.role === 'admin') {
+        localStorage.setItem('admin_logged_in', 'true');
+      }
+
+      window.HB.showToast(`Welcome back, ${result.user_name}! Logging in...`);
       setTimeout(() => {
-        window.location.href = "/Frontend/html/user/dashboard.html";
+        window.location.href = result.redirect || "dashboard.html";
       }, 1000);
 
     } else {

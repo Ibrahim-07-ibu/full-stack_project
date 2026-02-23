@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from ..dependencies import get_db
-from ..models.services import Service
-from ..schemas.services_schema import ServiceCreate, ServiceResponse
+from dependencies import get_db
+from models.services import Service
+from schemas.services_schema import ServiceCreate, ServiceResponse
 from typing import List
 
 router = APIRouter(prefix="/api/services", tags=["Services"])
@@ -32,5 +32,26 @@ def get_service(service_id: int, db: Session = Depends(get_db)):
 
     if not service:
         raise HTTPException(status_code=404, detail="Service not found")
+
+    return service
+
+
+@router.put("/{service_id}", response_model=ServiceResponse)
+def update_service(
+    service_id: int,
+    updated_service: ServiceCreate,
+    db: Session = Depends(get_db)
+):
+    service = db.query(Service).filter(Service.id == service_id).first()
+
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+
+    service.name = updated_service.name
+    service.price = updated_service.price
+    service.description = updated_service.description
+
+    db.commit()
+    db.refresh(service)
 
     return service
