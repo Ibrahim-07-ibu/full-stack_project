@@ -39,18 +39,18 @@ async def debug_path(request: Request):
         "headers": dict(request.headers)
     }
 
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    path = request.url.path
+    method = request.method
+    logger.info(f"Incoming Request: {method} {path}")
+    response = await call_next(request)
+    return response
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://ibuu-gvfn2snsa-maadys-projects.vercel.app",
-        "https://full-stack-project-iota-five.vercel.app",
-        "http://localhost:3000",
-        "http://localhost:8000",
-        "http://localhost:5500",
-        "http://127.0.0.1:5500",
-        "http://127.0.0.1:8000"
-    ],
-    allow_credentials=True, # Changed to True as it's often needed for tokens
+    allow_origins=["*"], # Temporarily broader for debugging
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
