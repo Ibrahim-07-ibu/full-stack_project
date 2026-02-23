@@ -77,6 +77,10 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
         )
 
 
+@router.get("/login")
+def login_diagnostic():
+    return {"detail": "This endpoint requires a POST request with email and password."}
+
 @router.post("/login")
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
     logger.info(f"Login attempt for: {user.email}")
@@ -125,6 +129,10 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             status_code=500, detail="Internal Server Error during login processing"
         )
 
+
+@router.get("/unified_login")
+def unified_login_diagnostic():
+    return {"detail": "This endpoint requires a POST request for unified account access."}
 
 @router.post("/unified_login")
 def unified_login(user: UserLogin, db: Session = Depends(get_db)):
