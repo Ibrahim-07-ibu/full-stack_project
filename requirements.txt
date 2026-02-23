@@ -1,1 +1,10 @@
--r api/requirements.txt
+fastapi
+sqlalchemy
+python-dotenv
+python-multipart
+pyjwt
+requests
+pg8000
+passlib
+bcrypt
+uvicorn
