@@ -15,12 +15,12 @@ if not DATABASE_URL:
     DATABASE_URL = "sqlite:///./homebuddy.db"
 
 # FOR VERCEL/SERVERLESS: ULTIMATE PG8000 OVERRIDE
-# This replaces any scheme (e.g. postgres://, postgresql+psycopg2://, etc.) 
-# with the pure-Python pg8000 scheme.
-if "://" in DATABASE_URL and "sqlite" not in DATABASE_URL:
-    _, rest = DATABASE_URL.split("://", 1)
-    DATABASE_URL = f"postgresql+pg8000://{rest}"
-    logger.info("Database URL forced to postgresql+pg8000 dialect.")
+# This replaces any standard postgres scheme with the pure-Python pg8000 scheme.
+if DATABASE_URL and DATABASE_URL.startswith(("postgres://", "postgresql://")):
+    if "://" in DATABASE_URL:
+        _, rest = DATABASE_URL.split("://", 1)
+        DATABASE_URL = f"postgresql+pg8000://{rest}"
+        logger.info("Database URL forced to postgresql+pg8000 dialect.")
 
 # Create engine — pool_pre_ping validates connections lazily
 engine = create_engine(

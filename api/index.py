@@ -1,40 +1,57 @@
-from fastapi import FastAPI
-from mangum import Mangum
 import os
 import sys
+import json
 import traceback
 
-# Path setup: api/index.py → project root → Backend package
+# 1. IMMEDIATE PATH INJECTION
+# index.py is in api/
+# project_root is the parent of api/
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(current_dir)
 
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-try:
-    # Try to import from the root Backend package
-    from Backend.main import app as fastapi_app
+# Force Backend to be recognizable
+backend_dir = os.path.join(project_root, "Backend")
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
 
-    @fastapi_app.get("/api/infra-test")
-    def infra_test():
-        return {"status": "ok", "version": "67.4-FINAL-MANGUM"}
+def handler(request, context=None):
+    """
+    Bulletproof entry point for Vercel Python runtime.
+    Moves all complex imports inside the handler to capture every possible crash.
+    """
+    try:
+        # Delayed framework imports
+        from fastapi import FastAPI
+        from mangum import Mangum
+        from Backend.main import app as fastapi_app
 
-    # Wrap the FastAPI app for Vercel's serverless environment
-    app = Mangum(fastapi_app, lifespan="off")
+        # Standard Mangum flow
+        # In Vercel, 'request' is a dictionary containing the event data
+        asgi_handler = Mangum(fastapi_app, lifespan="off")
+        return asgi_handler(request, context)
 
-except Exception as e:
-    # Fallback app to report errors if initialization fails
-    fallback_app = FastAPI()
-    
-    @fallback_app.get("/api/infra-test")
-    def infra_test_error():
-        return {
+    except Exception as e:
+        # If ANY import or initialization fails, return a JSON error instead of a 500
+        error_info = {
             "status": "error",
-            "message": str(e),
+            "message": f"Critical Gateway Failure: {str(e)}",
             "trace": traceback.format_exc(),
+            "env": {
+                "cwd": os.getcwd(),
+                "sys_path": sys.path[:5],
+                "python_version": sys.version
+            }
         }
-    
-    app = Mangum(fallback_app, lifespan="off")
+        
+        return {
+            "statusCode": 500,
+            "headers": {"Content-Type": "application/json"},
+            "body": json.dumps(error_info)
+        }
 
-# Vercel's @vercel/python looks for 'app' by default
-handler = app
+# For Vercel direct discovery, we also export an 'app' instance
+# but the 'builds' configuration in vercel.json prioritizes the handler.
+app = handler
