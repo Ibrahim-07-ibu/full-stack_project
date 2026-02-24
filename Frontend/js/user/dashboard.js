@@ -1,26 +1,44 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  window.checkAuth();
+  // --- Auth Check ---
+  // Only redirect if there is genuinely no token at all.
+  // We do NOT plug this into the API response cycle to prevent
+  // a failed profile sync from kicking the user out.
+  if (!window.getToken()) {
+    console.warn("[Dashboard] No auth token found. Redirecting to login.");
+    window.location.href = "/html/user/login.html";
+    return;
+  }
+
   const userId = localStorage.getItem("user_id");
   const welcomeName = document.getElementById("welcome-name");
-  const savedName = localStorage.getItem("user_name");
+  const savedName = localStorage.getItem("user_name") || localStorage.getItem("name");
 
+  // Immediately show the cached name from login
   if (savedName && welcomeName) {
     welcomeName.textContent = savedName;
   }
+
+  // Attempt to sync profile from server — but ONLY update the name,
+  // do NOT redirect on failure (the token check above is the only gate).
   try {
     const response = await makeRequest(`/api/auth/profile`);
     if (response.ok) {
       const user = await response.json();
-      if (welcomeName) welcomeName.textContent = user.name;
-      if (user.name !== savedName) {
+      if (welcomeName && user.name) {
+        welcomeName.textContent = user.name;
         localStorage.setItem("user_name", user.name);
+        localStorage.setItem("name", user.name);
       }
+    } else {
+      console.warn("[Dashboard] Profile sync failed (status:", response.status, "). Using cached name.");
     }
   } catch (error) {
-    console.error("Error syncing dashboard profile:", error);
+    console.warn("[Dashboard] Profile sync error:", error.message, "Using cached name.");
   }
+
   const activityContainer = document.querySelector(".activity-list");
   if (!activityContainer) return;
+
   try {
     const bookingsResponse = await makeRequest(`/api/bookings/my`);
     if (bookingsResponse.ok) {
@@ -44,32 +62,31 @@ document.addEventListener("DOMContentLoaded", async () => {
             cancelled: "Cancelled",
           };
           activityItem.innerHTML = `
-                        <div class="activity-icon">
-                            <i class="fa-solid ${icon}"></i>
-                        </div>
-                        <div class="activity-details">
-                            <h4>${booking.service_name}</h4>
-                            <p>${booking.status === "completed" ? "Completed on" : "Scheduled for"} ${booking.date}</p>
-                        </div>
-                        <span class="status ${booking.status}">${statusLabels[booking.status] || booking.status}</span>
-                    `;
+            <div class="activity-icon">
+              <i class="fa-solid ${icon}"></i>
+            </div>
+            <div class="activity-details">
+              <h4>${booking.service_name}</h4>
+              <p>${booking.status === "completed" ? "Completed on" : "Scheduled for"} ${booking.date}</p>
+            </div>
+            <span class="status ${booking.status}">${statusLabels[booking.status] || booking.status}</span>
+          `;
           activityContainer.appendChild(activityItem);
         });
       } else {
-        activityContainer.innerHTML =
-          '<p class="no-activity">No recent activity found.</p>';
+        activityContainer.innerHTML = '<p class="no-activity">No recent activity found.</p>';
       }
     }
   } catch (error) {
-    console.error("Error fetching recent activity:", error);
+    console.warn("[Dashboard] Bookings fetch error:", error.message);
   }
 
   const logoutBtn = document.querySelector(".btn-logout");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", (e) => {
-      window.removeToken();
       e.preventDefault();
-      window.location.href = "login.html";
+      window.removeToken();
+      window.location.href = "/html/user/login.html";
     });
   }
 });
