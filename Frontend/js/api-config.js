@@ -33,19 +33,21 @@ window.setToken = (token, role = "user") => {
 
 window.getToken = () => {
   const isProviderPath = window.location.pathname.includes("/provider/");
-  const isAdminPath = window.location.pathname.includes("/admin/");
+  // Attempt to find any valid token in storage
+  const tokens = [
+    localStorage.getItem("auth_token"),
+    localStorage.getItem("user_token"),
+    localStorage.getItem("provider_token")
+  ];
 
+  // Specific preference for provider paths
   if (isProviderPath) {
     const pToken = localStorage.getItem("provider_token");
     if (pToken) return pToken;
   }
 
-  // General fallback
-  return (
-    localStorage.getItem("auth_token") ||
-    localStorage.getItem("user_token") ||
-    localStorage.getItem("provider_token")
-  );
+  // Return the first available token
+  return tokens.find(t => t !== null && t !== undefined && t !== "") || null;
 };
 
 window.removeToken = () => {
@@ -115,13 +117,17 @@ async function makeRequest(endpoint, options = {}) {
       console.groupEnd();
 
       if (response.status === 401) {
-        console.warn(`[AUTH FAIL] 401 Unauthorized for ${endpoint}. Detail:`, errorData.detail || errorData);
+        const errorDetail = errorData.detail || errorData;
+        console.warn(`[AUTH FAIL] 401 Unauthorized for ${endpoint}. Detail:`, errorDetail);
 
-        // If we are already on a dashboard, and a core request fails, redirect to login
-        const isDashboard = window.location.pathname.includes("dashboard.html");
-        if (isDashboard) {
-          console.error("Critical auth failure on dashboard. Clearing session and redirecting...");
-          window.removeToken();
+        // Critical Logic: Only redirect if on a dashboard page or making a profile call
+        const dashboardPaths = ["dashboard.html", "profile.html", "my-bookings.html", "provider-accepted.html"];
+        const isProtectedPage = dashboardPaths.some(p => window.location.pathname.includes(p));
+        const isAuthProfileCall = endpoint.includes("/api/auth/profile");
+
+        if (isProtectedPage || isAuthProfileCall) {
+          console.error("Critical auth failure on protected resource. Redirecting to login...");
+          // window.removeToken(); // Keep the token for manual inspection in console if needed, but redirect to re-auth
           window.checkAuth();
         }
       }
