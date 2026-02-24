@@ -21,7 +21,7 @@ if not SECRET_KEY:
         SECRET_KEY = "dev-secret-key-change-it"
 
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 1440))
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 300))
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
