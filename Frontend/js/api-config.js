@@ -120,7 +120,13 @@ async function makeRequest(endpoint, options = {}) {
 
       console.group(`[API Error] ${response.status} ${response.statusText}`);
       console.error(`URL: ${url}`);
-      console.error(`Response Body:`, errorData);
+      if (typeof errorData === 'object') {
+        console.error("Error Detail:", errorData);
+        // Also log as string for easy copy-paste
+        console.log("Error JSON:", JSON.stringify(errorData, null, 2));
+      } else {
+        console.error(`Response Body:`, errorData);
+      }
       console.groupEnd();
 
       if (response.status === 401) {
