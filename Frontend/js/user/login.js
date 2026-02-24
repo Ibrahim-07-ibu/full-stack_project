@@ -23,6 +23,13 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 
       if (result.access_token) {
         window.setToken(result.access_token, result.role);
+        console.log("[Login] Token stored. Keys:", {
+          auth_token: !!localStorage.getItem("auth_token"),
+          user_token: !!localStorage.getItem("user_token"),
+          role: localStorage.getItem("role")
+        });
+      } else {
+        console.error("[Login] No access_token in response!", result);
       }
 
       const displayName = result.user_name || result.name || result.full_name || "User";
@@ -37,9 +44,11 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
         localStorage.setItem('admin_logged_in', 'true');
       }
 
+      const redirectTarget = result.redirect || "/html/user/dashboard.html";
+      console.log("[Login] Redirecting to:", redirectTarget);
       window.HB.showToast(`Welcome back, ${displayName}! Logging in...`);
       setTimeout(() => {
-        window.location.href = result.redirect || "dashboard.html";
+        window.location.href = redirectTarget;
       }, 1000);
 
     } else {

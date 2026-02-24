@@ -1,11 +1,17 @@
 document.addEventListener("DOMContentLoaded", async () => {
   // --- Auth Check ---
-  // Only redirect if there is genuinely no token at all.
-  // We do NOT plug this into the API response cycle to prevent
-  // a failed profile sync from kicking the user out.
-  if (!window.getToken()) {
+  const currentToken = window.getToken();
+  console.log("[Dashboard] Page loaded. Token check:", {
+    auth_token: !!localStorage.getItem("auth_token"),
+    user_token: !!localStorage.getItem("user_token"),
+    role: localStorage.getItem("role"),
+    path: window.location.pathname,
+    token_found: !!currentToken
+  });
+
+  if (!currentToken) {
     console.warn("[Dashboard] No auth token found. Redirecting to login.");
-    window.location.href = "../user/login.html";;
+    window.location.href = "../user/login.html";
     return;
   }
 
