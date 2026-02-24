@@ -114,7 +114,9 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             "access_token": access_token,
             "token_type": "bearer",
             "user_id": db_user.id,
+            "name": db_user.name,
             "user_name": db_user.name,
+            "full_name": db_user.name,
             "email": db_user.email,
             "role": "user",
         }
@@ -175,7 +177,9 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
             "access_token": access_token,
             "token_type": "bearer",
             "user_id": db_user.id,
+            "name": db_user.name,
             "user_name": db_user.name,
+            "full_name": db_user.name,
             "email": db_user.email,
             "role": db_user.role,
             "redirect": redirect_path
@@ -223,6 +227,8 @@ def login_provider(user: UserLogin, db: Session = Depends(get_db)):
             "token_type": "bearer",
             "provider_id": db_provider.id if db_provider else None,
             "user_id": db_user.id,
+            "name": db_user.name,
+            "user_name": db_user.name,
             "full_name": db_user.name,
         }
 

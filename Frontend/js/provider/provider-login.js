@@ -25,12 +25,15 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
         window.setToken(result.access_token, "provider");
       }
 
+      const displayName = result.full_name || result.user_name || result.name || "Provider";
       localStorage.setItem("role", "provider");
       localStorage.setItem("provider_id", result.provider_id);
       localStorage.setItem("user_id", result.user_id);
-      localStorage.setItem("provider_name", result.full_name);
+      localStorage.setItem("provider_name", displayName);
+      localStorage.setItem("user_name", displayName);
+      localStorage.setItem("name", displayName);
 
-      window.HB.showToast(`Welcome back, ${result.full_name}!`);
+      window.HB.showToast(`Welcome back, ${displayName}!`);
       setTimeout(() => {
         window.location.href = "provider-dashboard.html";
       }, 1000);

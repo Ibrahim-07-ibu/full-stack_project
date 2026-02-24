@@ -25,9 +25,11 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
         window.setToken(result.access_token, result.role);
       }
 
+      const displayName = result.user_name || result.name || result.full_name || "User";
       localStorage.setItem("role", result.role);
       localStorage.setItem("user_id", result.user_id);
-      localStorage.setItem("user_name", result.user_name);
+      localStorage.setItem("user_name", displayName);
+      localStorage.setItem("name", displayName);
       localStorage.setItem("user_email", result.email);
 
       // Admin specific flag
@@ -35,7 +37,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
         localStorage.setItem('admin_logged_in', 'true');
       }
 
-      window.HB.showToast(`Welcome back, ${result.user_name}! Logging in...`);
+      window.HB.showToast(`Welcome back, ${displayName}! Logging in...`);
       setTimeout(() => {
         window.location.href = result.redirect || "dashboard.html";
       }, 1000);
