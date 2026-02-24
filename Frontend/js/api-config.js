@@ -63,11 +63,13 @@ window.checkAuth = () => {
     console.warn("No token found, redirecting to login");
 
     if (window.location.pathname.includes("/provider/")) {
-      window.location.href = "/html/provider/provider-login.html";
+      window.location.href = "../provider/provider-login.html"
+        ;
     } else if (window.location.pathname.includes("/admin/")) {
-      window.location.href = "/html/admin/admin-login.html";
+      window.location.href = "../admin/admin-login.html"
+        ;
     } else {
-      window.location.href = "/html/user/login.html";
+      window.location.href = "../user/login.html";
     }
   }
 };

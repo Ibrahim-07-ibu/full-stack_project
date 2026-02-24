@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // a failed profile sync from kicking the user out.
   if (!window.getToken()) {
     console.warn("[Dashboard] No auth token found. Redirecting to login.");
-    window.location.href = "/html/user/login.html";
+    window.location.href = "../user/login.html";;
     return;
   }
 
