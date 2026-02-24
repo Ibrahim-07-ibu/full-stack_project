@@ -119,19 +119,10 @@ async function makeRequest(endpoint, options = {}) {
       console.groupEnd();
 
       if (response.status === 401) {
-        const errorDetail = errorData.detail || errorData;
-        console.warn(`[AUTH FAIL] 401 Unauthorized for ${endpoint}. Detail:`, errorDetail);
-
-        // Critical Logic: Only redirect if on a dashboard page or making a profile call
-        const dashboardPaths = ["dashboard.html", "profile.html", "my-bookings.html", "provider-accepted.html"];
-        const isProtectedPage = dashboardPaths.some(p => window.location.pathname.includes(p));
-        const isAuthProfileCall = endpoint.includes("/api/auth/profile");
-
-        if (isProtectedPage || isAuthProfileCall) {
-          console.error("Critical auth failure on protected resource. Redirecting to login...");
-          // window.removeToken(); // Keep the token for manual inspection in console if needed, but redirect to re-auth
-          window.checkAuth();
-        }
+        const errorDetail = (typeof errorData === 'object' && errorData.detail) ? errorData.detail : errorData;
+        console.warn(`[AUTH FAIL] 401 for ${endpoint}. Reason: ${errorDetail}`);
+        // NOTE: We do NOT auto-redirect here. Each page is responsible for its own auth guard.
+        // Auto-redirect here caused a loop: profile API fail → checkAuth() → back to login.
       }
     }
 
