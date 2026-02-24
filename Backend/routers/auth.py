@@ -165,12 +165,13 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
 
         # Determine redirect based on role
         redirect_path = "/html/user/dashboard.html"
-        if db_user.role == "provider":
+        user_role = (db_user.role or "user").lower()
+        if user_role == "provider":
             redirect_path = "/html/provider/provider-dashboard.html"
-        elif db_user.role == "admin":
+        elif user_role == "admin":
             redirect_path = "/html/admin/admin-dashboard.html"
 
-        logger.info(f"SUCCESS: {db_user.role.upper()} login successful for {normalized_email}")
+        logger.info(f"SUCCESS: {user_role.upper()} login successful for {normalized_email}")
 
         return {
             "message": "Login successful",
@@ -187,12 +188,18 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"CRITICAL ERROR IN UNIFIED LOGIN: {str(e)}")
-        traceback.print_exc()
-        # Return the actual error message in the detail to diagnose the 500 error
+        error_msg = str(e)
+        tb = traceback.format_exc()
+        logger.error(f"CRITICAL ERROR IN UNIFIED LOGIN: {error_msg}")
+        logger.error(f"Traceback: {tb}")
+        # Return detail with traceback to help debugging
         raise HTTPException(
             status_code=500, 
-            detail=f"Internal Server Error during login: {str(e)}"
+            detail={
+                "error": "Internal Server Error during login",
+                "message": error_msg,
+                "traceback": tb
+            }
         )
 
 @router.post("/provider/login")
