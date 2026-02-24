@@ -39,7 +39,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 
       window.HB.showToast(`Welcome back, ${displayName}! Logging in...`);
       setTimeout(() => {
-        window.location.href = result.redirect || "dashboard.html";
+        window.location.href = result.redirect || "/dashboard.html";
       }, 1000);
 
     } else {
