@@ -33,7 +33,7 @@ def get_current_user(
     user_id: str = payload.get("sub")
     role: str = payload.get("role")
     
-    if user_id is None or role not in ["user", "provider"]:
+    if user_id is None or role not in ["user", "provider", "admin"]:
         raise credentials_exception
         
     user = db.query(User).filter(User.id == int(user_id)).first()

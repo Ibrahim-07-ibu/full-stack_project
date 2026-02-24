@@ -22,6 +22,8 @@ const API_BASE = (function () {
 window.API_BASE_URL = API_BASE;
 
 window.setToken = (token, role = "user") => {
+  localStorage.setItem("auth_token", token);
+  localStorage.setItem("role", role);
   if (role === "provider") {
     localStorage.setItem("provider_token", token);
   } else {
@@ -30,15 +32,24 @@ window.setToken = (token, role = "user") => {
 };
 
 window.getToken = () => {
-  if (window.location.pathname.includes("/provider/")) {
-    return localStorage.getItem("provider_token");
+  // First try the specific token based on location
+  const isProviderPath = window.location.pathname.includes("/provider/");
+  const isAdminPath = window.location.pathname.includes("/admin/");
+
+  if (isProviderPath) {
+    return localStorage.getItem("provider_token") || localStorage.getItem("auth_token");
   }
-  return localStorage.getItem("user_token");
+
+  // Default fallback to the unified token or user token
+  return localStorage.getItem("auth_token") || localStorage.getItem("user_token");
 };
 
 window.removeToken = () => {
+  localStorage.removeItem("auth_token");
   localStorage.removeItem("user_token");
   localStorage.removeItem("provider_token");
+  localStorage.removeItem("role");
+  localStorage.removeItem("admin_logged_in");
 };
 
 window.checkAuth = () => {
