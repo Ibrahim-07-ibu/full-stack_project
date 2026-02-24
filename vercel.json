@@ -1,21 +1,30 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "api/index.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "Frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/index.py"
+      "dest": "api/index.py"
     },
     {
       "src": "/health",
-      "dest": "/api/index.py"
+      "dest": "api/index.py"
     },
     {
-      "src": "/Frontend/(.*)",
-      "dest": "/Frontend/$1"
+      "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/Frontend/$1"
+      "dest": "Frontend/$1"
     }
   ]
 }
