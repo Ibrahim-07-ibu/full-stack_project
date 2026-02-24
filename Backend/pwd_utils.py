@@ -1,7 +1,8 @@
 from passlib.context import CryptContext
 
-# Set up the crypt context with bcrypt (passlib will use a pure-python fallback if needed)
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+# Use pbkdf2_sha256 as primary to avoid bcrypt binary/limit issues on Vercel
+# bcrypt is kept in the list to support verification of existing hashes if any
+pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
 
 def hash_password(password: str) -> str:
     return pwd_context.hash(password)
