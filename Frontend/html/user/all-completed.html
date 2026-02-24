@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HomeBuddy - Booking History</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="../../css/user/my-bookings.css" />
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="dashboard.html" class="logo">
+                <i class="fa-solid fa-house"></i> HomeBuddy
+            </a>
+            <div class="nav-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="services.html">Services</a>
+                <a href="my-bookings.html">My Bookings</a>
+                <a href="profile.html">Profile</a>
+                <a href="login.html" class="btn-logout">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="bookings-container">
+        <section class="page-header">
+            <h1>Booking History</h1>
+            <p>Here are all your past services and the ratings you've shared.</p>
+        </section>
+
+        <section class="bookings-section" id="completed-history">
+            <div class="loading-msg">Fetching your history...</div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 HomeBuddy. All rights reserved.</p>
+    </footer>
+    <script src="../../js/api-config.js"></script>
+    <script src="../../js/user/all-completed.js" defer></script>
+</body>
+
+</html>

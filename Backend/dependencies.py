@@ -29,20 +29,20 @@ def get_current_user(
     
     payload = verify_token(token)
     if payload is None:
-        raise get_exception("Token verification failed: Invalid key, signature, or expired session.")
+        raise get_exception("Token verification failed (expired or invalid)")
         
     user_id: str = payload.get("sub")
     role: str = payload.get("role")
     
     if user_id is None:
-        raise get_exception("Token payload missing user ID (sub).")
+        raise get_exception("Token payload missing user ID")
     
     if role not in ["user", "provider", "admin"]:
-        raise get_exception(f"Invalid role in token: {role}. Expected user, provider, or admin.")
+        raise get_exception(f"Invalid role in token: {role}")
         
     user = db.query(User).filter(User.id == int(user_id)).first()
     if not user:
-        raise get_exception("User record linked to this token no longer exists in the database.")
+        raise get_exception("User no longer exists in database")
         
     return user
 

@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       if (response.ok) {
         alert("Review submitted successfully!");
-        window.location.href = "my-bookings.html";
+        window.location.href = "all-completed.html";
       } else {
         const error = await response.json();
         alert(`Error: ${error.detail || "Failed to submit review"}`);

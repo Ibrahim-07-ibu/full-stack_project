@@ -45,13 +45,6 @@ app.mount("/static", StaticFiles(directory=static_dir), name="static")
 def read_root():
     return {"message": "HomeBuddy API is running", "version": "55.0-RECOVERY"}
 
-@app.api_route("/api/debug-path", methods=["GET", "POST"])
-async def debug_path(request: Request):
-    return {
-        "url": str(request.url),
-        "method": request.method,
-        "headers": dict(request.headers)
-    }
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -74,23 +67,6 @@ from routers import auth
 from db.database import engine, Base
 import models.users, models.providers, models.services, models.bookings, models.reviews, models.supports
 
-@app.get("/api/infra-test")
-def infra_test():
-    from auth import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, ENVIRONMENT
-    is_default_key = (SECRET_KEY == "MISSING-SECRET-KEY-SET-IN-VERCEL" or SECRET_KEY == "dev-secret-key-change-it")
-    
-    return {
-        "status": "ok", 
-        "message": "Backend Is Live", 
-        "db": str(engine.url).split("@")[-1] if "@" in str(engine.url) else "local",
-        "env": {
-            "environment": ENVIRONMENT,
-            "algorithm": ALGORITHM,
-            "token_expire_min": ACCESS_TOKEN_EXPIRE_MINUTES,
-            "key_status": "DEFAULT/INSECURE" if is_default_key else "PROPERLY_SET",
-            "key_length": len(SECRET_KEY) if SECRET_KEY else 0
-        }
-    }
 
 
 app.include_router(auth.router)

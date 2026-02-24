@@ -6,6 +6,7 @@ from models.services import Service
 from models.bookings import Booking
 from models.providers import Provider
 from schemas.bookings_schema import BookingCreate
+from models.reviews import Review
 
 
 router = APIRouter(prefix="/api/bookings", tags=["Bookings"])
@@ -73,11 +74,13 @@ def get_accepted_bookings(
     )
 
 
+from sqlalchemy.orm import Session, joinedload
+
 @router.get("/my")
 def get_my_bookings(
     db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
-    bookings = db.query(Booking).filter(Booking.user_id == current_user.id).all()
+    bookings = db.query(Booking).options(joinedload(Booking.review)).filter(Booking.user_id == current_user.id).all()
 
     response = []
     for b in bookings:
@@ -103,6 +106,12 @@ def get_my_bookings(
                     "email": provider.email,
                     "phone": provider.phone,
                 }
+        
+        if b.review:
+            booking_data["review"] = {
+                "rating": b.review.rating,
+                "comment": b.review.comment
+            }
 
         response.append(booking_data)
 

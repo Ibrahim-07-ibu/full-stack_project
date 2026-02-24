@@ -22,20 +22,3 @@ def create_support_root(
     db.commit()
     db.refresh(new_support)
     return {"message": "Support ticket created successfully", "support_id": new_support.id}
-
-
-@router.post("/create")
-def create_support(
-    support: SupportCreate,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    new_support = Support(
-        user_id=current_user.id, subject=support.subject, message=support.message
-    )
-
-    db.add(new_support)
-    db.commit()
-    db.refresh(new_support)
-    return new_support
-

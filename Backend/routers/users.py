@@ -11,9 +11,6 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/auth", tags=["Users"])
 
 
-@router.get("/users")
-def get_all_users(db: Session = Depends(get_db)):
-    return db.query(User).all()
 
 
 @router.get("/profile", response_model=UserOut)

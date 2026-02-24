@@ -69,51 +69,12 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
         raise
     except Exception as e:
         db.rollback()
-        error_msg = str(e)
-        tb = traceback.format_exc()
         logger.exception("FATAL ERROR during registration")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail={
-                "error": "Internal Server Error during registration",
-                "message": error_msg,
-                "traceback": tb
-            }
+            detail="We encountered a problem setting up your account. Please try again later."
         )
 
-@router.get("/auth_check")
-def auth_check(db: Session = Depends(get_db)):
-    """
-    Diagnostic endpoint to check DB and Password hashing.
-    """
-    results = {
-        "database": "checking...",
-        "hashing": "checking..."
-    }
-    
-    # Check DB
-    try:
-        db.execute("SELECT 1")
-        results["database"] = "OK"
-    except Exception as e:
-        results["database"] = f"FAILED: {str(e)}"
-        
-    # Check Hashing
-    try:
-        test_pass = "HB-test-123"
-        hashed = hash_password(test_pass)
-        if verify_password(test_pass, hashed):
-            results["hashing"] = "OK"
-        else:
-            results["hashing"] = "FAILED: Verification mismatch"
-    except Exception as e:
-        results["hashing"] = f"FAILED Error: {str(e)}"
-        
-    return results
-
-@router.get("/login")
-def login_diagnostic():
-    return {"detail": "This endpoint requires a POST request with email and password."}
 
 @router.post("/login")
 def login_user(user: UserLogin, db: Session = Depends(get_db)):
@@ -165,9 +126,6 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             status_code=500, detail="Internal Server Error during login processing"
         )
 
-@router.get("/unified_login")
-def unified_login_diagnostic():
-    return {"detail": "This endpoint requires a POST request for unified account access."}
 
 @router.post("/unified_login")
 def unified_login(user: UserLogin, db: Session = Depends(get_db)):
@@ -200,14 +158,13 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
         )
 
         # Determine redirect based on role
-        redirect_path = "/html/user/dashboard.html"
-        user_role = (db_user.role or "user").lower()
-        if user_role == "provider":
-            redirect_path = "/html/provider/provider-dashboard.html"
-        elif user_role == "admin":
-            redirect_path = "/html/admin/admin-dashboard.html"
+        redirect_path = "dashboard.html"
+        if db_user.role == "provider":
+            redirect_path = "provider-dashboard.html"
+        elif db_user.role == "admin":
+            redirect_path = "../admin/admin-dashboard.html"
 
-        logger.info(f"SUCCESS: {user_role.upper()} login successful for {normalized_email}")
+        logger.info(f"SUCCESS: {db_user.role.upper()} login successful for {normalized_email}")
 
         return {
             "message": "Login successful",
@@ -224,18 +181,9 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
     except HTTPException:
         raise
     except Exception as e:
-        error_msg = str(e)
-        tb = traceback.format_exc()
-        logger.error(f"CRITICAL ERROR IN UNIFIED LOGIN: {error_msg}")
-        logger.error(f"Traceback: {tb}")
-        # Return detail with traceback to help debugging
+        logger.error(f"CRITICAL ERROR IN UNIFIED LOGIN: {e}")
         raise HTTPException(
-            status_code=500, 
-            detail={
-                "error": "Internal Server Error during login",
-                "message": error_msg,
-                "traceback": tb
-            }
+            status_code=500, detail="Internal Server Error during login"
         )
 
 @router.post("/provider/login")
