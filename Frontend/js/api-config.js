@@ -22,6 +22,10 @@ const API_BASE = (function () {
 window.API_BASE_URL = API_BASE;
 
 window.setToken = (token, role = "user") => {
+  if (!token) {
+    console.error("[setToken] Called with empty/null token! Token will NOT be stored.");
+    return;
+  }
   localStorage.setItem("auth_token", token);
   localStorage.setItem("role", role);
   if (role === "provider") {
@@ -29,6 +33,7 @@ window.setToken = (token, role = "user") => {
   } else {
     localStorage.setItem("user_token", token);
   }
+  console.log("[setToken] ✅ Token saved. role=" + role + " auth_token=" + !!localStorage.getItem("auth_token"));
 };
 
 window.getToken = () => {
