@@ -32,16 +32,20 @@ window.setToken = (token, role = "user") => {
 };
 
 window.getToken = () => {
-  // First try the specific token based on location
   const isProviderPath = window.location.pathname.includes("/provider/");
   const isAdminPath = window.location.pathname.includes("/admin/");
 
   if (isProviderPath) {
-    return localStorage.getItem("provider_token") || localStorage.getItem("auth_token");
+    const pToken = localStorage.getItem("provider_token");
+    if (pToken) return pToken;
   }
 
-  // Default fallback to the unified token or user token
-  return localStorage.getItem("auth_token") || localStorage.getItem("user_token");
+  // General fallback
+  return (
+    localStorage.getItem("auth_token") ||
+    localStorage.getItem("user_token") ||
+    localStorage.getItem("provider_token")
+  );
 };
 
 window.removeToken = () => {
@@ -111,9 +115,15 @@ async function makeRequest(endpoint, options = {}) {
       console.groupEnd();
 
       if (response.status === 401) {
-        console.warn("Unauthorized access (401). Redirecting to login...");
-        window.removeToken();
-        window.checkAuth();
+        console.warn(`[AUTH FAIL] 401 Unauthorized for ${endpoint}. Detail:`, errorData.detail || errorData);
+
+        // If we are already on a dashboard, and a core request fails, redirect to login
+        const isDashboard = window.location.pathname.includes("dashboard.html");
+        if (isDashboard) {
+          console.error("Critical auth failure on dashboard. Clearing session and redirecting...");
+          window.removeToken();
+          window.checkAuth();
+        }
       }
     }
 

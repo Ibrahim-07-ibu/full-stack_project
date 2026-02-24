@@ -76,10 +76,20 @@ import models.users, models.providers, models.services, models.bookings, models.
 
 @app.get("/api/infra-test")
 def infra_test():
+    from auth import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, ENVIRONMENT
+    is_default_key = (SECRET_KEY == "MISSING-SECRET-KEY-SET-IN-VERCEL" or SECRET_KEY == "dev-secret-key-change-it")
+    
     return {
         "status": "ok", 
         "message": "Backend Is Live", 
-        "db": str(engine.url).split("@")[-1] if "@" in str(engine.url) else "local"
+        "db": str(engine.url).split("@")[-1] if "@" in str(engine.url) else "local",
+        "env": {
+            "environment": ENVIRONMENT,
+            "algorithm": ALGORITHM,
+            "token_expire_min": ACCESS_TOKEN_EXPIRE_MINUTES,
+            "key_status": "DEFAULT/INSECURE" if is_default_key else "PROPERLY_SET",
+            "key_length": len(SECRET_KEY) if SECRET_KEY else 0
+        }
     }
 
 

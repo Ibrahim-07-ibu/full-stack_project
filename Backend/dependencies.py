@@ -20,25 +20,30 @@ def get_current_user(
     db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme)
 ):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+    def get_exception(detail="Could not validate credentials"):
+        return HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=detail,
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     
     payload = verify_token(token)
     if payload is None:
-        raise credentials_exception
+        raise get_exception("Token verification failed (expired or invalid)")
         
     user_id: str = payload.get("sub")
     role: str = payload.get("role")
     
-    if user_id is None or role not in ["user", "provider", "admin"]:
-        raise credentials_exception
+    if user_id is None:
+        raise get_exception("Token payload missing user ID")
+    
+    if role not in ["user", "provider", "admin"]:
+        raise get_exception(f"Invalid role in token: {role}")
         
     user = db.query(User).filter(User.id == int(user_id)).first()
     if not user:
-        raise credentials_exception
+        raise get_exception("User no longer exists in database")
+        
     return user
 
 def get_current_provider(
