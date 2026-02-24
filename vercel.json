@@ -1,26 +1,30 @@
 {
   "version": 2,
-  "cleanUrls": true,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.py"
+      "src": "api/index.py",
+      "use": "@vercel/python"
     },
     {
-      "source": "/health",
-      "destination": "/api/index.py"
+      "src": "Frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/index.py"
     },
     {
-      "source": "/(css|js|html)/(.*)",
-      "destination": "/Frontend/$1/$2"
+      "src": "/health",
+      "dest": "api/index.py"
     },
     {
-      "source": "/(.*).html",
-      "destination": "/Frontend/$1.html"
+      "handle": "filesystem"
     },
     {
-      "source": "/(.*)",
-      "destination": "/Frontend/index.html"
+      "src": "/(.*)",
+      "dest": "Frontend/$1"
     }
   ]
 }
