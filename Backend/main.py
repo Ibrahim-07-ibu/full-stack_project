@@ -14,10 +14,25 @@ backend_root = os.path.dirname(os.path.abspath(__file__))
 if backend_root not in sys.path:
     sys.path.insert(0, backend_root)
 
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Startup: Syncing database...")
+    try:
+        # Check if engine is postgres (Supabase) before sync
+        if "sqlite" not in str(engine.url):
+            Base.metadata.create_all(bind=engine)
+            logger.info("Database synchronized.")
+    except Exception as e:
+        logger.error(f"Post-startup DB sync failed: {e}")
+    yield
+
 app = FastAPI(
     title="HomeBuddy", 
     version="55.0-RECOVERY",
-    redirect_slashes=False  
+    redirect_slashes=False,
+    lifespan=lifespan
 )
 
 static_dir = os.path.join(backend_root, "static")
@@ -55,19 +70,9 @@ app.add_middleware(
 )
 
 from routers import users, bookings, providers, reviews, services, supports
-
+from routers import auth
 from db.database import engine, Base
 import models.users, models.providers, models.services, models.bookings, models.reviews, models.supports
-
-@app.on_event("startup")
-def startup_event():
-    logger.info("Startup: Syncing database...")
-    try:
-        if "sqlite" not in str(engine.url):
-            Base.metadata.create_all(bind=engine)
-            logger.info("Database synchronized.")
-    except Exception as e:
-        logger.error(f"Post-startup DB sync failed: {e}")
 
 @app.get("/api/infra-test")
 def infra_test():
@@ -77,6 +82,8 @@ def infra_test():
         "db": str(engine.url).split("@")[-1] if "@" in str(engine.url) else "local"
     }
 
+
+app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(bookings.router)
 app.include_router(providers.router)

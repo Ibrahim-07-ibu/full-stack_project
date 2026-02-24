@@ -1,1 +1,1 @@
-from . import users, bookings, providers, reviews, services, supports
+from . import auth, users, bookings, providers, reviews, services, supports
