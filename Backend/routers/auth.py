@@ -187,9 +187,12 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"CRITICAL ERROR IN UNIFIED LOGIN: {e}")
+        logger.error(f"CRITICAL ERROR IN UNIFIED LOGIN: {str(e)}")
+        traceback.print_exc()
+        # Return the actual error message in the detail to diagnose the 500 error
         raise HTTPException(
-            status_code=500, detail="Internal Server Error during login"
+            status_code=500, 
+            detail=f"Internal Server Error during login: {str(e)}"
         )
 
 @router.post("/provider/login")
