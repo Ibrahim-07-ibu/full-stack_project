@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             localStorage.removeItem('admin_logged_in');
             localStorage.removeItem('role');
             localStorage.removeItem('token');
-            window.location.href = '../../../index.html';
+            window.location.href = '../../index.html';
         });
     }
 
