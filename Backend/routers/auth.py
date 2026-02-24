@@ -69,11 +69,47 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
         raise
     except Exception as e:
         db.rollback()
+        error_msg = str(e)
+        tb = traceback.format_exc()
         logger.exception("FATAL ERROR during registration")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail="We encountered a problem setting up your account. Please try again later."
+            detail={
+                "error": "Internal Server Error during registration",
+                "message": error_msg,
+                "traceback": tb
+            }
         )
+
+@router.get("/auth_check")
+def auth_check(db: Session = Depends(get_db)):
+    """
+    Diagnostic endpoint to check DB and Password hashing.
+    """
+    results = {
+        "database": "checking...",
+        "hashing": "checking..."
+    }
+    
+    # Check DB
+    try:
+        db.execute("SELECT 1")
+        results["database"] = "OK"
+    except Exception as e:
+        results["database"] = f"FAILED: {str(e)}"
+        
+    # Check Hashing
+    try:
+        test_pass = "HB-test-123"
+        hashed = hash_password(test_pass)
+        if verify_password(test_pass, hashed):
+            results["hashing"] = "OK"
+        else:
+            results["hashing"] = "FAILED: Verification mismatch"
+    except Exception as e:
+        results["hashing"] = f"FAILED Error: {str(e)}"
+        
+    return results
 
 @router.get("/login")
 def login_diagnostic():
