@@ -162,7 +162,7 @@ def verify_provider(provider_id: int, db: Session = Depends(get_db)):
     return {"message": "Provider verified successfully", "is_verified": provider.is_verified}
 
 
-@router.post("/reject/{provider_id}")
+@router.put("/reject/{provider_id}")
 def reject_provider(provider_id: int, db: Session = Depends(get_db)):
     provider = db.query(Provider).filter(Provider.id == provider_id).first()
     if not provider:

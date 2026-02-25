@@ -21,7 +21,7 @@ document.getElementById('admin-login-form').addEventListener('submit', async (e)
             localStorage.clear();
 
             if (result.access_token) {
-                window.setToken(result.access_token);
+                window.setToken(result.access_token, 'admin');
             }
 
             localStorage.setItem('admin_logged_in', 'true');

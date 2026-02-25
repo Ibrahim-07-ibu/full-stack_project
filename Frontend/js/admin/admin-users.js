@@ -10,9 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            localStorage.removeItem('admin_logged_in');
-            localStorage.removeItem('role');
-            localStorage.removeItem('token');
+            window.removeToken();
             window.location.href = '../../index.html';
         });
     }

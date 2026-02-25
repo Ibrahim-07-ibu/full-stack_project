@@ -161,8 +161,13 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
         redirect_path = "/html/user/dashboard.html"
         if db_user.role == "provider":
             redirect_path = "/html/provider/provider-dashboard.html"
+            db_provider = db.query(Provider).filter(Provider.user_id == db_user.id).first()
+            provider_id = db_provider.id if db_provider else None
         elif db_user.role == "admin":
             redirect_path = "/html/admin/admin-dashboard.html"
+            provider_id = None
+        else:
+            provider_id = None
 
         logger.info(f"SUCCESS: {db_user.role.upper()} login successful for {normalized_email}")
 
@@ -171,6 +176,7 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
             "access_token": access_token,
             "token_type": "bearer",
             "user_id": db_user.id,
+            "provider_id": provider_id,
             "name": db_user.name,
             "user_name": db_user.name,
             "full_name": db_user.name,

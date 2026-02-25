@@ -10,9 +10,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            localStorage.removeItem('admin_logged_in');
-            localStorage.removeItem('role');
-            localStorage.removeItem('token');
+            window.removeToken();
             window.location.href = '../../index.html';
         });
     }
@@ -121,7 +119,7 @@ async function rejectProvider(providerId) {
 
     try {
         const response = await makeRequest(`/api/providers/reject/${providerId}`, {
-            method: 'POST'
+            method: 'PUT'
         });
 
         if (response.ok) {

@@ -26,6 +26,9 @@ window.setToken = (token, role = "user") => {
   if (role === "provider") {
     localStorage.setItem("provider_token", token);
     console.log("[AUTH] provider_token set in localStorage");
+  } else if (role === "admin") {
+    localStorage.setItem("admin_token", token);
+    console.log("[AUTH] admin_token set in localStorage");
   } else {
     localStorage.setItem("user_token", token);
     console.log("[AUTH] user_token set in localStorage");
@@ -38,6 +41,9 @@ window.getToken = () => {
   if (path.includes("/provider/")) {
     token = localStorage.getItem("provider_token");
     console.log(`[AUTH] Reading provider_token for path ${path}. Found: ${token ? "YES" : "NO"}`);
+  } else if (path.includes("/admin/")) {
+    token = localStorage.getItem("admin_token");
+    console.log(`[AUTH] Reading admin_token for path ${path}. Found: ${token ? "YES" : "NO"}`);
   } else {
     token = localStorage.getItem("user_token");
     console.log(`[AUTH] Reading user_token for path ${path}. Found: ${token ? "YES" : "NO"}`);
@@ -48,6 +54,8 @@ window.getToken = () => {
 window.removeToken = () => {
   localStorage.removeItem("user_token");
   localStorage.removeItem("provider_token");
+  localStorage.removeItem("admin_token");
+  localStorage.removeItem("admin_logged_in");
 };
 
 // Returns true if authenticated, false if redirected (callers should 'return' on false)

@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            localStorage.removeItem('admin_token');
+            window.removeToken();
             window.location.href = 'admin-login.html';
         });
     }

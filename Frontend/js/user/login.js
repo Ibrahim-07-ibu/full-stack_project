@@ -20,11 +20,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 
     if (response.ok) {
       const result = await response.json();
-      console.log("========== LOGIN RESPONSE ==========");
-      console.log(result);
-      console.log("access_token:", result.access_token);
-      console.log("role:", result.role);
-      console.log("====================================");
+      console.log("[LOGIN] Success response received:", { role: result.role, hasToken: !!result.access_token });
       if (result.access_token) {
         window.setToken(result.access_token, result.role);
         console.log("[LOGIN] Token stored via window.setToken");
@@ -38,6 +34,9 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       localStorage.setItem("user_name", displayName);
       localStorage.setItem("name", displayName);
       localStorage.setItem("user_email", result.email);
+      if (result.provider_id) {
+        localStorage.setItem("provider_id", result.provider_id);
+      }
       console.log("[LOGIN] Profile data stored in localStorage");
 
       // Admin specific flag
