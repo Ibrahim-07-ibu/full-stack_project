@@ -28,6 +28,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     dateInput.setAttribute("min", today);
   }
 
+  // Image Upload Logic
+  const uploadWrapper = document.querySelector('.file-upload-wrapper');
+  const fileInput = document.getElementById('issue_image');
+  const placeholder = document.getElementById('upload-placeholder');
+  const previewContainer = document.getElementById('image-preview');
+  const previewImg = previewContainer.querySelector('img');
+  const removeBtn = document.getElementById('remove-img');
+
+  if (uploadWrapper && fileInput) {
+    uploadWrapper.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          previewImg.src = e.target.result;
+          placeholder.style.display = 'none';
+          previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    removeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      fileInput.value = '';
+      previewImg.src = '';
+      placeholder.style.display = 'block';
+      previewContainer.style.display = 'none';
+    });
+  }
+
   document
     .getElementById("booking-form")
     .addEventListener("submit", async (e) => {
@@ -41,19 +74,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      const formData = {
-        service_id: parseInt(document.getElementById("service_id").value),
-        address: document.getElementById("address").value,
-        city: document.getElementById("city").value,
-        pincode: document.getElementById("zipcode").value,
-        date: bookingDate,
-        time: document.getElementById("time").value,
-        instructions: document.getElementById("notes").value,
-      };
+      const formData = new FormData();
+      formData.append("service_id", document.getElementById("service_id").value);
+      formData.append("address", document.getElementById("address").value);
+      formData.append("city", document.getElementById("city").value);
+      formData.append("pincode", document.getElementById("zipcode").value);
+      formData.append("date", bookingDate);
+      formData.append("time", document.getElementById("time").value);
+      formData.append("instructions", document.getElementById("notes").value);
+
+      const imageFile = document.getElementById("issue_image").files[0];
+      if (imageFile) {
+        formData.append("issue_image", imageFile);
+      }
+
       try {
-        const response = await makeRequest(`/api/bookings`, {
+        const response = await fetch(`${window.API_BASE_URL}/api/bookings`, {
           method: "POST",
-          body: JSON.stringify(formData),
+          headers: {
+            "Authorization": `Bearer ${window.getToken()}`
+          },
+          body: formData,
         });
         if (response.ok) {
           const result = await response.json();

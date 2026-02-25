@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, File, UploadFile, Form
 from sqlalchemy.orm import Session
 from dependencies import get_db, get_current_user, get_current_provider, get_current_admin
 from models.users import User
@@ -7,6 +7,8 @@ from models.bookings import Booking
 from models.providers import Provider
 from schemas.bookings_schema import BookingCreate
 from models.reviews import Review
+from utils.storage import upload_to_cloudinary
+from datetime import date as date_type, time as time_type
 
 
 router = APIRouter(prefix="/api/bookings", tags=["Bookings"])
@@ -35,24 +37,37 @@ def get_all_bookings(
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
-def create_booking(
-    booking: BookingCreate,
+async def create_booking(
+    service_id: int = Form(...),
+    address: str = Form(...),
+    city: str = Form(...),
+    pincode: str = Form(...),
+    date: str = Form(...),
+    time: str = Form(...),
+    instructions: str = Form(None),
+    issue_image: UploadFile = File(None),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    service = db.query(Service).filter(Service.id == booking.service_id).first()
+    service = db.query(Service).filter(Service.id == service_id).first()
     if not service:
         raise HTTPException(status_code=404, detail="Service not found")
 
+    # Handle image upload if present
+    img_url = None
+    if issue_image and issue_image.filename:
+        img_url = upload_to_cloudinary(issue_image.file, folder="homebuddy/bookings")
+
     new_booking = Booking(
         user_id=current_user.id,
-        service_id=booking.service_id,
-        address=booking.address,
-        city=booking.city,
-        pincode=booking.pincode,
-        date=booking.date,
-        time=booking.time,
-        instructions=booking.instructions,
+        service_id=service_id,
+        address=address,
+        city=city,
+        pincode=pincode,
+        date=date_type.fromisoformat(date),
+        time=time_type.fromisoformat(time),
+        instructions=instructions,
+        issue_image=img_url,
         status="pending",
     )
 
@@ -263,6 +278,7 @@ def get_provider_pending_bookings(
                 "date": b.date,
                 "time": b.time,
                 "instructions": b.instructions,
+                "issue_image": b.issue_image,
                 "status": b.status,
                 "address": b.address,
                 "city": b.city,
@@ -296,6 +312,32 @@ def confirm_booking(
 
     return {
         "message": "Booking confirmed successfully",
+        "booking_id": booking.id,
+        "status": booking.status,
+    }
+
+
+# PROVIDER → PUT PENDING → REJECTED
+@router.put("/provider/{booking_id}/reject")
+def reject_booking(
+    booking_id: int,
+    db: Session = Depends(get_db),
+    current_provider: Provider = Depends(get_current_provider),
+):
+    booking = (
+        db.query(Booking)
+        .filter(Booking.id == booking_id, Booking.status == "pending")
+        .first()
+    )
+
+    if not booking:
+        raise HTTPException(status_code=404, detail="Pending booking not found")
+
+    booking.status = "rejected"
+    db.commit()
+
+    return {
+        "message": "Booking rejected successfully",
         "booking_id": booking.id,
         "status": booking.status,
     }

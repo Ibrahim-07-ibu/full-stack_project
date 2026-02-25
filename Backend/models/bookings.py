@@ -16,6 +16,7 @@ class Booking(Base):
     date = Column(DATE)
     time = Column(TIME)
     instructions = Column(String)
+    issue_image = Column(String, nullable=True)
     status = Column(String, default="pending")
 
     user = relationship("User", back_populates="bookings")
