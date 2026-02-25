@@ -93,15 +93,22 @@ from sqlalchemy.orm import Session, joinedload
 
 @router.get("/my")
 def get_my_bookings(
-    db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
+    db: Session = Depends(get_db), 
+    current_user: User = Depends(get_current_user)
 ):
     try:
-        bookings = db.query(Booking).options(
-            joinedload(Booking.review),
-            joinedload(Booking.service)
-        ).filter(Booking.user_id == current_user.id).all()
+        bookings = (
+            db.query(Booking)
+            .options(
+                joinedload(Booking.review),
+                joinedload(Booking.service)
+            )
+            .filter(Booking.user_id == current_user.id)
+            .all()
+        )
 
         response = []
+
         for b in bookings:
             booking_data = {
                 "id": b.id,
@@ -116,32 +123,40 @@ def get_my_bookings(
                 "status": b.status,
                 "provider_id": b.provider_id,
                 "provider": None,
+                "issue_image": b.issue_image,  
             }
+
             if b.provider_id and b.status in ["confirmed", "completed"]:
-                provider = db.query(Provider).filter(Provider.id == b.provider_id).first()
+                provider = db.query(Provider).filter(
+                    Provider.id == b.provider_id
+                ).first()
+
                 if provider:
                     booking_data["provider"] = {
                         "full_name": provider.full_name,
                         "email": provider.email,
                         "phone": provider.phone,
                     }
-            
+
             if b.review:
                 booking_data["review"] = {
                     "rating": b.review.rating,
-                    "comment": b.review.comment
+                    "comment": b.review.comment,
                 }
 
             response.append(booking_data)
 
         return response
+
     except Exception as e:
-        logger.error(f"Error in get_my_bookings: {str(e)}")
         import traceback
-        logger.error(traceback.format_exc())
+        print(" ERROR in /api/bookings/my")
+        print(str(e))
+        print(traceback.format_exc())
+
         raise HTTPException(
-            status_code=500, 
-            detail=f"Error retrieving bookings: {str(e)}"
+            status_code=500,
+            detail=str(e)
         )
 
 
