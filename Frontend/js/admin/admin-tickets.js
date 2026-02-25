@@ -4,10 +4,17 @@ async function fetchTickets() {
 
     try {
         const data = await makeRequest('/api/supports/all');
+
+        if (!Array.isArray(data)) {
+            console.error("Unexpected response:", data);
+            tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">Access denied or invalid response</td></tr>';
+            return;
+        }
+
         tableBody.innerHTML = '';
 
         if (data.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No support tickets found</td></tr>';
+            tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No support tickets found</td></tr>';
             return;
         }
 
@@ -30,9 +37,10 @@ async function fetchTickets() {
             `;
             tableBody.appendChild(row);
         });
+
     } catch (error) {
         console.error('Error fetching tickets:', error);
-        tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--danger-color);">Error loading tickets</td></tr>';
+        tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--danger-color);">Error loading tickets</td></tr>';
     }
 }
 

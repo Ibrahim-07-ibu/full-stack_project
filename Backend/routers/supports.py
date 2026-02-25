@@ -24,7 +24,7 @@ def create_support_root(
     db.refresh(new_support)
     return {"message": "Support ticket created successfully", "support_id": new_support.id}
 
-@router.get("/all", response_model=List[SupportResponse])
+@router.get("/all")
 def get_all_supports(
     db: Session = Depends(get_db),
     admin: bool = Depends(get_current_admin)
