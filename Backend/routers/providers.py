@@ -159,9 +159,24 @@ def verify_provider(provider_id: int, db: Session = Depends(get_db)):
     if not provider:
         raise HTTPException(status_code=404, detail="Provider not found")
     
-    provider.is_verified = True
-    db.commit()
     return {"message": "Provider verified successfully", "is_verified": provider.is_verified}
+
+
+@router.post("/reject/{provider_id}")
+def reject_provider(provider_id: int, db: Session = Depends(get_db)):
+    provider = db.query(Provider).filter(Provider.id == provider_id).first()
+    if not provider:
+        raise HTTPException(status_code=404, detail="Provider not found")
+    
+    # Optional: You could delete the provider, or mark them as rejected.
+    # The current implementation of verification list filters by !is_verified.
+    # To "reject", we could either delete or have an is_rejected flag.
+    # Given the existing verification page logic, deleting them from providers table 
+    # but keeping the user record might be the simplest 'rejection' flow.
+    # However, let's just delete the provider entry to remove them from verifications.
+    db.delete(provider)
+    db.commit()
+    return {"message": "Provider application rejected and removed."}
 
 
 @router.delete("/delete/{provider_id}")

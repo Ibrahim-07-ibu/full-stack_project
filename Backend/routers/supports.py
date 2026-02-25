@@ -37,6 +37,22 @@ def get_all_supports(
             "user_id": s.user_id,
             "user_name": s.user.name if s.user else "Unknown User",
             "subject": s.subject,
-            "message": s.message
+            "message": s.message,
+            "status": s.status,
+            "created_at": s.created_at
         })
     return response
+
+@router.put("/{ticket_id}/resolve")
+def resolve_ticket(
+    ticket_id: int,
+    db: Session = Depends(get_db),
+    admin: bool = Depends(get_current_admin)
+):
+    ticket = db.query(Support).filter(Support.id == ticket_id).first()
+    if not ticket:
+        raise HTTPException(status_code=404, detail="Ticket not found")
+    
+    ticket.status = "Resolved"
+    db.commit()
+    return {"message": "Ticket marked as resolved"}

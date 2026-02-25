@@ -10,6 +10,8 @@ class SupportResponse(BaseModel):
     user_name: str
     subject: str
     message: str
+    status: str
+    created_at: str
 
     class Config:
         from_attributes = True

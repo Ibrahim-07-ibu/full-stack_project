@@ -1,6 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
 from db.database import Base
 from sqlalchemy.orm import relationship
+from datetime import datetime
 
 
 class Support(Base):
@@ -10,5 +10,7 @@ class Support(Base):
     user_id = Column(Integer, ForeignKey("users.id"), index=True)
     subject = Column(String)
     message = Column(String)
+    status = Column(String, default="Open")
+    created_at = Column(String, default=lambda: datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
     user = relationship("User", back_populates="supports")

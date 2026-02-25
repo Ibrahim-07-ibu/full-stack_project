@@ -18,10 +18,14 @@ async function fetchTickets() {
                 <td>${ticket.user_name} (ID: ${ticket.user_id})</td>
                 <td><strong>${ticket.subject}</strong></td>
                 <td>${ticket.message}</td>
+                <td><span class="badge-status ${ticket.status === 'Resolved' ? 'verified' : 'pending'}">${ticket.status}</span></td>
+                <td><small>${ticket.created_at || 'N/A'}</small></td>
                 <td>
-                    <button class="action-btn btn-view" onclick="viewTicket(${ticket.id})">
-                        <i class="fa-solid fa-eye"></i> View
+                    ${ticket.status === 'Open' ? `
+                    <button class="action-btn btn-view" style="background: var(--success-color); color: white;" onclick="resolveTicket(${ticket.id})">
+                        <i class="fa-solid fa-check"></i> Resolve
                     </button>
+                    ` : '<span class="text-muted">No actions</span>'}
                 </td>
             `;
             tableBody.appendChild(row);
@@ -32,10 +36,25 @@ async function fetchTickets() {
     }
 }
 
-function viewTicket(id) {
-    // For now, just alert or show in a modal if needed. 
-    // Since we're keeping it simple, let's just alert the details for now.
-    alert('Viewing ticket details for ID: ' + id + '\n\nFull message handling can be implemented here.');
+async function resolveTicket(id) {
+    if (!confirm('Are you sure you want to mark this ticket as resolved?')) return;
+
+    try {
+        const response = await makeRequest(`/api/supports/${id}/resolve`, {
+            method: 'PUT'
+        });
+
+        if (response.ok) {
+            if (window.HB) window.HB.showToast('Ticket marked as resolved', 'success');
+            else alert('Ticket marked as resolved');
+            fetchTickets();
+        } else {
+            if (window.HB) window.HB.showToast('Failed to resolve ticket', 'error');
+            else alert('Failed to resolve ticket');
+        }
+    } catch (error) {
+        console.error('Error resolving ticket:', error);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {

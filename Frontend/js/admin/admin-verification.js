@@ -88,7 +88,7 @@ function renderVerifications(providers) {
 
             <div class="verification-actions">
                 <button class="btn-approve" onclick="verifyProvider(${provider.id})">Approve & Verify</button>
-                <button class="btn-reject">Reject Application</button>
+                <button class="btn-reject" onclick="rejectProvider(${provider.id})">Reject Application</button>
             </div>
         `;
         container.appendChild(card);
@@ -109,6 +109,26 @@ async function verifyProvider(providerId) {
             setTimeout(() => location.reload(), 1500);
         } else {
             showModal('Failed to verify provider.', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+async function rejectProvider(providerId) {
+    const confirmed = await showConfirm('Are you sure you want to REJECT and REMOVE this provider application?', 'error');
+    if (!confirmed) return;
+
+    try {
+        const response = await makeRequest(`/api/providers/reject/${providerId}`, {
+            method: 'POST'
+        });
+
+        if (response.ok) {
+            showModal('Provider application rejected.', 'success');
+            setTimeout(() => location.reload(), 1500);
+        } else {
+            showModal('Failed to reject provider.', 'error');
         }
     } catch (error) {
         console.error('Error:', error);
