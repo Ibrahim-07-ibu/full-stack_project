@@ -3,18 +3,19 @@ async function fetchTickets() {
     if (!tableBody) return;
 
     try {
-        const data = await makeRequest('/api/supports/all');
+        const response = await makeRequest('/api/supports/all');
 
-        if (!Array.isArray(data)) {
-            console.error("Unexpected response:", data);
-            tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: red;">Access denied or invalid response</td></tr>';
-            return;
+        if (!response.ok) {
+            throw new Error("Failed to fetch tickets");
         }
+
+        const data = await response.json();   // 🔥 THIS IS THE FIX
 
         tableBody.innerHTML = '';
 
         if (data.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No support tickets found</td></tr>';
+            tableBody.innerHTML =
+                '<tr><td colspan="7" style="text-align: center;">No support tickets found</td></tr>';
             return;
         }
 
@@ -25,11 +26,17 @@ async function fetchTickets() {
                 <td>${ticket.user_name} (ID: ${ticket.user_id})</td>
                 <td><strong>${ticket.subject}</strong></td>
                 <td>${ticket.message}</td>
-                <td><span class="badge-status ${ticket.status === 'Resolved' ? 'verified' : 'pending'}">${ticket.status}</span></td>
+                <td>
+                    <span class="badge-status ${ticket.status === 'Resolved' ? 'verified' : 'pending'}">
+                        ${ticket.status}
+                    </span>
+                </td>
                 <td><small>${ticket.created_at || 'N/A'}</small></td>
                 <td>
                     ${ticket.status === 'Open' ? `
-                    <button class="action-btn btn-view" style="background: var(--success-color); color: white;" onclick="resolveTicket(${ticket.id})">
+                    <button class="action-btn btn-view"
+                        style="background: var(--success-color); color: white;"
+                        onclick="resolveTicket(${ticket.id})">
                         <i class="fa-solid fa-check"></i> Resolve
                     </button>
                     ` : '<span class="text-muted">No actions</span>'}
@@ -40,7 +47,8 @@ async function fetchTickets() {
 
     } catch (error) {
         console.error('Error fetching tickets:', error);
-        tableBody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--danger-color);">Error loading tickets</td></tr>';
+        tableBody.innerHTML =
+            '<tr><td colspan="7" style="text-align: center; color: var(--danger-color);">Error loading tickets</td></tr>';
     }
 }
 
