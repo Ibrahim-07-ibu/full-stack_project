@@ -55,18 +55,21 @@ document.addEventListener("DOMContentLoaded", async () => {
                   <span class="detail-label">Address</span>
                   <span class="detail-value"><i class="fa-solid fa-location-dot"></i> ${booking.address}, ${booking.city} - ${booking.pincode}</span>
                 </div>
-                ${booking.issue_image ? `
-                <div class="order-detail issue-image-container" style="margin-top: 1rem;">
-                  <span class="detail-label">Issue Image</span>
-                  <div class="booking-img-wrapper" style="margin-top: 0.5rem; border-radius: 8px; overflow: hidden; max-width: 200px;">
-                    <img src="${booking.issue_image}" alt="Issue" style="width: 100%; display: block; filter: brightness(0.9); transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" onclick="window.open('${booking.issue_image}', '_blank')" />
-                  </div>
-                </div>
-                ` : ''}
               </div>
+
+              ${booking.issue_image ? `
+              <div class="issue-image-section" style="margin: 1.5rem 0; padding: 1rem; background: rgba(0,0,0,0.03); border-radius: 12px; border: 1px dashed var(--mist-blue);">
+                <span class="detail-label" style="display: block; margin-bottom: 0.75rem; font-weight: bold; color: var(--steel-grey);">Customer Provided Image:</span>
+                <div class="booking-img-wrapper" style="border-radius: 8px; overflow: hidden; max-width: 300px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                  <img src="${booking.issue_image}" alt="Issue" style="width: 100%; display: block; transition: transform 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" onclick="window.open('${booking.issue_image}', '_blank')" />
+                </div>
+                <p style="font-size: 0.8rem; color: var(--slate-blue); margin-top: 0.5rem;"><i class="fa-solid fa-magnifying-glass-plus"></i> Click image to view full size</p>
+              </div>
+              ` : ''}
+
               <div class="order-actions">
                 <button class="btn-accept" onclick="acceptBooking(${booking.id})"><i class="fa-solid fa-check"></i> Accept Order</button>
-                <button class="btn-reject" style="background: var(--danger-color); color: white;" onclick="rejectBooking(${booking.id})"><i class="fa-solid fa-xmark"></i> Reject Order</button>
+                <button class="btn-reject" onclick="rejectBooking(${booking.id})"><i class="fa-solid fa-xmark"></i> Reject Order</button>
               </div>`;
 
       container.appendChild(card);
