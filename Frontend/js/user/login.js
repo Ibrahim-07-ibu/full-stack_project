@@ -20,8 +20,11 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 
     if (response.ok) {
       const result = await response.json();
-      console.log("[LOGIN] Success response received:", { role: result.role, hasToken: !!result.access_token });
-
+      console.log("========== LOGIN RESPONSE ==========");
+      console.log(result);
+      console.log("access_token:", result.access_token);
+      console.log("role:", result.role);
+      console.log("====================================");
       if (result.access_token) {
         window.setToken(result.access_token, result.role);
         console.log("[LOGIN] Token stored via window.setToken");
