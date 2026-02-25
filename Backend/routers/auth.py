@@ -72,7 +72,7 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
         logger.exception("FATAL ERROR during registration")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-            detail="We encountered a problem setting up your account. Please try again later."
+            detail=f"Registration Error: {str(e)}"
         )
 
 
@@ -183,7 +183,7 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"CRITICAL ERROR IN UNIFIED LOGIN: {e}")
         raise HTTPException(
-            status_code=500, detail="Internal Server Error during login"
+            status_code=500, detail=f"Login Error: {str(e)}"
         )
 
 @router.post("/provider/login")
