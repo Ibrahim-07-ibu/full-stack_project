@@ -23,9 +23,6 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const response = await makeRequest("/api/supports", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
                 body: JSON.stringify(supportData),
             });
 
