@@ -55,6 +55,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
   document.querySelector(".btn-secondary").addEventListener("click", () => {
-    location.reload();
+    window.location.href = "dashboard.html";
   });
 });
