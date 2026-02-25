@@ -20,10 +20,8 @@ from contextlib import asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Startup: Syncing database...")
     try:
-        # Check if engine is postgres (Supabase) before sync
-        if "sqlite" not in str(engine.url):
-            Base.metadata.create_all(bind=engine)
-            logger.info("Database synchronized.")
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database synchronized.")
     except Exception as e:
         logger.error(f"Post-startup DB sync failed: {e}")
     yield

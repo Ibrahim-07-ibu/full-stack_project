@@ -1,52 +1,16 @@
-from fastapi import Depends, HTTPException, status, Header
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from db.database import SessionLocal
-from models.users import User
-from models.providers import Provider
+from db.database import get_db
 from typing import Optional
 from auth import verify_token
+# Note: User and Provider models are imported where needed or used for typing
+from models.users import User
+from models.providers import Provider
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
 def get_current_user(
-    db: Session = Depends(get_db),
-    token: str = Depends(oauth2_scheme)
-):
-    def get_exception(detail="Could not validate credentials"):
-        return HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=detail,
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    
-    payload = verify_token(token)
-    if payload is None:
-        raise get_exception("Token verification failed (expired or invalid)")
-        
-    user_id: str = payload.get("sub")
-    role: str = payload.get("role")
-    
-    if user_id is None:
-        raise get_exception("Token payload missing user ID")
-    
-    if role not in ["user", "provider", "admin"]:
-        raise get_exception(f"Invalid role in token: {role}")
-        
-    user = db.query(User).filter(User.id == int(user_id)).first()
-    if not user:
-        raise get_exception("User no longer exists in database")
-        
-    return user
-
-def get_current_provider(
     db: Session = Depends(get_db),
     token: str = Depends(oauth2_scheme)
 ):
@@ -60,16 +24,15 @@ def get_current_provider(
     if payload is None:
         raise credentials_exception
         
-    user_id: str = payload.get("sub")
-    role: str = payload.get("role")
-    
-    if user_id is None or role != "provider":
+    user_id: int = payload.get("sub")
+    if user_id is None:
         raise credentials_exception
         
-    provider = db.query(Provider).filter(Provider.user_id == int(user_id)).first()
-    if not provider:
+    user = db.query(User).filter(User.id == user_id).first()
+    if user is None:
         raise credentials_exception
-    return provider
+    return user
+
 def get_current_admin(
     token: str = Depends(oauth2_scheme)
 ):
@@ -91,3 +54,26 @@ def get_current_admin(
             detail="Not enough permissions"
         )
     return True
+
+def get_current_provider(
+    db: Session = Depends(get_db),
+    token: str = Depends(oauth2_scheme)
+):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    
+    payload = verify_token(token)
+    if payload is None:
+        raise credentials_exception
+        
+    user_id: int = payload.get("sub")
+    if user_id is None:
+        raise credentials_exception
+        
+    provider = db.query(Provider).filter(Provider.user_id == user_id).first()
+    if provider is None:
+        raise credentials_exception
+    return provider
