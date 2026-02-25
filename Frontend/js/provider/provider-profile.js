@@ -88,25 +88,35 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
 
       container.innerHTML = "";
-      reviews.forEach((r) => {
+      reviews.slice(0, 2).forEach((r) => {
         const div = document.createElement("div");
         div.className = "review";
+
         const stars =
           '<i class="fa-solid fa-star"></i>'.repeat(r.rating) +
           '<i class="fa-regular fa-star"></i>'.repeat(5 - r.rating);
+
         div.innerHTML = `
-                    <div class="review-header">
-                        <strong>${r.user_name}</strong>
-                        <span>${stars} ${r.rating}.0</span>
-                    </div>
-                    <div style="font-size: 0.8rem; color: #5A6D7A; margin-bottom: 0.5rem;">
-                        <i class="fa-solid ${window.getServiceIcon(r.service_name)}"></i> ${r.service_name}
-                    </div>
-                    <p>"${r.comment}"</p>
-                    <span class="review-date">Recent</span>
-                `;
+          <div class="review-header">
+              <strong>${r.user_name}</strong>
+              <span>${stars} ${r.rating}.0</span>
+          </div>
+          <div style="font-size: 0.8rem; color: #5A6D7A; margin-bottom: 0.5rem;">
+              <i class="fa-solid ${window.getServiceIcon(
+          r.service_name
+        )}"></i> ${r.service_name}
+          </div>
+          <p>"${r.comment}"</p>
+          <span class="review-date">Recent</span>
+        `;
+
         container.appendChild(div);
       });
+
+      if (viewAllBtn) {
+        viewAllBtn.style.display =
+          reviews.length > 2 ? "inline-block" : "none";
+      }
     }
   } catch (error) {
     console.error("Error fetching reviews:", error);
