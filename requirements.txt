@@ -5,6 +5,7 @@ python-multipart
 pyjwt
 requests
 pg8000
-passlib
-bcrypt
 uvicorn
+
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
