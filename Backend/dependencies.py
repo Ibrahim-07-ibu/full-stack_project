@@ -85,15 +85,34 @@ def get_current_provider(
         headers={"WWW-Authenticate": "Bearer"},
     )
     
-    payload = verify_token(token)
-    if payload is None:
-        raise credentials_exception
+    try:
+        payload = verify_token(token)
+        if payload is None:
+            logger.warning("Token verification failed for provider")
+            raise credentials_exception
+            
+        sub = payload.get("sub")
+        if sub is None:
+            logger.warning("Token payload missing 'sub' for provider")
+            raise credentials_exception
+            
+        user_id = int(sub)
         
-    user_id: int = payload.get("sub")
-    if user_id is None:
-        raise credentials_exception
-        
-    provider = db.query(Provider).filter(Provider.user_id == user_id).first()
-    if provider is None:
-        raise credentials_exception
-    return provider
+        provider = db.query(Provider).filter(Provider.user_id == user_id).first()
+        if provider is None:
+            logger.warning(f"No provider found for user_id: {user_id}")
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="User is not a registered provider"
+            )
+        return provider
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"CRITICAL ERROR in get_current_provider: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise HTTPException(
+            status_code=500,
+            detail=f"Provider Authentication Error: {str(e)}"
+        )
