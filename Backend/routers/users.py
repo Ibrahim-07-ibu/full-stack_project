@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from typing import List
 from sqlalchemy.orm import Session
 from dependencies import get_db, get_current_user, get_current_admin
 from models.users import User
@@ -9,6 +10,18 @@ import logging
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/auth", tags=["Users"])
+
+
+@router.get("/users", response_model=List[UserOut])
+def get_users(
+    db: Session = Depends(get_db),
+    admin: bool = Depends(get_current_admin)
+):
+    """
+    Get all users. Admin only.
+    """
+    users = db.query(User).all()
+    return users
 
 
 

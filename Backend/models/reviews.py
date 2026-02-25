@@ -1,4 +1,5 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
+from datetime import datetime
 from db.database import Base
 from sqlalchemy.orm import relationship
 
@@ -13,6 +14,7 @@ class Review(Base):
     service_id = Column(Integer, ForeignKey("services.id"))
     rating = Column(Integer)
     comment = Column(String)
+    created_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="reviews")
     provider = relationship("Provider", back_populates="reviews")

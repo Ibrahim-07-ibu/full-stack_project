@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from dependencies import get_db
+from dependencies import get_db, get_current_admin
 from models.services import Service
 from schemas.services_schema import ServiceCreate, ServiceResponse
 from typing import List
@@ -55,3 +55,17 @@ def update_service(
     db.refresh(service)
 
     return service
+
+@router.delete("/{service_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_service(
+    service_id: int,
+    db: Session = Depends(get_db),
+    admin: bool = Depends(get_current_admin)
+):
+    service = db.query(Service).filter(Service.id == service_id).first()
+    if not service:
+        raise HTTPException(status_code=404, detail="Service not found")
+    
+    db.delete(service)
+    db.commit()
+    return None

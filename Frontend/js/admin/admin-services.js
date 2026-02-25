@@ -87,6 +87,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <button class="btn-update" onclick="updateService(${service.id}, '${service.name}', '${service.description}')">
                         Update
                     </button>
+                    <button class="btn-remove" onclick="deleteService(${service.id})" style="background: #ff4d4d; color: white; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; margin-left: 0.5rem;">
+                        Remove
+                    </button>
                 </div>
             `;
             container.appendChild(item);
@@ -140,6 +143,27 @@ document.addEventListener('DOMContentLoaded', async () => {
                 fetchServices();
             } else {
                 showModal('Failed to update price.', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showModal('Server error occurred.', 'error');
+        }
+    };
+
+    window.deleteService = async (id) => {
+        const confirmed = await showConfirm('Are you sure you want to remove this service?', 'danger');
+        if (!confirmed) return;
+
+        try {
+            const response = await makeRequest(`/api/services/${id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                showModal('Service removed successfully!', 'success');
+                fetchServices();
+            } else {
+                showModal('Failed to remove service.', 'error');
             }
         } catch (error) {
             console.error('Error:', error);

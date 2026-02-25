@@ -28,6 +28,7 @@ class UserOut(BaseModel):
     phone: str
     address: str
     role: str
+    is_active: bool
 
     class Config:
         from_attributes = True

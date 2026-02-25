@@ -26,7 +26,7 @@ def get_all_reviews(
             "provider_name": r.provider.full_name if r.provider else "Unknown",
             "service_name": r.service.name if r.service else "Service",
             "booking_id": r.booking_id,
-            "created_at": str(r.created_at) if hasattr(r, 'created_at') else "N/A"
+            "created_at": r.created_at.strftime("%Y-%m-%d") if r.created_at else "N/A"
         })
     return response
 
