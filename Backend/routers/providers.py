@@ -3,8 +3,6 @@ from sqlalchemy.orm import Session
 from dependencies import get_db, get_current_user
 from models.providers import Provider
 from models.users import User
-import shutil
-import os
 from datetime import date
 
 from schemas.provider_schema import ProviderCreate, ProviderUpdate, ProviderResponse

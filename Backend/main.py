@@ -3,7 +3,6 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import sys
 import logging
-from fastapi.staticfiles import StaticFiles
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -32,12 +31,6 @@ app = FastAPI(
     redirect_slashes=False,
     lifespan=lifespan
 )
-
-static_dir = os.path.join(backend_root, "static")
-if not os.path.exists(static_dir):
-    os.makedirs(static_dir, exist_ok=True)
-
-app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 @app.get("/")
 def read_root():
