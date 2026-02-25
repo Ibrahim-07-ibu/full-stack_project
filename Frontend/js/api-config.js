@@ -22,18 +22,27 @@ const API_BASE = (function () {
 window.API_BASE_URL = API_BASE;
 
 window.setToken = (token, role = "user") => {
+  console.log(`[AUTH] Setting token for role: ${role}`);
   if (role === "provider") {
     localStorage.setItem("provider_token", token);
+    console.log("[AUTH] provider_token set in localStorage");
   } else {
     localStorage.setItem("user_token", token);
+    console.log("[AUTH] user_token set in localStorage");
   }
 };
 
 window.getToken = () => {
-  if (window.location.pathname.includes("/provider/")) {
-    return localStorage.getItem("provider_token");
+  const path = window.location.pathname;
+  let token;
+  if (path.includes("/provider/")) {
+    token = localStorage.getItem("provider_token");
+    console.log(`[AUTH] Reading provider_token for path ${path}. Found: ${token ? "YES" : "NO"}`);
+  } else {
+    token = localStorage.getItem("user_token");
+    console.log(`[AUTH] Reading user_token for path ${path}. Found: ${token ? "YES" : "NO"}`);
   }
-  return localStorage.getItem("user_token");
+  return token;
 };
 
 window.removeToken = () => {
@@ -41,18 +50,23 @@ window.removeToken = () => {
   localStorage.removeItem("provider_token");
 };
 
+// Returns true if authenticated, false if redirected (callers should 'return' on false)
 window.checkAuth = () => {
-  if (!window.getToken()) {
-    console.warn("No token found, redirecting to login");
+  const token = window.getToken();
+  if (!token) {
+    console.warn(`[AUTH] No token found on path: ${window.location.pathname}. Redirecting to login...`);
 
     if (window.location.pathname.includes("/provider/")) {
-      window.location.href = "provider-login.html";
+      window.location.replace("/html/provider/provider-login.html");
     } else if (window.location.pathname.includes("/admin/")) {
-      window.location.href = "admin-login.html";
+      window.location.replace("/html/admin/admin-login.html");
     } else {
-      window.location.href = "login.html";
+      window.location.replace("/html/user/login.html");
     }
+    return false; // signal to callers that they should stop
   }
+  console.log(`[AUTH] Token verified for path: ${window.location.pathname}`);
+  return true;
 };
 
 async function makeRequest(endpoint, options = {}) {
@@ -101,14 +115,8 @@ async function makeRequest(endpoint, options = {}) {
 
       if (response.status === 401) {
         console.warn(`[AUTH FAIL] 401 Unauthorized for ${endpoint}. Detail:`, errorData.detail || errorData);
-
-        // If we are already on a dashboard, and a core request fails, redirect to login
-        const isDashboard = window.location.pathname.includes("dashboard.html");
-        if (isDashboard) {
-          console.error("Critical auth failure on dashboard. Clearing session and redirecting...");
-          window.removeToken();
-          window.checkAuth();
-        }
+        // NOTE: We do NOT auto-clear the token or redirect here.
+        // The caller is responsible for handling 401s to avoid cascading redirects.
       }
     }
 

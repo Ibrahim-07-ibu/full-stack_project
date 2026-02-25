@@ -1,5 +1,5 @@
-document.addEventListener("DOMContentLoaded", () => {
-  window.checkAuth();
+document.addEventListener("DOMContentLoaded", async () => {
+  if (!window.checkAuth()) return;
   const urlParams = new URLSearchParams(window.location.search);
   const bookingId = urlParams.get("booking_id");
   const providerId = urlParams.get("provider_id");

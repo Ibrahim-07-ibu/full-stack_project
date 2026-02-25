@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  window.checkAuth();
+  // If not authenticated, checkAuth() will redirect and return false — stop here.
+  if (!window.checkAuth()) return;
+
   const userId = localStorage.getItem("user_id");
   const welcomeName = document.getElementById("welcome-name");
   const savedName = localStorage.getItem("user_name");

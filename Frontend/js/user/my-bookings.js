@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  window.checkAuth();
+  if (!window.checkAuth()) return;
   try {
     const response = await makeRequest(`/api/bookings/my`);
     if (!response.ok) {

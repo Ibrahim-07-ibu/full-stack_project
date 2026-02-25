@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  window.checkAuth();
+  if (!window.checkAuth()) return;
   const providerId = localStorage.getItem("provider_id");
   const userId = localStorage.getItem("user_id");
   if (!providerId) {

@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    window.checkAuth();
+    if (!window.checkAuth()) return;
 
     const container = document.getElementById("reviews-list");
     const countDisplay = document.getElementById("total-reviews-count");

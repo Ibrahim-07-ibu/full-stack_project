@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  window.checkAuth();
+  if (!window.checkAuth()) return;
   const urlParams = new URLSearchParams(window.location.search);
   const serviceId = urlParams.get("service_id") || 1;
 

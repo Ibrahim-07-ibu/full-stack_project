@@ -20,9 +20,13 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 
     if (response.ok) {
       const result = await response.json();
+      console.log("[LOGIN] Success response received:", { role: result.role, hasToken: !!result.access_token });
 
       if (result.access_token) {
         window.setToken(result.access_token, result.role);
+        console.log("[LOGIN] Token stored via window.setToken");
+      } else {
+        console.error("[LOGIN] No access_token found in response!");
       }
 
       const displayName = result.user_name || result.name || result.full_name || "User";
@@ -31,12 +35,13 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       localStorage.setItem("user_name", displayName);
       localStorage.setItem("name", displayName);
       localStorage.setItem("user_email", result.email);
+      console.log("[LOGIN] Profile data stored in localStorage");
 
       // Admin specific flag
       if (result.role === 'admin') {
         localStorage.setItem('admin_logged_in', 'true');
       }
-      
+
       window.HB.showToast(`Welcome back, ${displayName}! Logging in...`);
       setTimeout(() => {
         if (result.role === "provider") {

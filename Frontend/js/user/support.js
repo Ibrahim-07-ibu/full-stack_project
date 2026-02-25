@@ -1,8 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-
-    if (window.checkAuth) {
-        window.checkAuth();
-    }
+    if (!window.checkAuth()) return;
 
     const form = document.querySelector(".support-form");
     if (!form) return;
