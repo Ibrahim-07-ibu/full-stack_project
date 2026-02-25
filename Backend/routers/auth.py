@@ -158,11 +158,11 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
         )
 
         # Determine redirect based on role
-        redirect_path = "dashboard.html"
+        redirect_path = "/html/user/dashboard.html"
         if db_user.role == "provider":
-            redirect_path = "provider-dashboard.html"
+            redirect_path = "/html/provider/provider-dashboard.html"
         elif db_user.role == "admin":
-            redirect_path = "../admin/admin-dashboard.html"
+            redirect_path = "/html/admin/admin-dashboard.html"
 
         logger.info(f"SUCCESS: {db_user.role.upper()} login successful for {normalized_email}")
 

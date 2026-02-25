@@ -36,10 +36,16 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       if (result.role === 'admin') {
         localStorage.setItem('admin_logged_in', 'true');
       }
-
+      
       window.HB.showToast(`Welcome back, ${displayName}! Logging in...`);
       setTimeout(() => {
-        window.location.href = result.redirect || "dashboard.html";
+        if (result.role === "provider") {
+          window.location.href = "/html/provider/provider-dashboard.html";
+        } else if (result.role === "admin") {
+          window.location.href = "/html/admin/admin-dashboard.html";
+        } else {
+          window.location.href = "/html/user/dashboard.html";
+        }
       }, 1000);
 
     } else {
