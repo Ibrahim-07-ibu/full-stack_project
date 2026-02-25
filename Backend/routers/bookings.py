@@ -95,7 +95,10 @@ from sqlalchemy.orm import Session, joinedload
 def get_my_bookings(
     db: Session = Depends(get_db), current_user: User = Depends(get_current_user)
 ):
-    bookings = db.query(Booking).options(joinedload(Booking.review)).filter(Booking.user_id == current_user.id).all()
+    bookings = db.query(Booking).options(
+        joinedload(Booking.review),
+        joinedload(Booking.service)
+    ).filter(Booking.user_id == current_user.id).all()
 
     response = []
     for b in bookings:
@@ -106,8 +109,8 @@ def get_my_bookings(
             "address": b.address,
             "city": b.city,
             "pincode": b.pincode,
-            "date": b.date,
-            "time": b.time,
+            "date": str(b.date),
+            "time": str(b.time),
             "instructions": b.instructions,
             "status": b.status,
             "provider_id": b.provider_id,
@@ -275,8 +278,8 @@ def get_provider_pending_bookings(
                 "id": b.id,
                 "service_id": b.service_id,
                 "service_name": b.service.name if b.service else "Unknown",
-                "date": b.date,
-                "time": b.time,
+                "date": str(b.date),
+                "time": str(b.time),
                 "instructions": b.instructions,
                 "issue_image": b.issue_image,
                 "status": b.status,
@@ -364,8 +367,8 @@ def get_provider_confirmed_bookings(
                 "id": b.id,
                 "service_id": b.service_id,
                 "service_name": b.service.name if b.service else "Unknown",
-                "date": b.date,
-                "time": b.time,
+                "date": str(b.date),
+                "time": str(b.time),
                 "address": b.address,
                 "city": b.city,
                 "pincode": b.pincode,
@@ -397,8 +400,8 @@ def get_provider_completed_bookings(
             "id": b.id,
             "service_id": b.service_id,
             "service_name": b.service.name if b.service else "Unknown",
-            "date": b.date,
-            "time": b.time,
+            "date": str(b.date),
+            "time": str(b.time),
             "instructions": b.instructions,
             "status": b.status,
             "address": b.address,
