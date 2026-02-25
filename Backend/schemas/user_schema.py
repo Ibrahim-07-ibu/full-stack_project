@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class UserRegister(BaseModel):
@@ -25,8 +26,8 @@ class UserOut(BaseModel):
     id: int
     name: str
     email: str
-    phone: str
-    address: str
+    phone: Optional[str] = None
+    address: Optional[str] = None
     role: str
     is_active: bool
 

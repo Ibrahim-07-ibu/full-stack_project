@@ -4,6 +4,10 @@ from sqlalchemy.orm import Session
 from db.database import get_db
 from typing import Optional
 from auth import verify_token
+import logging
+import traceback
+
+logger = logging.getLogger(__name__)
 # Note: User and Provider models are imported where needed or used for typing
 from models.users import User
 from models.providers import Provider
@@ -22,16 +26,32 @@ def get_current_user(
     
     payload = verify_token(token)
     if payload is None:
+        logger.warning("Token verification failed")
         raise credentials_exception
         
-    user_id: int = payload.get("sub")
-    if user_id is None:
+    try:
+        sub = payload.get("sub")
+        if sub is None:
+            logger.warning("Token payload missing 'sub'")
+            raise credentials_exception
+        user_id = int(sub)
+    except (ValueError, TypeError) as e:
+        logger.error(f"Invalid user_id in token: {sub}")
         raise credentials_exception
         
-    user = db.query(User).filter(User.id == user_id).first()
-    if user is None:
-        raise credentials_exception
-    return user
+    try:
+        user = db.query(User).filter(User.id == user_id).first()
+        if user is None:
+            logger.warning(f"User not found for ID: {user_id}")
+            raise credentials_exception
+        return user
+    except Exception as e:
+        logger.error(f"Database error in get_current_user: {str(e)}")
+        traceback.print_exc()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Auth Database Error: {str(e)}"
+        )
 
 def get_current_admin(
     token: str = Depends(oauth2_scheme)
