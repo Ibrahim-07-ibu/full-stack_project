@@ -285,36 +285,42 @@ def get_provider_pending_bookings(
     db: Session = Depends(get_db),
     current_provider: Provider = Depends(get_current_provider),
 ):
-    # Filter bookings by the provider's specific service specialty
-    bookings = (
-        db.query(Booking)
-        .filter(
-            Booking.status == "pending",
-            Booking.service_id == current_provider.service_id
+    try:
+        # Filter bookings by the provider's specific service specialty
+        bookings = (
+            db.query(Booking)
+            .filter(
+                Booking.status == "pending",
+                Booking.service_id == current_provider.service_id
+            )
+            .all()
         )
-        .all()
-    )
 
-    response = []
-    for b in bookings:
-        response.append(
-            {
-                "id": b.id,
-                "service_id": b.service_id,
-                "service_name": b.service.name if b.service else "Unknown",
-                "date": str(b.date),
-                "time": str(b.time),
-                "instructions": b.instructions,
-                "issue_image": b.issue_image,
-                "status": b.status,
-                "address": b.address,
-                "city": b.city,
-                "pincode": b.pincode,
-                "user_name": b.user.name if b.user else "Unknown",
-                "user_phone": b.user.phone if b.user else "N/A",
-            }
-        )
-    return response
+        response = []
+        for b in bookings:
+            response.append(
+                {
+                    "id": b.id,
+                    "service_id": b.service_id,
+                    "service_name": b.service.name if b.service else "Unknown",
+                    "date": str(b.date),
+                    "time": str(b.time),
+                    "instructions": b.instructions,
+                    "issue_image": b.issue_image,
+                    "status": b.status,
+                    "address": b.address,
+                    "city": b.city,
+                    "pincode": b.pincode,
+                    "user_name": b.user.name if b.user else "Unknown",
+                    "user_phone": b.user.phone if b.user else "N/A",
+                }
+            )
+        return response
+    except Exception as e:
+        import traceback
+        logger.error(f"ERROR in /api/bookings/provider/pending: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 #  PROVIDER → PUT PENDING → CONFIRMED
@@ -448,77 +454,83 @@ def get_provider_statistics(
     db: Session = Depends(get_db),
     current_provider: Provider = Depends(get_current_provider),
 ):
-    # Only count pending bookings that match this provider's service
-    pending = (
-        db.query(Booking)
-        .filter(
-            Booking.status == "pending",
-            Booking.service_id == current_provider.service_id
+    try:
+        # Only count pending bookings that match this provider's service
+        pending = (
+            db.query(Booking)
+            .filter(
+                Booking.status == "pending",
+                Booking.service_id == current_provider.service_id
+            )
+            .count()
         )
-        .count()
-    )
-    accepted = (
-        db.query(Booking)
-        .filter(
-            Booking.provider_id == current_provider.id, Booking.status == "confirmed"
+        accepted = (
+            db.query(Booking)
+            .filter(
+                Booking.provider_id == current_provider.id, Booking.status == "confirmed"
+            )
+            .count()
         )
-        .count()
-    )
-    completed = (
-        db.query(Booking)
-        .filter(
-            Booking.provider_id == current_provider.id, Booking.status == "completed"
+        completed = (
+            db.query(Booking)
+            .filter(
+                Booking.provider_id == current_provider.id, Booking.status == "completed"
+            )
+            .count()
         )
-        .count()
-    )
 
-    total_earned = (
-        db.query(Service.price)
-        .join(Booking, Booking.service_id == Service.id)
-        .filter(
-            Booking.provider_id == current_provider.id, Booking.status == "completed"
+        total_earned = (
+            db.query(Service.price)
+            .join(Booking, Booking.service_id == Service.id)
+            .filter(
+                Booking.provider_id == current_provider.id, Booking.status == "completed"
+            )
+            .all()
         )
-        .all()
-    )
 
-    earnings = sum(e[0] for e in total_earned)
+        earnings = sum(e[0] for e in total_earned)
 
-    from models.reviews import Review
+        from models.reviews import Review
 
-    ratings = (
-        db.query(Review.rating).filter(Review.provider_id == current_provider.id).all()
-    )
-    if ratings:
-        avg_rating = round(sum(r[0] for r in ratings) / len(ratings), 1)
-        total_reviews = len(ratings)
-        satisfaction_rate = round(
-            (len([r for r in ratings if r[0] >= 4]) / total_reviews) * 100
+        ratings = (
+            db.query(Review.rating).filter(Review.provider_id == current_provider.id).all()
         )
-    else:
-        avg_rating = 0.0
-        total_reviews = 0
-        satisfaction_rate = 100
+        if ratings:
+            avg_rating = round(sum(r[0] for r in ratings) / len(ratings), 1)
+            total_reviews = len(ratings)
+            satisfaction_rate = round(
+                (len([r for r in ratings if r[0] >= 4]) / total_reviews) * 100
+            )
+        else:
+            avg_rating = 0.0
+            total_reviews = 0
+            satisfaction_rate = 100
 
-    total_assigned = (
-        db.query(Booking)
-        .filter(
-            Booking.provider_id == current_provider.id,
-            Booking.status.in_(["confirmed", "completed"]),
+        total_assigned = (
+            db.query(Booking)
+            .filter(
+                Booking.provider_id == current_provider.id,
+                Booking.status.in_(["confirmed", "completed"]),
+            )
+            .count()
         )
-        .count()
-    )
 
-    completion_rate = (
-        round((completed / total_assigned) * 100) if total_assigned > 0 else 100
-    )
+        completion_rate = (
+            round((completed / total_assigned) * 100) if total_assigned > 0 else 100
+        )
 
-    return {
-        "pending": pending,
-        "accepted": accepted,
-        "completed": completed,
-        "earnings": earnings,
-        "rating": avg_rating,
-        "total_reviews": total_reviews,
-        "completion_rate": completion_rate,
-        "satisfaction_rate": satisfaction_rate,
-    }
+        return {
+            "pending": pending,
+            "accepted": accepted,
+            "completed": completed,
+            "earnings": earnings,
+            "rating": avg_rating,
+            "total_reviews": total_reviews,
+            "completion_rate": completion_rate,
+            "satisfaction_rate": satisfaction_rate,
+        }
+    except Exception as e:
+        import traceback
+        logger.error(f"ERROR in /api/bookings/provider/statistics: {str(e)}")
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
