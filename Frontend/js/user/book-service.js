@@ -85,6 +85,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const imageFile = document.getElementById("issue_image").files[0];
       if (imageFile) {
+        // Limit to 4MB to prevent 413 Content Too Large on Vercel
+        const maxSize = 4 * 1024 * 1024;
+        if (imageFile.size > maxSize) {
+          window.HB.showToast("Image size too large. Please select an image under 4MB.", "error");
+          return;
+        }
         formData.append("issue_image", imageFile);
       }
 
@@ -103,8 +109,20 @@ document.addEventListener("DOMContentLoaded", async () => {
             window.location.href = "my-bookings.html";
           }, 1500);
         } else {
-          const errorData = await response.json();
-          window.HB.showToast(errorData.detail || "Booking failed", "error");
+          let errorMsg = "Booking failed";
+          try {
+            const errorData = await response.json();
+            errorMsg = errorData.detail || errorMsg;
+          } catch (e) {
+            // Handle non-JSON errors (like 413 HTML page)
+            if (response.status === 413) {
+              errorMsg = "File size too large for server. Please use a smaller image.";
+            } else {
+              errorMsg = `Server Error (${response.status})`;
+            }
+            console.warn("Could not parse error response as JSON:", e);
+          }
+          window.HB.showToast(errorMsg, "error");
         }
       } catch (error) {
         console.error("Error booking:", error);

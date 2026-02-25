@@ -105,10 +105,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     const idProofFile = document.getElementById("id_proof").files[0];
     const certFile = document.getElementById("certificate").files[0];
+    const MAX_SIZE = 4 * 1024 * 1024; // 4MB
 
     // Check if files are selected
     if (!idProofFile || !certFile) {
       window.HB.showToast("Please upload both ID proof and certificate.", "error");
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+      return;
+    }
+
+    if (idProofFile.size > MAX_SIZE || certFile.size > MAX_SIZE) {
+      window.HB.showToast("Files are too large. Each file must be under 4MB.", "error");
       submitBtn.disabled = false;
       submitBtn.innerHTML = originalText;
       return;
