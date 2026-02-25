@@ -10,6 +10,7 @@ from datetime import date
 from schemas.provider_schema import ProviderCreate, ProviderUpdate, ProviderResponse
 
 from pwd_utils import hash_password
+from utils.storage import upload_to_cloudinary
 import logging
 import traceback
 
@@ -69,23 +70,15 @@ async def create_provider(
              db.add(db_user)
              db.flush()
 
-        # 2. Handle File Uploads
-        backend_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        upload_dir = os.path.join(backend_root, "static", "uploads", "providers")
-        if not os.path.exists(upload_dir):
-            os.makedirs(upload_dir, exist_ok=True)
+        # 2. Handle File Uploads via Cloudinary
+        id_proof_url = upload_to_cloudinary(id_proof.file)
+        certificate_url = upload_to_cloudinary(certificate.file)
 
-        id_proof_filename = f"id_{db_user.id}_{id_proof.filename}"
-        cert_filename = f"cert_{db_user.id}_{certificate.filename}"
-        
-        id_proof_path = os.path.join(upload_dir, id_proof_filename)
-        cert_path = os.path.join(upload_dir, cert_filename)
-
-        with open(id_proof_path, "wb") as buffer:
-            shutil.copyfileobj(id_proof.file, buffer)
-            
-        with open(cert_path, "wb") as buffer:
-            shutil.copyfileobj(certificate.file, buffer)
+        if not id_proof_url or not certificate_url:
+             raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to upload documents to cloud storage."
+            )
 
         # 3. Create the Provider Profile
         # Correctly format dob from string
@@ -106,8 +99,8 @@ async def create_provider(
             years_experience=years_experience,
             specialization=specialization,
             bio=bio,
-            id_proof=f"/static/uploads/providers/{id_proof_filename}",
-            certificate=f"/static/uploads/providers/{cert_filename}",
+            id_proof=id_proof_url,
+            certificate=certificate_url,
             role="provider",
             is_verified=False
         )

@@ -78,10 +78,10 @@ function renderVerifications(providers) {
             </div>
 
             <div class="document-list">
-                <a href="${window.API_BASE_URL}${provider.id_proof}" target="_blank" class="doc-item link-premium">
+                <a href="${provider.id_proof.startsWith('http') ? provider.id_proof : window.API_BASE_URL + provider.id_proof}" target="_blank" class="doc-item link-premium">
                     <i class="fa-solid fa-file-invoice"></i> View ID Proof
                 </a>
-                <a href="${window.API_BASE_URL}${provider.certificate}" target="_blank" class="doc-item link-premium">
+                <a href="${provider.certificate.startsWith('http') ? provider.certificate : window.API_BASE_URL + provider.certificate}" target="_blank" class="doc-item link-premium">
                     <i class="fa-solid fa-certificate"></i> View Certificate
                 </a>
             </div>
