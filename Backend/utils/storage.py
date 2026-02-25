@@ -1,9 +1,12 @@
 import cloudinary
 import cloudinary.uploader
 import os
+import logging
 from dotenv import load_dotenv
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 # Configuration 
 cloudinary.config( 
@@ -21,9 +24,16 @@ def upload_to_cloudinary(file, folder="homebuddy/providers"):
     :return: Secure URL of the uploaded file.
     """
     try:
-        # If it's an UploadFile object (FastAPI), we use .file
+        cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME")
+        api_key = os.getenv("CLOUDINARY_API_KEY")
+        logger.info(f"Cloudinary upload attempt - cloud_name: {'SET' if cloud_name else 'MISSING'}, api_key: {'SET' if api_key else 'MISSING'}, folder: {folder}")
+        
         upload_result = cloudinary.uploader.upload(file, folder=folder)
-        return upload_result.get("secure_url")
+        url = upload_result.get("secure_url")
+        logger.info(f"Cloudinary upload SUCCESS: {url}")
+        return url
     except Exception as e:
-        print(f"Cloudinary Upload Error: {e}")
+        logger.error(f"Cloudinary Upload Error: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
         return None

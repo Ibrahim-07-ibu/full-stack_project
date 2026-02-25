@@ -57,6 +57,10 @@ async def create_booking(
     img_url = None
     if issue_image and issue_image.filename:
         img_url = upload_to_cloudinary(issue_image.file, folder="homebuddy/bookings")
+        # Log the result for debugging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Uploaded issue image URL: {img_url}")
 
     new_booking = Booking(
         user_id=current_user.id,
@@ -75,7 +79,7 @@ async def create_booking(
     db.commit()
     db.refresh(new_booking)
 
-    return {"message": "Booking created successfully", "booking_id": new_booking.id}
+    return {"message": "Booking created successfully", "booking_id": new_booking.id, "issue_image": img_url}
 
 
 @router.get("/accepted")
