@@ -4,8 +4,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const bookingId = urlParams.get("booking_id");
   const providerId = urlParams.get("provider_id");
   if (!bookingId || !providerId) {
-    alert("Missing booking or provider information.");
-    window.location.href = "my-bookings.html";
+    HB.showToast("Missing booking or provider information.", "error");
+    setTimeout(() => {
+      window.location.href = "my-bookings.html";
+    }, 2000);
     return;
   }
 
@@ -36,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     )?.value;
     const comment = document.getElementById("feedback").value;
     if (!rating) {
-      alert("Please select a rating.");
+      HB.showToast("Please select a rating.", "warning");
       return;
     }
     const reviewData = {
@@ -59,15 +61,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         body: JSON.stringify(reviewData),
       });
       if (response.ok) {
-        alert("Review submitted successfully!");
-        window.location.href = "all-completed.html";
+        HB.showToast("Review submitted successfully!", "success");
+        setTimeout(() => {
+          window.location.href = "all-completed.html";
+        }, 2000);
       } else {
         const error = await response.json();
-        alert(`Error: ${error.detail || "Failed to submit review"}`);
+        HB.showToast(error.detail || "Failed to submit review", "error");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred. Please try again.");
+      HB.showToast("An error occurred. Please try again.", "error");
     }
   });
 });

@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       headerUserName.textContent = user.name;
     } else {
       console.error("Failed to fetch profile");
-      alert("Could not load profile details.");
+      HB.showToast("Could not load profile details.", "error");
     }
   } catch (error) {
     console.error("Error:", error);
@@ -44,14 +44,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         const user = await response.json();
         headerUserName.textContent = user.name;
         localStorage.setItem("user_name", user.name);
-        alert("Profile updated successfully!");
+        HB.showToast("Profile updated successfully!", "success");
       } else {
         const error = await response.json();
-        alert(`Error: ${error.detail || "Failed to update profile"}`);
+        HB.showToast(error.detail || "Failed to update profile", "error");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("An error occurred while updating profile.");
+      HB.showToast("An error occurred while updating profile.", "error");
     }
   });
   document.querySelector(".btn-secondary").addEventListener("click", () => {

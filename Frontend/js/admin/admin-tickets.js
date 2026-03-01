@@ -53,7 +53,8 @@ async function fetchTickets() {
 }
 
 async function resolveTicket(id) {
-    if (!confirm('Are you sure you want to mark this ticket as resolved?')) return;
+    const confirmed = await showConfirm('Are you sure you want to mark this ticket as resolved?', 'info');
+    if (!confirmed) return;
 
     try {
         const response = await makeRequest(`/api/supports/${id}/resolve`, {
@@ -61,15 +62,14 @@ async function resolveTicket(id) {
         });
 
         if (response.ok) {
-            if (window.HB) window.HB.showToast('Ticket marked as resolved', 'success');
-            else alert('Ticket marked as resolved');
+            showModal('Ticket marked as resolved', 'success');
             fetchTickets();
         } else {
-            if (window.HB) window.HB.showToast('Failed to resolve ticket', 'error');
-            else alert('Failed to resolve ticket');
+            showModal('Failed to resolve ticket', 'error');
         }
     } catch (error) {
         console.error('Error resolving ticket:', error);
+        showModal('An error occurred while resolving ticket', 'error');
     }
 }
 

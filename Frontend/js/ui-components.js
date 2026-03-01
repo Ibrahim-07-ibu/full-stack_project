@@ -10,7 +10,13 @@ const HB = {
         const toast = document.createElement('div');
         toast.className = `hb-toast ${type}`;
 
-        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        const icons = {
+            success: 'fa-check-circle',
+            error: 'fa-exclamation-circle',
+            warning: 'fa-triangle-exclamation',
+            info: 'fa-circle-info'
+        };
+        const icon = icons[type] || icons.info;
         toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
 
         container.appendChild(toast);
@@ -21,12 +27,22 @@ const HB = {
         }, duration);
     },
 
-    confirm: (title, message, onConfirm) => {
+    confirm: (title, message, onConfirm, type = 'warning') => {
         const overlay = document.createElement('div');
         overlay.className = 'hb-modal-overlay';
 
+        const icons = {
+            warning: 'fa-triangle-exclamation',
+            danger: 'fa-circle-exclamation',
+            info: 'fa-circle-question'
+        };
+        const icon = icons[type] || icons.info;
+
         overlay.innerHTML = `
             <div class="hb-modal">
+                <div class="hb-modal-icon ${type}" style="font-size: 3rem; margin-bottom: 1rem; color: #f6ad55">
+                    <i class="fa-solid ${icon}"></i>
+                </div>
                 <h3>${title}</h3>
                 <p>${message}</p>
                 <div class="hb-modal-actions">
@@ -43,7 +59,7 @@ const HB = {
 
         cancelBtn.onclick = () => overlay.remove();
         confirmBtn.onclick = () => {
-            onConfirm();
+            if (onConfirm) onConfirm();
             overlay.remove();
         };
 

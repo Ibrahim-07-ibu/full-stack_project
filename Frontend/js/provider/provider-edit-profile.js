@@ -23,11 +23,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       setVal("bio", p.bio);
     } else {
       console.error("API Error:", response.status);
-      alert("Failed to load profile data");
+      HB.showToast("Failed to load profile data", "error");
     }
   } catch (error) {
     console.error("Error fetching profile:", error);
-    alert("Failed to load profile data");
+    HB.showToast("Failed to load profile data", "error");
   }
   const form = document.getElementById("edit-profile-form");
   if (form) {

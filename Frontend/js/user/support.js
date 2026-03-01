@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const message = form.querySelector("textarea").value.trim();
 
         if (!subject || !message) {
-            alert("Please fill in all fields");
+            HB.showToast("Please fill in all fields", "warning");
             return;
         }
 
@@ -27,16 +27,16 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
             if (response.ok) {
-                alert("Support ticket submitted successfully! We'll get back to you soon.");
+                HB.showToast("Support ticket submitted successfully! We'll get back to you soon.", "success");
                 form.reset();
             } else {
                 const error = await response.json();
-                alert(`Error: ${error.detail || "Failed to submit ticket"}`);
+                HB.showToast(error.detail || "Failed to submit ticket", "error");
             }
 
         } catch (error) {
             console.error("Error submitting support ticket:", error);
-            alert("An error occurred. Please try again later.");
+            HB.showToast("An error occurred. Please try again later.", "error");
         }
     });
 
