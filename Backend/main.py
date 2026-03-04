@@ -3,12 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import sys
 import logging
+from routers import users, bookings, providers, reviews, services, supports
+from routers import auth
+from db.database import engine, Base
+import models.users, models.providers, models.services, models.bookings, models.reviews, models.supports
 
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Ensure Backend directory parts are in path
 backend_root = os.path.dirname(os.path.abspath(__file__))
 if backend_root not in sys.path:
     sys.path.insert(0, backend_root)
@@ -34,7 +36,7 @@ app = FastAPI(
 
 @app.get("/")
 def read_root():
-    return {"message": "HomeBuddy API is running", "version": "55.0-RECOVERY"}
+    return {"message": "HomeBuddy API is running"}
 
 
 @app.middleware("http")
@@ -53,10 +55,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from routers import users, bookings, providers, reviews, services, supports
-from routers import auth
-from db.database import engine, Base
-import models.users, models.providers, models.services, models.bookings, models.reviews, models.supports
 
 
 

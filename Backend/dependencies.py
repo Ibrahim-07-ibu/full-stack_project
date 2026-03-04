@@ -8,7 +8,6 @@ import logging
 import traceback
 
 logger = logging.getLogger(__name__)
-# Note: User and Provider models are imported where needed or used for typing
 from models.users import User
 from models.providers import Provider
 

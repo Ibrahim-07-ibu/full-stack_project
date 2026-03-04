@@ -1,21 +1,15 @@
-// --- HomeBuddy API Config v1.0.2 [RECOVERY MODE] ---
-console.log("🚀 HB API Config Loaded - v1.0.2");
 const API_BASE = (function () {
   const host = window.location.hostname;
 
-  // Production (Vercel/Netlify)
-  // When deployed, we use relative paths (/api/...)
   if (host.includes("vercel.app")) {
     return "";
   }
 
-  // Local Development (localhost, 127.0.0.1, or opening as a file)
-  // If host is empty, it means user is opening the file directly (file:///)
+
   if (host === "localhost" || host === "127.0.0.1" || host === "") {
     return "http://127.0.0.1:8000";
   }
 
-  // Fallback for any other local network IP
   return "http://127.0.0.1:8000";
 })();
 
@@ -58,7 +52,6 @@ window.removeToken = () => {
   localStorage.removeItem("admin_logged_in");
 };
 
-// Returns true if authenticated, false if redirected (callers should 'return' on false)
 window.checkAuth = () => {
   const token = window.getToken();
   if (!token) {
@@ -71,14 +64,13 @@ window.checkAuth = () => {
     } else {
       window.location.replace("/html/user/login.html");
     }
-    return false; // signal to callers that they should stop
+    return false; 
   }
   console.log(`[AUTH] Token verified for path: ${window.location.pathname}`);
   return true;
 };
 
 async function makeRequest(endpoint, options = {}) {
-  // Ensure endpoint starts with / and API_BASE doesn't end with / to avoid double slashes
   const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
   const url = `${API_BASE}${cleanEndpoint}`;
 
@@ -101,13 +93,10 @@ async function makeRequest(endpoint, options = {}) {
     });
 
     if (!response.ok) {
-      // Try to get detailed error info
       let errorData = "No error body";
       try {
-        // Clone the response so we can read it without consuming the original
         const clone = response.clone();
         errorData = await clone.text();
-        // Try to parse as JSON for a cleaner log if possible
         try {
           const json = JSON.parse(errorData);
           errorData = json;
@@ -123,8 +112,7 @@ async function makeRequest(endpoint, options = {}) {
 
       if (response.status === 401) {
         console.warn(`[AUTH FAIL] 401 Unauthorized for ${endpoint}. Detail:`, errorData.detail || errorData);
-        // NOTE: We do NOT auto-clear the token or redirect here.
-        // The caller is responsible for handling 401s to avoid cascading redirects.
+
       }
     }
 
@@ -175,15 +163,12 @@ window.getServiceIcon = (serviceName) => {
 
 console.log("API Routing configured:", API_BASE || "(relative paths)");
 
-// --- UI Feedback Components (Toasts, Modals, Validation) ---
 
-// Auto-inject UI CSS
 (function injectUIStyles() {
   if (!document.getElementById("hb-ui-styles")) {
     const link = document.createElement("link");
     link.id = "hb-ui-styles";
     link.rel = "stylesheet";
-    // Try both relative and absolute paths for robustness
     const cssPath = window.location.pathname.includes("/html/")
       ? "../../css/ui-components.css"
       : "./Frontend/css/ui-components.css";
@@ -193,7 +178,6 @@ console.log("API Routing configured:", API_BASE || "(relative paths)");
 })();
 
 window.HB = {
-  // Toast Notification
   showToast: (message, type = "success", duration = 3000) => {
     let container = document.querySelector(".hb-toast-container");
     if (!container) {
@@ -222,7 +206,6 @@ window.HB = {
     }, duration);
   },
 
-  // Confirmation Modal
   confirm: (title, message, onConfirm, type = 'warning') => {
     const overlay = document.createElement("div");
     overlay.className = "hb-modal-overlay";
@@ -264,7 +247,6 @@ window.HB = {
     };
   },
 
-  // Info Modal (for displaying data)
   info: (title, htmlContent) => {
     const overlay = document.createElement("div");
     overlay.className = "hb-modal-overlay";
@@ -291,7 +273,6 @@ window.HB = {
     };
   },
 
-  // Form Validation Helpers
   showError: (inputId, message) => {
     const input = document.getElementById(inputId);
     if (!input) return;
@@ -308,7 +289,6 @@ window.HB = {
     errorDiv.textContent = message;
     input.parentNode.insertBefore(errorDiv, input.nextSibling);
 
-    // Clear error on input
     input.oninput = () => window.HB.clearError(inputId);
   },
 

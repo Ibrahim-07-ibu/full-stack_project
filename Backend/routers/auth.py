@@ -21,7 +21,6 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
     logger.info(f"New registration attempt: {user.email}")
     
     try:
-        # 1. Normalize and check for existing email
         normalized_email = user.email.lower().strip()
         if db.query(User).filter(User.email == normalized_email).first():
             logger.warning(f"Registration failed: Email {normalized_email} already exists")
@@ -30,7 +29,6 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
                 detail="This email is already registered. Please login instead."
             )
 
-        # 2. Check for existing phone
         if db.query(User).filter(User.phone == user.phone).first():
             logger.warning(f"Registration failed: Phone {user.phone} already exists")
             raise HTTPException(
@@ -38,7 +36,6 @@ def register_user(user: UserRegister, db: Session = Depends(get_db)):
                 detail="This phone number is already linked to an account."
             )
 
-        # 3. Create User object (Role is anchored to 'user' for this endpoint)
         new_user = User(
             name=user.name.strip(),
             email=normalized_email,
@@ -152,12 +149,10 @@ def unified_login(user: UserLogin, db: Session = Depends(get_db)):
                 detail="Invalid email or password",
             )
 
-        # Generate token with proper role
         access_token = create_access_token(
             data={"sub": str(db_user.id), "role": db_user.role}
         )
 
-        # Determine redirect based on role
         redirect_path = "/html/user/dashboard.html"
         if db_user.role == "provider":
             redirect_path = "/html/provider/provider-dashboard.html"

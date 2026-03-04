@@ -8,7 +8,6 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-# Configuration 
 cloudinary.config( 
   cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME"), 
   api_key = os.getenv("CLOUDINARY_API_KEY"), 
@@ -17,12 +16,7 @@ cloudinary.config(
 )
 
 def upload_to_cloudinary(file, folder="homebuddy/providers"):
-    """
-    Uploads a file to Cloudinary and returns the secure URL.
-    :param file: The file object or path to upload.
-    :param folder: The folder name in Cloudinary.
-    :return: Secure URL of the uploaded file.
-    """
+
     try:
         cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME")
         api_key = os.getenv("CLOUDINARY_API_KEY")

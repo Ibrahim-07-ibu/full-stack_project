@@ -14,7 +14,6 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 if not SECRET_KEY:
     if ENVIRONMENT == "production":
-        # Log clearly but don't crash — the error will surface when tokens are used
         logger.error("CRITICAL: SECRET_KEY is not set in production! JWT tokens will be insecure.")
         SECRET_KEY = "MISSING-SECRET-KEY-SET-IN-VERCEL"
     else:

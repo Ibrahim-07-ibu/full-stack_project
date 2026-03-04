@@ -53,11 +53,9 @@ async def create_booking(
     if not service:
         raise HTTPException(status_code=404, detail="Service not found")
 
-    # Handle image upload if present
     img_url = None
     if issue_image and issue_image.filename:
         img_url = upload_to_cloudinary(issue_image.file, folder="homebuddy/bookings")
-        # Log the result for debugging
         import logging
         logger = logging.getLogger(__name__)
         logger.info(f"Uploaded issue image URL: {img_url}")

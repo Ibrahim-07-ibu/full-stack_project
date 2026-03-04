@@ -22,7 +22,7 @@ async def create_provider(
     email: str = Form(...),
     password: str = Form(...),
     phone: str = Form(...),
-    dob: str = Form(...), # date as string to be parsed
+    dob: str = Form(...),
     address: str = Form(...),
     service_id: int = Form(...),
     years_experience: int = Form(...),
@@ -32,14 +32,11 @@ async def create_provider(
     certificate: UploadFile = File(...),
     db: Session = Depends(get_db)
 ):
-    """
-    Register a new service provider with document uploads.
-    """
+
     logger.info(f"New provider registration attempt: {email}")
     normalized_email = email.lower().strip()
 
     try:
-        # 1. Integrity Check: Check for existing User/Provider
         existing_user = db.query(User).filter(User.email == normalized_email).first()
         db_user = None
         
@@ -68,7 +65,6 @@ async def create_provider(
              db.add(db_user)
              db.flush()
 
-        # 2. Handle File Uploads via Cloudinary
         id_proof_url = upload_to_cloudinary(id_proof.file)
         certificate_url = upload_to_cloudinary(certificate.file)
 
@@ -78,8 +74,7 @@ async def create_provider(
                 detail="Failed to upload documents to cloud storage."
             )
 
-        # 3. Create the Provider Profile
-        # Correctly format dob from string
+
         try:
             dob_date = date.fromisoformat(dob)
         except ValueError:
@@ -167,13 +162,7 @@ def reject_provider(provider_id: int, db: Session = Depends(get_db)):
     provider = db.query(Provider).filter(Provider.id == provider_id).first()
     if not provider:
         raise HTTPException(status_code=404, detail="Provider not found")
-    
-    # Optional: You could delete the provider, or mark them as rejected.
-    # The current implementation of verification list filters by !is_verified.
-    # To "reject", we could either delete or have an is_rejected flag.
-    # Given the existing verification page logic, deleting them from providers table 
-    # but keeping the user record might be the simplest 'rejection' flow.
-    # However, let's just delete the provider entry to remove them from verifications.
+
     db.delete(provider)
     db.commit()
     return {"message": "Provider application rejected and removed."}
