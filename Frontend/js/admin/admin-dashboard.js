@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    window.HB.showThemedLoading(null, "Loading platform statistics...");
     try {
         // Fetch Users Count
         const userRes = await makeRequest('/api/auth/users');
@@ -55,6 +56,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error('Error fetching stats:', error);
+    } finally {
+        window.HB.hideThemedLoading();
     }
 });
 

@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    window.HB.showThemedLoading("#verification-cards-container", "Loading pending verifications...");
     try {
         const response = await makeRequest('/api/providers/all');
         if (response.ok) {
@@ -27,6 +28,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (error) {
         console.error('Error fetching providers:', error);
+    } finally {
+        window.HB.hideThemedLoading("#verification-cards-container");
     }
 });
 

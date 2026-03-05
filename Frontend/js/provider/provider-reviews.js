@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const container = document.getElementById("reviews-list");
     const countDisplay = document.getElementById("total-reviews-count");
 
+    window.HB.showThemedLoading("#reviews-list", "Loading your reviews...");
     try {
         const response = await makeRequest("/api/reviews/my/reviews");
         if (response.ok) {
@@ -39,5 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     } catch (error) {
         console.error("Error loading reviews:", error);
+    } finally {
+        window.HB.hideThemedLoading("#reviews-list");
     }
 });

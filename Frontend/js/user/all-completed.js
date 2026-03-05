@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", async () => {
     if (!window.checkAuth()) return;
     const container = document.getElementById("completed-history");
-
+    window.HB.showThemedLoading("#completed-history", "Loading your service history...");
     try {
         const response = await makeRequest(`/api/bookings/my`);
         if (!response.ok) throw new Error("Failed to fetch bookings");
@@ -47,6 +47,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
         console.error("Error loading history:", error);
         container.innerHTML = "<p>Error loading your history. Please try again.</p>";
+    } finally {
+        window.HB.hideThemedLoading("#completed-history");
     }
 
     const logoutBtn = document.querySelector(".btn-logout");

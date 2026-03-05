@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       phone: phoneInput.value,
       address: addressInput.value,
     };
+    window.HB.setButtonLoading(".profile-form button[type='submit']", true, "Saving...");
     try {
       const response = await makeRequest(`/api/auth/profile`, {
         method: "PUT",
@@ -52,6 +53,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
       console.error("Error:", error);
       HB.showToast("An error occurred while updating profile.", "error");
+    } finally {
+      window.HB.setButtonLoading(".profile-form button[type='submit']", false);
     }
   });
   document.querySelector(".btn-secondary").addEventListener("click", () => {

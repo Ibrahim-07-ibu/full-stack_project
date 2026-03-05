@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!providerId) {
   }
   updateNavBar();
+  window.HB.showThemedLoading(null, "Loading your profile data...");
   try {
     const response = await makeRequest(`/api/providers/${providerId}`);
     if (response.ok) {
@@ -28,6 +29,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (error) {
     console.error("Error fetching profile:", error);
     HB.showToast("Failed to load profile data", "error");
+  } finally {
+    window.HB.hideThemedLoading(); // Hiding a full page loader if one was used? Or specific? 
+    // Actually better to use themed loading on the whole page for profile load.
   }
   const form = document.getElementById("edit-profile-form");
   if (form) {
@@ -53,6 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         years_experience: parseInt(getVal("years_experience")) || 0,
         bio: getVal("bio"),
       };
+      window.HB.setButtonLoading("#edit-profile-form button[type='submit']", true, "Saving...");
       try {
         const response = await makeRequest(
           `/api/providers/update/${providerId}`,
@@ -73,7 +78,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
       } catch (error) {
         console.error("Error updating profile:", error);
-        window.HB.showToast("An error occurred. Please try again.", "error");
+      } finally {
+        window.HB.setButtonLoading("#edit-profile-form button[type='submit']", false);
       }
     });
   }

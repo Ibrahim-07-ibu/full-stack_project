@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    window.HB.showThemedLoading("#users-table-body", "Loading platform users...");
     try {
         const response = await makeRequest('/api/auth/users');
         if (!response.ok) throw new Error('Failed to fetch users');
@@ -53,6 +54,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.error('Error fetching users:', error);
         const tbody = document.getElementById('users-table-body');
         if (tbody) tbody.innerHTML = '<tr><td colspan="5" class="text-center">Error loading user data.</td></tr>';
+    } finally {
+        window.HB.hideThemedLoading("#users-table-body");
     }
 });
 

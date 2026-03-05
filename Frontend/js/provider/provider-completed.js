@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateNavBar();
   const container = document.getElementById("bookings-container");
   if (!container) return;
+  window.HB.showThemedLoading("#bookings-container", "Loading your service history...");
   try {
     const response = await makeRequest(`/api/bookings/provider/completed`);
     if (!response.ok) throw new Error("Failed to fetch completed bookings");
@@ -43,6 +44,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Error:", error);
     container.innerHTML =
       '<div class="no-bookings"><p>Error loading service history.</p></div>';
+  } finally {
+    window.HB.hideThemedLoading("#bookings-container");
   }
 });
 function updateSummary(bookings) {

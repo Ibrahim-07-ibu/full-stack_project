@@ -1,7 +1,7 @@
 async function fetchTickets() {
     const tableBody = document.getElementById('tickets-table-body');
     if (!tableBody) return;
-
+    window.HB.showThemedLoading("#tickets-table-body", "Loading support tickets...");
     try {
         const response = await makeRequest('/api/supports/all');
 
@@ -49,6 +49,8 @@ async function fetchTickets() {
         console.error('Error fetching tickets:', error);
         tableBody.innerHTML =
             '<tr><td colspan="7" style="text-align: center; color: var(--danger-color);">Error loading tickets</td></tr>';
+    } finally {
+        window.HB.hideThemedLoading("#tickets-table-body");
     }
 }
 

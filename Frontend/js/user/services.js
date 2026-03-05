@@ -1,4 +1,4 @@
-let allServices = []; 
+let allServices = [];
 
 document.addEventListener("DOMContentLoaded", async () => {
   const servicesGrid = document.getElementById("services-grid");
@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function loadServices() {
   const servicesGrid = document.getElementById("services-grid");
+  window.HB.showThemedLoading("#services-grid", "Fetching available services...");
   try {
     const response = await makeRequest("/api/services");
     if (response.ok) {
@@ -31,6 +32,8 @@ async function loadServices() {
     console.error("Error loading services:", error);
     servicesGrid.innerHTML =
       '<p class="error">An error occurred while loading services.</p>';
+  } finally {
+    window.HB.hideThemedLoading("#services-grid");
   }
 }
 

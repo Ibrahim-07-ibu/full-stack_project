@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    window.HB.showThemedLoading("#reviews-list-container", "Loading platform reviews...");
     try {
         const response = await makeRequest('/api/reviews/all');
         if (response.ok) {
@@ -26,6 +27,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (error) {
         console.error('Error fetching reviews:', error);
+    } finally {
+        window.HB.hideThemedLoading("#reviews-list-container");
     }
 });
 

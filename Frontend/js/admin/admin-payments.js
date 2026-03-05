@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    window.HB.showThemedLoading("#payments-table-body", "Loading payment records...");
     try {
         const response = await makeRequest('/api/bookings/all');
         if (response.ok) {
@@ -28,6 +29,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (error) {
         console.error('Error fetching data:', error);
+    } finally {
+        window.HB.hideThemedLoading("#payments-table-body");
     }
 });
 

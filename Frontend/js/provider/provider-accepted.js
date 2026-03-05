@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateNavBar();
   const container = document.getElementById("bookings-container");
   if (!container) return;
+  window.HB.showThemedLoading("#bookings-container", "Loading your accepted orders...");
   try {
     const response = await makeRequest(`/api/bookings/provider/confirmed`);
     if (!response.ok) throw new Error("Failed to fetch confirmed bookings");
@@ -57,6 +58,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Error:", error);
     container.innerHTML =
       '<div class="no-bookings"><p>Error loading accepted orders.</p></div>';
+  } finally {
+    window.HB.hideThemedLoading("#bookings-container");
   }
 });
 async function completeBooking(bookingId) {

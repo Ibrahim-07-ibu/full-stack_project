@@ -340,4 +340,51 @@ window.HB = {
       btn.disabled = false;
     }
   },
+
+  showThemedLoading: (containerSelector = null, text = "Setting up your home services...") => {
+    const container = containerSelector ? document.querySelector(containerSelector) : document.body;
+    if (!container) return;
+
+    // Check if already exist
+    if (container.querySelector(".hb-themed-loader-container")) return;
+
+    const loaderDiv = document.createElement("div");
+    loaderDiv.className = containerSelector ? "hb-themed-loader-container" : "hb-loading-overlay themed";
+
+    loaderDiv.innerHTML = `
+      <div class="hb-themed-loader-container">
+        <div class="hb-themed-loader">
+          <div class="hb-loader-circle">
+            <div class="hb-loader-icon hb-icon-1"><i class="fa-solid fa-wrench"></i></div>
+            <div class="hb-loader-icon hb-icon-2"><i class="fa-solid fa-broom"></i></div>
+            <div class="hb-loader-icon hb-icon-3"><i class="fa-solid fa-paint-roller"></i></div>
+            <div class="hb-loader-icon hb-icon-4"><i class="fa-solid fa-bolt"></i></div>
+          </div>
+          <div class="hb-loader-house">
+            <i class="fa-solid fa-house-chimney"></i>
+          </div>
+        </div>
+        <div class="hb-themed-text">${text}</div>
+        <div class="hb-themed-subtext">Connecting you with our best professionals</div>
+      </div>
+    `;
+
+    if (!containerSelector) {
+      document.body.appendChild(loaderDiv);
+    } else {
+      container.innerHTML = ""; // Clear container for the loader
+      container.appendChild(loaderDiv);
+    }
+  },
+
+  hideThemedLoading: (containerSelector = null) => {
+    if (containerSelector) {
+      const container = document.querySelector(containerSelector);
+      const loader = container?.querySelector(".hb-themed-loader-container");
+      if (loader) loader.remove();
+    } else {
+      const overlay = document.querySelector(".hb-loading-overlay.themed");
+      if (overlay) overlay.remove();
+    }
+  }
 };

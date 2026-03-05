@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
+    window.HB.showThemedLoading("#bookings-table-body", "Loading platform bookings...");
     try {
         const response = await makeRequest('/api/bookings/all');
         if (response.ok) {
@@ -26,6 +27,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (error) {
         console.error('Error:', error);
+    } finally {
+        window.HB.hideThemedLoading("#bookings-table-body");
     }
 });
 

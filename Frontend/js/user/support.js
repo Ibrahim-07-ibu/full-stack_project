@@ -15,11 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const supportData = {
-            subject: subject,
-            message: message,
-        };
-
+        window.HB.setButtonLoading(".support-form button[type='submit']", true, "Submitting...");
         try {
             const response = await makeRequest("/api/supports", {
                 method: "POST",
@@ -37,6 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
         } catch (error) {
             console.error("Error submitting support ticket:", error);
             HB.showToast("An error occurred. Please try again later.", "error");
+        } finally {
+            window.HB.setButtonLoading(".support-form button[type='submit']", false);
         }
     });
 

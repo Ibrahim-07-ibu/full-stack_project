@@ -12,7 +12,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     return;
   }
 
-  window.HB.setButtonLoading("#provider-login-form button", true, "Logging in...");
+  window.HB.setButtonLoading("#login-form button", true, "Logging in...");
   try {
     const response = await makeRequest("/api/auth/unified_login", {
       method: "POST",
@@ -48,6 +48,6 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     console.error("Login error:", error);
     window.HB.showToast("Connection error. Please try again.", "error");
   } finally {
-    window.HB.setButtonLoading("#provider-login-form button", false);
+    window.HB.setButtonLoading("#login-form button", false);
   }
 });

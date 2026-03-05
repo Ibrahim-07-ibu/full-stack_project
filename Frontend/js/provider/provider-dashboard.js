@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   updateNavBar();
   updateStatistics();
   const container = document.getElementById("bookings-container");
+  window.HB.showThemedLoading("#bookings-container", "Checking for new requests...");
   try {
     const response = await makeRequest(`/api/bookings/provider/pending`);
     if (!response.ok) {
@@ -68,6 +69,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (error) {
     console.error("Error:", error);
     container.innerHTML = `<div class="no-bookings"><p>Error loading requests.</p></div>`;
+  } finally {
+    window.HB.hideThemedLoading("#bookings-container");
   }
 });
 

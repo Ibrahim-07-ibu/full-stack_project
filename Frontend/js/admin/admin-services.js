@@ -45,6 +45,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Fetch and render services
     async function fetchServices() {
         const container = document.getElementById('services-list-container');
+        window.HB.showThemedLoading("#services-list-container", "Loading service catalog...");
         try {
             const response = await makeRequest('/api/services');
             if (response.ok) {
@@ -56,6 +57,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         } catch (error) {
             console.error('Error:', error);
             container.innerHTML = '<p class="text-danger">Error connecting to server.</p>';
+        } finally {
+            window.HB.hideThemedLoading("#services-list-container");
         }
     }
 
@@ -101,10 +104,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (addForm) {
         addForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const name = document.getElementById('new-service-name').value;
-            const price = parseInt(document.getElementById('new-service-price').value);
-            const description = document.getElementById('new-service-desc').value;
-
+            window.HB.setButtonLoading("#add-service-form button[type='submit']", true, "Adding...");
             try {
                 const response = await makeRequest('/api/services', {
                     method: 'POST',
@@ -121,6 +121,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             } catch (error) {
                 console.error('Error:', error);
                 showModal('Server error occurred.', 'error');
+            } finally {
+                window.HB.setButtonLoading("#add-service-form button[type='submit']", false);
             }
         });
     }

@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   const activityContainer = document.querySelector(".activity-list");
   if (!activityContainer) return;
+  window.HB.showThemedLoading(".activity-list", "Loading recent activity...");
   try {
     const bookingsResponse = await makeRequest(`/api/bookings/my`);
     if (bookingsResponse.ok) {
@@ -63,6 +64,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   } catch (error) {
     console.error("Error fetching recent activity:", error);
+  } finally {
+    window.HB.hideThemedLoading(".activity-list");
   }
 
   const logoutBtn = document.querySelector(".btn-logout");

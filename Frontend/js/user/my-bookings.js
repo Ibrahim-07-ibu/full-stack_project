@@ -1,5 +1,11 @@
 document.addEventListener("DOMContentLoaded", async () => {
   if (!window.checkAuth()) return;
+
+  // Show themed loading in each tab
+  window.HB.showThemedLoading("#pending", "Loading pending bookings...");
+  window.HB.showThemedLoading("#confirmed", "Loading confirmed bookings...");
+  window.HB.showThemedLoading("#completed", "Loading completed bookings...");
+
   try {
     const response = await makeRequest(`/api/bookings/my`);
     if (!response.ok) {
@@ -102,6 +108,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       const el = document.getElementById(id);
       if (el) el.innerHTML = "<p>Error loading bookings.</p>";
     });
+  } finally {
+    window.HB.hideThemedLoading("#pending");
+    window.HB.hideThemedLoading("#confirmed");
+    window.HB.hideThemedLoading("#completed");
   }
 });
 
