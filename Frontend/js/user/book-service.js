@@ -21,14 +21,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   } catch (e) {
     console.log("Could not fetch service details");
   }
-  // Set minimum date to today
   const dateInput = document.getElementById("date");
   const today = new Date().toISOString().split("T")[0];
   if (dateInput) {
     dateInput.setAttribute("min", today);
   }
 
-  // Image Upload Logic
   const uploadWrapper = document.querySelector('.file-upload-wrapper');
   const fileInput = document.getElementById('issue_image');
   const placeholder = document.getElementById('upload-placeholder');
@@ -68,7 +66,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const bookingDate = document.getElementById("date").value;
 
-      // Validation check
       if (bookingDate < today) {
         window.HB.showError("date", "Please select a date from today onwards.");
         return;
@@ -85,7 +82,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       const imageFile = document.getElementById("issue_image").files[0];
       if (imageFile) {
-        // Limit to 4MB to prevent 413 Content Too Large on Vercel
         const maxSize = 4 * 1024 * 1024;
         if (imageFile.size > maxSize) {
           window.HB.showToast("Image size too large. Please select an image under 4MB.", "error");
@@ -94,6 +90,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         formData.append("issue_image", imageFile);
       }
 
+      window.HB.setButtonLoading("#booking-form button[type='submit']", true, "Confirming...");
       try {
         const response = await fetch(`${window.API_BASE_URL}/api/bookings`, {
           method: "POST",
@@ -114,7 +111,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             const errorData = await response.json();
             errorMsg = errorData.detail || errorMsg;
           } catch (e) {
-            // Handle non-JSON errors (like 413 HTML page)
             if (response.status === 413) {
               errorMsg = "File size too large for server. Please use a smaller image.";
             } else {
@@ -127,6 +123,8 @@ document.addEventListener("DOMContentLoaded", async () => {
       } catch (error) {
         console.error("Error booking:", error);
         window.HB.showToast("An error occurred. Please try again.", "error");
+      } finally {
+        window.HB.setButtonLoading("#booking-form button[type='submit']", false);
       }
     });
 });

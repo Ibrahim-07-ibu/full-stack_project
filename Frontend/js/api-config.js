@@ -57,6 +57,9 @@ window.checkAuth = () => {
   if (!token) {
     console.warn(`[AUTH] No token found on path: ${window.location.pathname}. Redirecting to login...`);
 
+    // Show loading before redirection
+    window.HB.showLoading("Redirecting to login...");
+
     if (window.location.pathname.includes("/provider/")) {
       window.location.replace("/html/provider/provider-login.html");
     } else if (window.location.pathname.includes("/admin/")) {
@@ -64,7 +67,7 @@ window.checkAuth = () => {
     } else {
       window.location.replace("/html/user/login.html");
     }
-    return false; 
+    return false;
   }
   console.log(`[AUTH] Token verified for path: ${window.location.pathname}`);
   return true;
@@ -300,6 +303,41 @@ window.HB = {
     const next = input.nextElementSibling;
     if (next && next.classList.contains("hb-error-message")) {
       next.remove();
+    }
+  },
+
+  showLoading: (text = "Loading...") => {
+    if (document.querySelector(".hb-loading-overlay")) return;
+
+    const overlay = document.createElement("div");
+    overlay.className = "hb-loading-overlay";
+    overlay.innerHTML = `
+      <div class="hb-spinner"></div>
+      <div class="hb-loading-text">${text}</div>
+    `;
+    document.body.appendChild(overlay);
+  },
+
+  hideLoading: () => {
+    const overlay = document.querySelector(".hb-loading-overlay");
+    if (overlay) overlay.remove();
+  },
+
+  setButtonLoading: (btnSelector, isLoading, text = null) => {
+    const btn = typeof btnSelector === "string" ? document.querySelector(btnSelector) : btnSelector;
+    if (!btn) return;
+
+    if (isLoading) {
+      btn.dataset.originalContent = btn.innerHTML;
+      btn.classList.add("hb-btn-loading");
+      btn.disabled = true;
+      if (text) btn.innerHTML = text;
+    } else {
+      if (btn.dataset.originalContent) {
+        btn.innerHTML = btn.dataset.originalContent;
+      }
+      btn.classList.remove("hb-btn-loading");
+      btn.disabled = false;
     }
   },
 };

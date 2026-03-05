@@ -4,6 +4,7 @@ document.getElementById('admin-login-form').addEventListener('submit', async (e)
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
+    window.HB.setButtonLoading("#admin-login-form button", true, "Authenticating...");
     try {
         const response = await makeRequest('/api/auth/unified_login', {
             method: 'POST',
@@ -36,7 +37,9 @@ document.getElementById('admin-login-form').addEventListener('submit', async (e)
             showModal(`Login failed: ${errorData.detail || 'Invalid credentials'}`, 'error');
         }
     } catch (error) {
-        console.error('Admin Login Error:', error);
-        showModal('An error occurred. Please try again.', 'error');
+        console.error('Login error:', error);
+        window.HB.showToast('Connection error. Please try again.', 'error');
+    } finally {
+        window.HB.setButtonLoading("#admin-login-form button", false);
     }
 });

@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // If not authenticated, checkAuth() will redirect and return false — stop here.
   if (!window.checkAuth()) return;
 
   const userId = localStorage.getItem("user_id");
@@ -69,6 +68,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const logoutBtn = document.querySelector(".btn-logout");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", (e) => {
+      window.HB.showLoading("Logging out...");
       window.removeToken();
       e.preventDefault();
       window.location.href = "login.html";

@@ -46,11 +46,7 @@ document
     if (hasError) return;
 
     // 3. UI State: Loading
-    const submitBtn = e.target.querySelector('button[type="submit"]');
-    const originalBtnText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML =
-      '<i class="fa-solid fa-circle-notch fa-spin"></i> Creating Account...';
+    window.HB.setButtonLoading("#register-form button[type='submit']", true, "Creating Account...");
 
     try {
       const response = await makeRequest("/api/auth/register", {
@@ -110,7 +106,6 @@ document
         "error",
       );
     } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalBtnText;
+      window.HB.setButtonLoading("#register-form button[type='submit']", false);
     }
   });

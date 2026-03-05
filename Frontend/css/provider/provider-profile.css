@@ -165,3 +165,24 @@
         flex-direction: column;
     }
 }
+
+.profile-header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.recent-reviews-title {
+    margin: 0;
+}
+
+.view-all-link {
+    font-size: 0.9rem;
+    text-decoration: none;
+    color: #5A6D7A;
+}
+
+.view-all-link:hover {
+    color: #FF6B35;
+}

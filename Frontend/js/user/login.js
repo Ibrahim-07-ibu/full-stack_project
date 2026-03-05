@@ -12,6 +12,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     return;
   }
 
+  window.HB.setButtonLoading("#login-form button", true, "Logging in...");
   try {
     const response = await makeRequest("/api/auth/unified_login", {
       method: "POST",
@@ -63,5 +64,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   } catch (error) {
     console.error("Login Fetch Error:", error);
     window.HB.showToast("An error occurred. Please try again.", "error");
+  } finally {
+    window.HB.setButtonLoading("#login-form button", false);
   }
 });

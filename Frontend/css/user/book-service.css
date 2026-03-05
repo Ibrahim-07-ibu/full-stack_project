@@ -283,3 +283,60 @@ body {
         text-align: center;
     }
 }
+
+.upload-zone {
+    border: 2px dashed #C9D6DF;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upload-zone:hover {
+    border-color: #FF6B35;
+    background: rgba(255, 107, 53, 0.02);
+}
+
+.hidden-input {
+    display: none;
+}
+
+.upload-icon {
+    font-size: 2rem;
+    color: #FF6B35;
+    margin-bottom: 0.5rem;
+}
+
+.upload-text {
+    margin: 0;
+    color: #5A6D7A;
+}
+
+.upload-hint {
+    font-size: 0.8rem;
+    color: #5A6D7A;
+}
+
+.image-preview-container {
+    display: none;
+    margin-top: 1rem;
+}
+
+.image-preview-img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.remove-img-btn {
+    color: #dc3545;
+    margin-top: 0.5rem;
+    display: block;
+    width: 100%;
+    border: none;
+    background: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+}

@@ -97,11 +97,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // 4. UI State: Loading
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn.innerHTML;
-    submitBtn.disabled = true;
-    submitBtn.innerHTML =
-      '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing Application...';
+    window.HB.setButtonLoading(submitBtn, true, "Processing Application...");
 
     const idProofFile = document.getElementById("id_proof").files[0];
     const certFile = document.getElementById("certificate").files[0];
@@ -110,15 +106,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Check if files are selected
     if (!idProofFile || !certFile) {
       window.HB.showToast("Please upload both ID proof and certificate.", "error");
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
+      window.HB.setButtonLoading(submitBtn, false);
       return;
     }
 
     if (idProofFile.size > MAX_SIZE || certFile.size > MAX_SIZE) {
       window.HB.showToast("Files are too large. Each file must be under 4MB.", "error");
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
+      window.HB.setButtonLoading(submitBtn, false);
       return;
     }
 
@@ -172,8 +166,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.error("Signup Error:", error);
       window.HB.showToast("Connection lost or server error. Please try again.", "error");
     } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
+      window.HB.setButtonLoading(submitBtn, false);
     }
   });
 });

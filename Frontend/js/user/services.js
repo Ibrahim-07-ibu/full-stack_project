@@ -1,4 +1,4 @@
-let allServices = []; // Store all services for filtering
+let allServices = []; 
 
 document.addEventListener("DOMContentLoaded", async () => {
   const servicesGrid = document.getElementById("services-grid");
@@ -6,10 +6,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (!servicesGrid) return;
 
-  // Load all services
   await loadServices();
 
-  // Add search functionality
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
       const searchTerm = e.target.value.toLowerCase().trim();
@@ -18,7 +16,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-// Function to load services from API
 async function loadServices() {
   const servicesGrid = document.getElementById("services-grid");
   try {
@@ -37,7 +34,6 @@ async function loadServices() {
   }
 }
 
-// Function to display services
 function displayServices(services) {
   const servicesGrid = document.getElementById("services-grid");
 
