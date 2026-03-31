@@ -5,7 +5,6 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   const email = emailInput.value.trim();
   const password = document.getElementById("password").value;
 
-  // Basic Email Validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     window.HB.showError("email", "Please enter a valid email.");

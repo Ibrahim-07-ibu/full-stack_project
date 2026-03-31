@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const bookings = await response.json();
 
-        // Filter: ONLY completed AND have a review
         const history = bookings.filter(b => (b.status || "").toLowerCase() === "completed" && b.review);
 
         container.innerHTML = "";

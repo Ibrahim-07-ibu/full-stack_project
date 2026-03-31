@@ -30,8 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Error fetching profile:", error);
     HB.showToast("Failed to load profile data", "error");
   } finally {
-    window.HB.hideThemedLoading(); // Hiding a full page loader if one was used? Or specific? 
-    // Actually better to use themed loading on the whole page for profile load.
+    window.HB.hideThemedLoading(); 
   }
   const form = document.getElementById("edit-profile-form");
   if (form) {
@@ -41,7 +40,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const emailInput = document.getElementById("email");
       const email = emailInput.value.trim();
 
-      // Basic Email Validation
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
         window.HB.showError("email", "Please enter a valid email.");

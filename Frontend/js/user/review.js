@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const fetchBookingDetails = async () => {
-    window.HB.showThemedLoading(".review-section", "Loading booking details..."); // Assuming a section exists or body
+    window.HB.showThemedLoading(".review-section", "Loading booking details..."); 
     try {
       const response = await makeRequest(`/api/bookings/${bookingId}`);
       if (response.ok) {

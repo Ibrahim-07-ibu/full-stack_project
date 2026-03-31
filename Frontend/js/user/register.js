@@ -3,7 +3,6 @@ document
   .addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    // 1. Get Form Data
     const name = document.getElementById("Name").value.trim();
     const email = document.getElementById("email").value.trim();
     const phone = document.getElementById("phone").value.trim();
@@ -11,7 +10,6 @@ document
     const password = document.getElementById("password").value;
     const confirmPassword = document.getElementById("confirmPassword").value;
 
-    // 2. Client-Side Validation
     let hasError = false;
 
     if (name.length < 2) {
@@ -45,7 +43,6 @@ document
 
     if (hasError) return;
 
-    // 3. UI State: Loading
     window.HB.setButtonLoading("#register-form button[type='submit']", true, "Creating Account...");
 
     try {
@@ -60,34 +57,28 @@ document
         }),
       });
 
-      // ✅ Check if the server responded with an error (like 405 or 500) FIRST
       if (!response.ok) {
-        // Read as text so we don't trigger the JSON crash if it's an HTML error page
         const errorText = await response.text();
         console.error(`Server Error ${response.status}:`, errorText);
 
         let errorMsg = "Registration failed. Please try again.";
         try {
-          // Try to parse the error text as JSON if the backend sent a structured error
           const errorJson = JSON.parse(errorText);
           errorMsg = errorJson.detail || errorMsg;
         } catch (e) {
-          // If parsing fails, it's likely an HTML error or plain text
         }
 
         window.HB.showToast(errorMsg, "error");
 
-        // Field specific highlights
         if (errorMsg.toLowerCase().includes("email")) {
           window.HB.showError("email", errorMsg);
         } else if (errorMsg.toLowerCase().includes("phone")) {
           window.HB.showError("phone", errorMsg);
         }
 
-        return; // Stop execution here since it failed
+        return; 
       }
 
-      // ✅ If we get here, response.ok is true, so it is safe to parse the JSON
       const result = await response.json();
 
       window.HB.showToast(
@@ -95,7 +86,6 @@ document
         "success",
       );
 
-      // Auto-login or redirect
       setTimeout(() => {
         window.location.href = "login.html?registered=true";
       }, 2000);

@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", async () => {
   if (!window.checkAuth()) return;
 
-  // Show themed loading in each tab
   window.HB.showThemedLoading("#pending", "Loading pending bookings...");
   window.HB.showThemedLoading("#confirmed", "Loading confirmed bookings...");
   window.HB.showThemedLoading("#completed", "Loading completed bookings...");
@@ -53,7 +52,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 `;
       } else if (status === "completed") {
         if (booking.review) {
-          // Skip rated bookings on this page (they move to all-completed.html)
           return;
         } else {
           actions = `<a href="review.html?booking_id=${booking.id}&provider_id=${booking.provider_id}" class="a-review">Give Rating</a>`;

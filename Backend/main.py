@@ -1,21 +1,21 @@
-from fastapi import FastAPI, Request
-from fastapi.middleware.cors import CORSMiddleware
 import os
 import sys
 import logging
-from routers import users, bookings, providers, reviews, services, supports
-from routers import auth
-from db.database import engine, Base
-import models.users, models.providers, models.services, models.bookings, models.reviews, models.supports
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+from contextlib import asynccontextmanager
 
 backend_root = os.path.dirname(os.path.abspath(__file__))
 if backend_root not in sys.path:
     sys.path.insert(0, backend_root)
 
-from contextlib import asynccontextmanager
+from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
+
+from db.database import engine, Base
+from routers import auth, users, bookings, providers, reviews, services, supports
+import models.users, models.providers, models.services, models.bookings, models.reviews, models.supports
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -34,19 +34,6 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-@app.get("/")
-def read_root():
-    return {"message": "HomeBuddy API is running"}
-
-
-@app.middleware("http")
-async def log_requests(request: Request, call_next):
-    path = request.url.path
-    method = request.method
-    logger.info(f"Incoming Request: {method} {path}")
-    response = await call_next(request)
-    return response
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -55,7 +42,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    logger.info(f"Incoming Request: {request.method} {request.url.path}")
+    response = await call_next(request)
+    return response
 
+@app.get("/")
+def health():
+    return {"message": "HomeBuddy API is running"}
 
 
 app.include_router(auth.router)
@@ -65,7 +60,3 @@ app.include_router(providers.router)
 app.include_router(reviews.router)
 app.include_router(services.router)
 app.include_router(supports.router)
-
-@app.get("/health")
-def health():
-    return {"status": "ok", "message": "Backend package is healthy"}

@@ -5,12 +5,11 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   const email = emailInput.value.trim();
   const password = document.getElementById("password").value;
 
-  // Basic Email Validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     window.HB.showError("email", "Please enter a valid email.");
     return;
-  }
+}
 
   window.HB.setButtonLoading("#login-form button", true, "Logging in...");
   try {
@@ -40,7 +39,6 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
       }
       console.log("[LOGIN] Profile data stored in localStorage");
 
-      // Admin specific flag
       if (result.role === 'admin') {
         localStorage.setItem('admin_logged_in', 'true');
       }

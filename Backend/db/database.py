@@ -1,49 +1,20 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
-if not SQLALCHEMY_DATABASE_URL:
-    SQLALCHEMY_DATABASE_URL = "sqlite:///./homebuddy.db"
 
-is_postgres = SQLALCHEMY_DATABASE_URL.startswith("postgresql") or SQLALCHEMY_DATABASE_URL.startswith("postgres")
-if is_postgres and "+pg8000" not in SQLALCHEMY_DATABASE_URL:
-    SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL.replace("://", "+pg8000://", 1)
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
-engine_args = {
-    "pool_recycle": 300,
-    "pool_pre_ping": True,
-}
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
 
-connect_args = {}
-
-if "sqlite" in SQLALCHEMY_DATABASE_URL:
-    connect_args["check_same_thread"] = False
-elif "+pg8000" not in SQLALCHEMY_DATABASE_URL:
-
-    connect_args = {
-        "keepalives": 1,
-        "keepalives_idle": 30,
-        "keepalives_interval": 10,
-        "keepalives_count": 5
-    }
-
-if connect_args:
-    engine_args["connect_args"] = connect_args
-
-if "sqlite" not in SQLALCHEMY_DATABASE_URL:
-    engine_args.update({
-        "pool_size": 20,
-        "max_overflow": 0,
-    })
-
-engine = create_engine(SQLALCHEMY_DATABASE_URL, **engine_args)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 def get_db():
