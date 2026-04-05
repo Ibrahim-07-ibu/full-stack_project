@@ -106,6 +106,11 @@ document.addEventListener('DOMContentLoaded', async () => {
             e.preventDefault();
             window.HB.setButtonLoading("#add-service-form button[type='submit']", true, "Adding...");
             try {
+                const formData = new FormData(addForm);
+                const name = formData.get('name');
+                const price = parseInt(formData.get('price'));
+                const description = formData.get('description');
+
                 const response = await makeRequest('/api/services', {
                     method: 'POST',
                     body: JSON.stringify({ name, price, description })

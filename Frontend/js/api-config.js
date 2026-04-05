@@ -1,16 +1,21 @@
 const API_BASE = (function () {
   const host = window.location.hostname;
+  
+  // 1. Manual Override (For custom deployments)
+  // return "https://your-api-url.com";
 
-  if (host.includes("vercel.app")) {
-    return "";
-  }
-
-
+  // 2. Localhost Development
   if (host === "localhost" || host === "127.0.0.1" || host === "") {
     return "http://127.0.0.1:8000";
   }
 
-  return "http://127.0.0.1:8000";
+  // 3. Vercel/Cloud Hosting (Relative paths for same-origin proxying)
+  if (host.includes("vercel.app") || host.includes("netlify.app") || host.includes("github.io")) {
+    return ""; // Empty string for relative API calls
+  }
+
+  // 4. Default Fallback
+  return window.location.origin.replace(window.location.port, "8000");
 })();
 
 window.API_BASE_URL = API_BASE;
