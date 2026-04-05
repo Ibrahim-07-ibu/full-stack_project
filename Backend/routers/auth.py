@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from auth import create_access_token
+from token_utils import create_access_token
 from sqlalchemy.orm import Session
 from dependencies import get_db
 from models.users import User

@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from db.database import get_db
 from typing import Optional
-from auth import verify_token
+from token_utils import verify_token
 import logging
 import traceback
 
