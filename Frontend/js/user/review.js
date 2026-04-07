@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   const fetchBookingDetails = async () => {
-    window.HB.showThemedLoading(".review-section", "Loading booking details..."); 
     try {
       const response = await makeRequest(`/api/bookings/${bookingId}`);
       if (response.ok) {
@@ -28,7 +27,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (error) {
       console.error("Error fetching booking details:", error);
     } finally {
-      window.HB.hideThemedLoading(".review-section");
+
     }
   };
   fetchBookingDetails();
@@ -52,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       comment: comment,
     };
 
-    window.HB.setButtonLoading(".review-form button[type='submit']", true, "Submitting...");
+
     try {
       const bookingResponse = await makeRequest(`/api/bookings/${bookingId}`);
       if (bookingResponse.ok) {
@@ -77,7 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       console.error("Error:", error);
       HB.showToast("An error occurred. Please try again.", "error");
     } finally {
-      window.HB.setButtonLoading(".review-form button[type='submit']", false);
+
     }
   });
 });
