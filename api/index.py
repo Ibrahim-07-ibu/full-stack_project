@@ -1,8 +1,6 @@
 import os
 import sys
 
-# Add project root and Backend directory to sys.path
-# This ensures both "from Backend.X import" and "from X import" (bare) work
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 backend_root = os.path.join(project_root, "Backend")
 

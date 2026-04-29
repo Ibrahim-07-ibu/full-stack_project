@@ -29,7 +29,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="HomeBuddy", 
-    version="55.0-RECOVERY",
     redirect_slashes=False,
     lifespan=lifespan
 )
